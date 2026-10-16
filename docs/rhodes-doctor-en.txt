@@ -1,0 +1,558 @@
+RHODES ISLAND DOCTOR (Paladin Archetype)
+English localization text (enGB) · Revision 6 (Spellbook scheme)
+
+Game: Pathfinder: Wrath of the Righteous
+Companion file: rhodes-doctor-archetype.txt — the Chinese rules document (revision 6, final).
+That document is the source of truth for all rules; this file provides the English text shown
+in-game, which is also the fallback when a player's language is missing.
+
+Conventions:
+- Spell entries use the game's official fields: school, casting time, range, target/area,
+  duration, saving throw, spell resistance.
+- Each archetype feature ends with a "This ability replaces/modifies ..." line.
+- Arknights and its characters belong to Hypergryph. This is a non-commercial fan mod.
+
+
+══════════════════════════════════════════
+ARCHETYPE
+══════════════════════════════════════════
+
+Name: Rhodes Island Doctor
+Class: Paladin
+
+[Character creation description]
+The Doctor of Rhodes Island awoke from the sarcophagus with nearly all memories lost — yet with
+a mind that still reads the battlefield like an open book. Rarely raising a blade in person, the
+Doctor directs every ally with brief, precise orders. But beneath that calm exterior slumbers
+the one once called the Specter of Babel. When the battle demands it, the Doctor lets it wake
+for a short while, turning every shred of wisdom into the sharpest fighting instinct.
+
+[Changes to the paladin class]
+Class skills: adds Knowledge (Arcana), Knowledge (World), and Perception to the paladin's class
+skills.
+Skill ranks per level: 4 + Intelligence modifier.
+Hit die, base attack bonus, saving throws, proficiencies, alignment, and code of conduct:
+unchanged.
+
+
+══════════════════════════════════════════
+CLASS FEATURES
+══════════════════════════════════════════
+
+Tactical Orders (Sp)
+At 1st level, the Doctor gains the Tactical Orders spellbook: a standalone arcane spellbook of
+supernatural orders. It is a spontaneous spellbook cast with Intelligence; spells per day and
+spells known exactly follow the sorcerer table. The Doctor casts any known order freely while
+slots of the matching level remain — no preparation is required.
+New spell levels are gained at paladin levels 1, 4, 6, 8, 10, 12, 14, 16, and 18 (levels 1–9).
+0-level orders are cantrips: usable at will, unlimited times per day. Starting at 4th level, at
+every even level the Doctor may forget one known order and learn a new one of the same or a
+lower level; cantrips cannot be swapped.
+This spellbook ignores arcane spell failure from armor. Unless an order says otherwise, orders
+are subject to dispelling, antimagic, spell resistance, and counterspelling; their save DC
+equals 10 + order level + the Doctor's Intelligence modifier, and their caster level equals the
+Doctor's paladin level.
+This ability, together with Focus Fire, replaces smite evil.
+
+──────────────────────────────
+
+Focus Fire (Ex)
+At 1st level, the Doctor can use Focus Fire 3 + Intelligence modifier times per day (minimum 1).
+It is not a spell and costs no spell slot.
+Swift action; range 60 ft.; target one enemy; duration: Intelligence modifier rounds (min 1);
+Saving Throw: none.
+The Doctor marks the target. All allies gain a +1 insight bonus on attack rolls and damage
+rolls against it, increasing by +1 for every 4 paladin levels (to +6 at 20th). Only one mark
+can be active at a time; marking a new target ends the old one.
+
+──────────────────────────────
+
+Originium Arts Mastery (Ex)
+At 1st level, the Doctor gains a +2 bonus on caster level checks to overcome spell resistance.
+This bonus increases to +4 at 7th level, +6 at 13th, and +8 at 19th.
+While the Specter of Babel is active, this bonus is lost and the Doctor instead takes a penalty
+on such checks equal to the Transfer Value. After gaining Doctor of Rhodes Island at 20th
+level, this penalty no longer applies.
+This ability replaces divine grace.
+
+──────────────────────────────
+
+Cool Head (Ex)
+At 2nd level, the Doctor adds their Intelligence modifier (if positive) as an untyped bonus on
+all saving throws. While the Specter of Babel is active, this bonus is halved (rounded down);
+at 20th level it is no longer halved.
+
+──────────────────────────────
+
+Lay on Hands (Su)
+As the paladin ability, except that all values based on Charisma use Intelligence instead: uses
+per day equal half the Doctor's paladin level + Intelligence modifier, and the DC when harming
+undead uses the Intelligence modifier.
+This ability modifies lay on hands.
+
+──────────────────────────────
+
+Channel Positive Energy (Su)
+As the paladin ability, except that the DC equals 10 + half the Doctor's paladin level + the
+Doctor's Intelligence modifier.
+This ability modifies channel positive energy.
+
+──────────────────────────────
+
+Aura of Command (Ex)
+At 4th level, the Doctor emits a 10-foot aura. The Doctor and allies within gain a +1
+competence bonus on attack rolls and initiative checks. Suppressed while the Doctor is
+unconscious or the Specter of Babel is active.
+This ability replaces the paladin's original spellcasting.
+
+──────────────────────────────
+
+Total Command (Ex)
+At 11th level, Aura of Command's radius increases to 30 feet and its bonus to +2.
+This ability replaces aura of justice.
+
+──────────────────────────────
+
+Specter of Babel (Ex)
+At 8th level, the Doctor can awaken the other self slumbering within. Activation is a move
+action (a swift action from 16th level); ending it is a free action. The Specter can be
+maintained for 4 + paladin level + Intelligence modifier rounds per day, in any number of
+bouts, restored after rest. The Transfer Value equals half the Intelligence modifier at levels
+8–11, and the full Intelligence modifier from 12th level. The Doctor's Intelligence score
+itself is never reduced.
+
+On activation, choose one form; it cannot be changed until the Specter ends:
+- Agile Form: an untyped bonus to Dexterity equal to twice the Transfer Value; melee attack and
+  damage rolls use Dexterity instead of Strength (whichever is higher); the armor's maximum
+  Dexterity bonus increases by the Transfer Value. From 12th level, evasion that works in any
+  armor.
+- Enduring Form: an untyped bonus to Constitution equal to twice the Transfer Value (hit points
+  and Fortitude saves rise accordingly). From 12th level, damage reduction 3/— that stacks with
+  damage reduction from other sources.
+
+While the Specter is active:
+- the Doctor can only cast orders with the [Specter] descriptor (Focus Fire is allowed from
+  16th level);
+- Originium Arts Mastery is lost and its caster-level checks take a penalty equal to the
+  Transfer Value;
+- Cool Head is halved; Aura of Command and Total Command are suppressed.
+Orders already in effect last out their remaining duration.
+
+When the Specter ends, for any reason, the Doctor suffers the Specter's Aftermath for 2 rounds:
+only move actions are allowed (no attacks, spells, or active abilities or items), and speed
+gains a +50-foot untyped bonus. The Aftermath cannot be ended early and the Specter cannot be
+reactivated during it.
+This ability replaces aura of resolve.
+
+──────────────────────────────
+
+Doctor of Rhodes Island (Ex)
+At 20th level, while the Specter is active the Doctor may cast all orders, Cool Head and the
+auras function at full strength, and Originium Arts Mastery no longer suffers its penalty. When
+the Specter ends, the Aftermath imposes no action restriction and the Specter can be
+reactivated immediately; the +50-foot speed still applies for 2 rounds.
+This ability replaces holy champion.
+
+
+══════════════════════════════════════════
+0-LEVEL ORDERS (CANTRIPS)
+══════════════════════════════════════════
+
+Cantrips are arcane spells with a casting time of 1 standard action; spell resistance: no,
+unless noted.
+
+Tactical Mark — Divination; range 60 ft.; one creature; 1 round; no save.
+You and your allies gain a +1 insight bonus on the next attack roll against the target this
+round. A creature can be affected only once per round.
+
+Field Dressing — Transmutation (healing); touch; one living creature; instantaneous; Will
+(harmless).
+The target regains 1 hit point. Cannot affect a creature that has benefited from it in the last
+24 hours.
+
+Battlefield Survey — Divination; personal; you; 1 minute.
++2 insight bonus on Perception checks.
+
+Beacon Projection — Illusion (light); range 30 ft.; one floating beacon; 10 min./level; no
+save.
+Creates a beacon illuminating a 20-ft. radius.
+
+Suppressing Shot — Enchantment (mind-affecting); range 30 ft.; one enemy; 1 round/level; Will
+negates.
+The target takes a –2 penalty on its next attack roll.
+
+Emergency Extraction — Conjuration (teleportation); touch; you or one willing ally;
+instantaneous; Will (harmless).
+The target moves up to 10 ft. to a visible square (implemented as the nearest open square
+behind the caster). This movement provokes no attacks of opportunity.
+
+
+══════════════════════════════════════════
+1ST-LEVEL ORDERS
+══════════════════════════════════════════
+
+Hold the Line — Hoshiguma. Abjuration; swift action; personal; all allies in a 30-ft. burst centered on you; 1 minute/level; Will (harmless); SR yes (harmless).
+Targets gain a +2 insight bonus to AC and a +1 insight bonus on saving throws.
+
+Cavalry Charge — Grani. Transmutation; swift action; personal; all allies in a 30-ft. burst centered on you; 1 minute/level; Will (harmless); SR yes (harmless).
+Targets gain a +10-ft. untyped speed bonus (+20 ft. at 10th level) and a +4 dodge bonus to AC
+against attacks of opportunity.
+
+Frost Prayer — Pramanix. Necromancy (cold); swift action; close; one enemy; 1 round/level; Will
+negates; SR yes.
+The target takes a –2 penalty to AC and on all saving throws.
+
+Emergency Treatment — Shining. Conjuration (healing); move action; close; one ally;
+instantaneous; Will (harmless); SR yes (harmless).
+The target gains the effect of the Doctor's lay on hands, including any mercies. Cannot damage
+undead.
+
+Fire Recon — Kroos. Divination; swift action; medium (100 ft. + 10 ft./level); one enemy; 1
+round/level; no save; SR no.
+The target gains no miss chance from invisibility, mirror images, or concealment against your
+allies' attacks (the effects themselves are not removed).
+
+Medical Drone — Silence. Conjuration (creation, healing); standard action; close; one ally;
+1 round/level; no save; SR no.
+A medical drone follows the target ally; at the start of each round that ally regains 1d6 +
+caster level (max +5) hit points. (Implemented as a buff following the ally, not an attackable
+unit.)
+
+
+══════════════════════════════════════════
+2ND-LEVEL ORDERS
+══════════════════════════════════════════
+
+Ura! — Zima. Enchantment (mind-affecting); swift action; personal; all allies in a 30-ft. burst centered on you; 1 min./level; Will (harmless); SR yes (harmless).
+Ends shaken, frightened, and panicked on the targets. Targets gain a +1 untyped bonus on
+attack rolls and weapon damage rolls (+2 at 10th level).
+
+Unstable Plasma — Warfarin. Necromancy; swift action; close; one ally; 1 round/level; Will
+(harmless); SR yes (harmless).
+The target gains +2 on attack rolls and +2 on weapon damage rolls (untyped); the damage bonus
+increases by +1 per 4 levels. At the start of each of its turns the target loses 2 hit points
+(not below 1).
+
+Anti-Gravity — Angelina. Transmutation; standard action; close; one enemy; 1 round/level; Will
+negates; SR yes.
+The target is slowed, as the slow spell.
+
+Smokescreen — Jessica. Conjuration (creation); standard action; medium; 20-ft.-radius smoke;
+1 round/level; no save; SR no.
+The area grants concealment (20% miss chance). Allies see normally within it; enemies cannot.
+
+Delayed Blast — W. Evocation (fire); standard action; medium; one delayed charge; 1
+round/level or until triggered; Reflex half; SR yes.
+Places a charge on the ground. At the start of each round it explodes if an enemy is within 10
+ft. of it, in a 10-ft. burst for 2d6 fire and 2d6 bludgeoning damage; you may also detonate it as
+a free action.
+
+Silencer — Lappland. Abjuration; standard action; close; one enemy; 1 round/level; Will
+negates; SR yes.
+The target cannot cast spells or use spell-like or supernatural abilities; passive abilities
+are unaffected.
+
+
+══════════════════════════════════════════
+3RD-LEVEL ORDERS
+══════════════════════════════════════════
+
+Overloading Mode — Exusiai. Transmutation; swift action; close; all allies in a 20-ft. burst
+centered on a point within close range; 1 round/level; Will (harmless); SR yes (harmless).
+On a full attack the target makes one extra attack at full base attack bonus; +1 untyped on
+attack rolls; +1 dodge to AC and Reflex saves; +30-ft. untyped bonus to all speeds. This is not
+haste: each benefit stacks with haste and with speed weapons.
+
+Sword Rain — Texas. Evocation; standard action; close; 10-ft.-radius burst; instantaneous;
+Reflex half; SR yes.
+Enemies in the area take 1d6 slashing damage per 2 levels (max 10d6). Those that fail the save
+are also dazed for 1 round.
+
+Calcification — Saria. Transmutation; standard action; close; 20-ft.-radius area; 1 round/level; no
+save; SR no.
+Enemies in the area have their speed halved and take a –2 penalty on saves; allies in the area
+regain 1d8 hit points at the start of each round. Enemy effects end on leaving the area.
+
+Lock of Time — Mostima. Transmutation; standard action; medium; 20-ft.-radius burst; 1 round/level
+rounds; Will negates; SR yes.
+Enemies in the area take −1 on AC, Reflex saves and attack rolls, and can take only a single
+move or standard action each round (no full-round actions). At the start of each round an
+affected creature may save again to end the effect on itself.
+
+Scorching Breath — Ifrit. Evocation (fire); standard action; 60-ft. line; instantaneous;
+Reflex half; SR yes.
+Enemies in the line take 1d6 fire damage per level (max 10d6). Those that fail the save have
+their fire resistance reduced by 10 for 1 round/level.
+
+Execution — Projekt Red [Specter]. Transmutation; swift action; personal; you; 1 round/level
+or until triggered; no save.
+If your next melee hit strikes a target at half or fewer of its maximum hit points, that hit's
+weapon damage dice are doubled (precision damage is not). The spell then ends.
+
+
+══════════════════════════════════════════
+4TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Sanctuary — Nightingale. Abjuration; swift action; personal; all allies in a 30-ft. burst centered on you; 1 round/level; Will
+(harmless); SR yes (harmless).
+Targets gain a +4 sacred bonus on saves against spells and spell-like abilities, and
+resistance 10 to fire, cold, electricity, acid, and sonic. This resistance stacks with the same
+type from other sources.
+
+Volcano — Eyjafjalla. Evocation (fire); standard action; medium; 20-ft.-radius burst;
+instantaneous, embers for 2 rounds; Reflex half; SR yes.
+Enemies immediately take 1d6 fire damage per 2 levels (max 10d6), then 1d6 per 4 levels (max
+5d6) at the start of each of the next 2 rounds. Each instance allows a separate save.
+
+Dragnet — Gladiia. Conjuration (teleportation); standard action; medium; enemies in a 20-ft.
+burst; instantaneous; Fortitude negates; SR yes.
+Each failing target is teleported to an adjacent square of your choice and falls prone. Targets
+cannot be sent into hazardous terrain or occupied squares.
+
+Nightterror — Nightmare. Enchantment (fear, mind-affecting); standard action; medium; one
+enemy; 1 round/level; Will partial; SR yes.
+On a failure the target is panicked for 2 rounds, then shaken for the rest; on a success it is
+shaken for 1 round.
+
+Swift Breach — Bagpipe [Specter]. Transmutation; swift action; personal; you; 3 rounds; no
+save.
+You gain haste-like acceleration for 3 rounds; until your next melee hit this round you provoke no attacks of opportunity (including movement); your next melee hit deals +3d6.
+
+Flashbang — Ash. Evocation (light); standard action; medium; a 15-ft. burst centered on a point within medium range; 1 round/level;
+Reflex partial; SR yes.
+Enemies that fail are blinded for 1 round and dazzled for the duration; those that succeed are
+dazzled for 1 round. Invisible creatures that fail become visible for 1 round.
+
+
+══════════════════════════════════════════
+5TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Chimera — Amiya. Transmutation; swift action; close; one ally; 1 round/level; Will (harmless); SR
+yes (harmless).
+The target gains a +4 untyped bonus on attack rolls, an untyped bonus on weapon damage rolls
+equal to half your level, and its weapon attacks ignore all damage reduction.
+
+Mon3tr — Kal'tsit. Conjuration (healing); standard action; medium; one ally; instantaneous;
+Will (harmless); SR yes (harmless).
+The target regains 1d6 hit points per level (max 20d6) and is cured of stunned, dazed,
+paralyzed, and nauseated.
+
+Ironcast — Nian. Abjuration; standard action; close; one ally; 1 round/level; Will (harmless);
+SR yes (harmless).
+The target gains DR 10/— and immunity to critical hits and sneak attacks. This DR does not
+stack with similar effects.
+
+Inked Mountains — Dusk. Illusion (creation); standard action; close; two ink spirits; 1
+round/level; no save; SR no.
+Summons two ink spirits. Each attacks with your base attack bonus, dealing 2d6 force damage on
+a hit; when destroyed it bursts, dealing 2d6 force damage to an adjacent enemy and dazzling it
+for 1 round (Will negates).
+
+Frozen Domain — FrostNova. Evocation (cold); standard action; medium; 20-ft.-radius area; 1
+round/level; Reflex partial; SR yes.
+An enemy entering the area or starting its turn inside takes 4d6 cold damage; on a failed save
+it is entangled for 1 round, on a success its speed is halved for 1 round.
+
+Royal Charge — Siege [Specter]. Transmutation; standard action; 40 ft. (one point); one line charge;
+instantaneous; Reflex partial; SR no.
+You move up to 40 ft. in a straight line and make one melee attack. Each enemy in
+your path takes 4d6 bludgeoning damage; those that fail the save fall prone. You may pass
+through enemy-occupied squares but cannot stop in one.
+
+
+══════════════════════════════════════════
+6TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Tidal Elegy — Skadi [Specter]. Transmutation; swift action; personal; you; 1 round/level; no save.
+You gain +6 untyped on attack rolls, a damage bonus equal to your caster level, 60 temporary
+hit points, and a +20-ft. untyped speed bonus.
+
+Dance of Childhood — Suzuran. Enchantment (mind-affecting); standard action; medium; 20-ft.-
+radius area; 1 round/level; Will negates; SR yes.
+Enemies that fail are slowed and take 30% increased damage from all sources; both end on
+leaving the area. Allies in the area regain 2d8 + half your caster level hit points at the
+start of each round.
+
+Drunken Dream — Ling. Enchantment (sleep, mind-affecting); standard action; medium; 20-ft.-
+radius burst; 1 round/level; Will negates; SR yes.
+Enemies that fail fall into a magical slumber with no HD limit. A creature damaged wakes but is
+dazed for 1 round. Sleep-immune targets: if the immunity stops the whole spell (e.g. elves), they are unaffected; if it stops only the sleep effect, they do not sleep but are still dazed for 1 round.
+
+Black Snake's Flame — Talulah. Evocation (fire); standard action; medium; one enemy;
+instantaneous plus 1 round/level; Reflex half; SR yes.
+The target takes 1d6 fire damage per level (max 20d6, half of it divine damage unaffected by
+fire resistance; fire immunity only halves the total). The target then takes 3d6 fire damage at
+the start of each round regardless of the save.
+
+Artillery Barrage — Horn. Evocation; standard action; long (400 ft. + 40 ft./level); same
+point for three rounds; Reflex half; SR yes.
+Choose one point on the ground. At the start of each round that point explodes in a 15-ft.
+radius for 8d6 bludgeoning and 8d6 fire damage; creatures can see the marked points and move
+away.
+
+Sin and Punishment — Penance. Necromancy; standard action; medium; one enemy; 1 round/level;
+Will negates; SR yes.
+The first time each round the target deals hit-point damage to another creature, it takes half
+that much damage itself, of the same type. Reflected damage cannot trigger this again.
+
+
+══════════════════════════════════════════
+7TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Twilight — Surtr. Evocation (fire); standard action; medium; 20-ft.-radius burst;
+instantaneous, molten fire for 2 rounds; Reflex half; SR yes.
+Enemies take 1d6 fire damage per level (max 20d6). Those that fail are set alight with molten
+fire, taking 4d6 fire damage at the start of each of the next 2 rounds (a separate Reflex save
+each round halves it).
+
+Mirror Flow — Muelsyse. Illusion (shadow); standard action; close; one ally; 1 round/level; no
+save; SR no.
+Creates a mirror duplicate of the target with the target's stats, AC, attack bonus, and
+weapon, at the target's current hit points. It acts after the target and can act normally and cast spells
+(it has full spell slots and resources). It lasts 1 round/level or until
+destroyed.
+
+Final Snipe — Schwarz. Divination; standard action; long; one enemy; until the start of your
+next turn; Reflex half; SR yes.
+At the start of your next turn the target is struck by an unmissable shot for 15d6 piercing
+damage and 2d6 Constitution damage. The shot fails if the target is invisible at that moment.
+
+Chain Detonation — Wis'adel. Necromancy; standard action; medium; all enemies within 20 ft. of
+the target; 1 round/level; Reflex half; SR yes.
+Marks the targets. When a marked target dies, it explodes in a 20-ft. radius for 10d6 force
+damage.
+
+Thunderous Judgment — Irene. Evocation (electricity); standard action; medium; 30-ft.-radius
+burst; instantaneous; Reflex partial; SR yes.
+Enemies take 12d6 electricity damage; those that fail fall prone and are dazed for 1 round;
+those that succeed take half damage and remain standing.
+
+Tide — Specter [Specter]. Necromancy; swift action; personal; you; 1 round/level; no
+save.
+Each melee hit restores 2d6 hit points, up to three times per round; the first critical hit or
+kill each round returns 1 round of Specter duration, up to three rounds total.
+
+
+══════════════════════════════════════════
+8TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Painted World — Dusk. Illusion (shadow); standard action; medium; one enemy; 2 rounds (then paralyzed 1 round/level); Will
+negates; SR yes.
+A failing target is drawn into a painting: it cannot act, cannot be attacked or targeted, and its model is hidden for 2 rounds.
+When the duration ends it returns where it was and is paralyzed for 1 round/level.
+
+Blazing Sun's Bow — Nearl the Radiant Knight. Evocation (light); standard action; 120-ft.
+line; instantaneous; Reflex partial; SR yes.
+Enemies in the line take 15d6 holy damage; those that fail are blinded for 1 round/level, those
+that succeed take half and are dazzled for 1 round. Allies in the line regain 10d6 hit points
+and are cured of blindness.
+
+Tidal Vigil — Skadi the Corrupting Heart. Abjuration; standard action; personal; all allies in a 30-ft. burst centered on you; 1 min./level; Will (harmless); SR yes (harmless).
+At the start of each round each target gains 15 temporary hit points (refreshing, not stacking)
+and is immune to charm and compulsion effects.
+
+Shadow Realm — Ines. Illusion (shadow); standard action; medium; 15-ft.-radius area; 1
+round/level; Will partial; SR yes.
+The area becomes shadowed. Allies within it are invisible; enemies that fail are blinded for 1
+round, those that succeed are dazzled for 1 round. Effects end immediately upon leaving the
+area.
+
+Harvest of Years — Shu. Conjuration (healing); standard action; personal; all allies in a 30-ft. burst centered on you; 3 rounds; Will (harmless); SR yes (harmless).
+Each target regains 4d8 + caster level hit points per round. When the spell ends, the total
+healing that went unused becomes temporary hit points (max 60) for 1 minute.
+
+The Banner Stands — Saileach. Enchantment (mind-affecting); swift action; personal; all allies in a 30-ft. burst centered on you; 1 round/level; Will (harmless); SR yes (harmless).
+A target reduced to 0 or fewer hit points does not die or fall unconscious and can act
+normally; when the spell ends, normal rules apply if it is still below 0. Does not prevent
+death effects.
+
+
+══════════════════════════════════════════
+9TH-LEVEL ORDERS
+══════════════════════════════════════════
+
+Shadow Blade: Draw — Amiya. Necromancy; standard action; medium; one enemy; instantaneous;
+Fortitude partial; SR no.
+On a failed save the target dies. On a success it still takes 10d6 + caster level damage.
+Targets immune to death effects count as having succeeded.
+
+Chronostasis — Mostima. Transmutation; standard action; personal; you; 1d4+1 apparent
+rounds; no save.
+As the vanilla time stop spell. You cannot directly affect other creatures or their
+equipment, but may move, place area effects, and cast on yourself.
+(Implementation: casts the vanilla Time Stop directly; its 1d4+1 rounds are slightly more
+generous than the original "two extra turns" draft — accepted.)
+
+Cloudpiercer — Typhon. Evocation; standard action; long; one 5-ft.-wide line; instantaneous;
+Reflex half; SR no.
+Enemies in the line take 20d6 piercing damage, ignoring damage reduction.
+
+Earth's Fury — Carnelian. Evocation; standard action; personal; 30-ft.-radius burst centered on you; instantaneous; Reflex partial; SR no.
+An earthquake shakes the area. Enemies take 10d6 bludgeoning damage and fall prone (half and
+no prone on a success); summoned creatures take double damage.
+
+Reconstruction — Kal'tsit. Conjuration (healing); standard action; personal; 30-ft.-radius burst centered on you;
+instantaneous; Will (harmless); SR yes (harmless).
+Only allies revive (summons do not revive, other effects apply normally); all negative effects except curses, diseases and poisons are cleansed. The dead return at half hit points, up to three per casting.
+
+Tactician of Old [Specter]. Transmutation; swift action; personal; you; 1 round/level; no save.
+Completes the other half of your current Specter form: you gain the full benefits of both
+the Agile and Enduring Forms, and the Transfer Value increases by an additional 2. Requires
+an active Specter form (cannot be cast otherwise). This spell does not lift the Specter's restriction on normal
+orders.
+
+
+══════════════════════════════════════════
+10TH-LEVEL ORDERS (EXPERIMENTAL: GRANTED VIA TEST PANEL)
+══════════════════════════════════════════
+
+10th-level orders are not ordinary class spells. **Currently experimental**: in the test panel
+(Ctrl+F10 -> this mod) press "给我 10 环指令" to grant the four orders to the Doctor directly, for
+in-game testing. The final unlock rule (class level 20 or mythic merge) is TBD -- the merge route
+has been confirmed not to work (see docs/dev-notes.md section 10).
+
+The Survival of Civilization. Conjuration (healing); standard action; personal; 30-ft.-radius burst centered on you; instantaneous, then 1 minute; Will (harmless); SR yes (harmless).
+Allies in the area are fully healed and freed of all negative effects except curses, diseases
+and poisons. Dead allies return to life fully healed, up to five per casting. For 1 minute
+afterward, the targets gain a +4 untyped bonus on attack rolls, weapon damage rolls, AC, and
+saving throws, and the first time each would drop to 0 hit points it instead stays at 1. Does not remove story curses.
+
+Eternal Gaze — Priestess. Abjuration; standard action; personal; all allies in a 30-ft. burst centered on you; 1
+min./level; Will (harmless); SR yes (harmless).
+The first time each target would die, it instead is restored to full hit points, teleports to a
+square adjacent to you, and immediately gains 1 minute of haste-like acceleration (speed plus one extra attack on a full attack, stacking with haste). Each target
+benefits only once.
+
+Echo of the Crown — Theresa. Enchantment (mind-affecting); standard action; personal; 60-ft.
+burst centred on you; 1 round/level; Will partial; SR yes.
+Enemies that fail lose all dispellable spell buffs (no dispel check; only the enemy's own buffs are taken); you may distribute up to two of the buffs lost by
+each enemy among allies in the area, with their remaining durations. Failing enemies are also
+dazed for 1 round; enemies that succeed lose one random dispellable spell buff, which vanishes.
+
+Catastrophe Descends. Evocation; full-round action; long; 40-ft.-radius area; 1 minute; Reflex
+half; SR yes.
+At the start of each round every enemy in the area takes 12d6 fire, 12d6 bludgeoning and 12d6 electricity once per round.
+
+
+══════════════════════════════════════════
+IMPLEMENTATION NOTES
+══════════════════════════════════════════
+
+1. A standalone spontaneous arcane spellbook: sorcerer slots/known table, Intelligence-based,
+   no arcane spell failure from armor.
+2. All non-cantrip orders are BlueprintAbility spells added to this class's spell list;
+   cantrips are unlimited-use 0-level spells.
+3. Focus Fire remains a resource-based class feature (3 + Intelligence modifier per day, min 1).
+4. While the Specter is active, a caster restriction allows only spells with the [Specter]
+   descriptor; at 20th level the restriction is removed. Originium Arts Mastery's SR-check
+   bonus inverts to a penalty of the Transfer Value during the Specter; no penalty at 20th.
+5. Merging: do not hardcode path names. Register this spellbook as mergeable according to the
+   game-native SpellbookMerge/CanMerge flags of mergeable mythic paths (this only affects
+   levels 0-9). 10th-level orders no longer depend on merging; they are granted at class level 20.
+6. Complex effects (duplicates, buff theft, extra turns, resurrection windows) must be checked
+   against the current game API and marked VERIFY.

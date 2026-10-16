@@ -1,0 +1,211 @@
+{
+  "AssetId": "5d61dde0020bbf54ba1521f7ca0229dc",
+  "SourcePath": "Spells/Level3/SummonMonsterIIIBase.jbp",
+  "Data": {
+    "$type": "da11db195c86e0d4dae17a2c03a4ba9a, BlueprintAbility",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$SpellListComponent$fc844d98-b8f1-4b71-8cad-25ecd10fcd2c",
+      "$SpellComponent$64dfb84d-660b-4abb-8a4f-a63445cea7d5",
+      "$AbilityVariants$9630459a-ffa9-410b-a26a-61cf5a324e91",
+      "$SpellListComponent$17899df4-48bb-4855-a60f-b23743a7b526",
+      "$SpellListComponent$19ed73ff-0130-4a9e-b127-2d0f114fd175",
+      "$SpellDescriptorComponent$2d614deb-5bfb-4cf2-92ab-62b124747693"
+    ],
+    "Components": [
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$fc844d98-b8f1-4b71-8cad-25ecd10fcd2c",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_ba0401fdeb4062f40a7aa95b6f07fe89",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "bbf7e743804d40a47bde0b27174f33a9, SpellComponent",
+        "m_Flags": 0,
+        "name": "$SpellComponent$64dfb84d-660b-4abb-8a4f-a63445cea7d5",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "School": "Conjuration"
+      },
+      {
+        "$type": "1bf4aff684fadda4c85160390570fdf2, AbilityVariants",
+        "m_Flags": 0,
+        "name": "$AbilityVariants$9630459a-ffa9-410b-a26a-61cf5a324e91",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_Variants": [
+          "!bp_15b5efe371d47c944b58444e7b734ffb",
+          "!bp_28f49845fad6a534b95a65b6cea8f8d6",
+          "!bp_7b531828b885e8b47a7b06a6f1a34805"
+        ]
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$17899df4-48bb-4855-a60f-b23743a7b526",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_25a5013493bdcf74bb2424532214d0c8",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$19ed73ff-0130-4a9e-b127-2d0f114fd175",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_8443ce803d2d31347897a3d85cc32f53",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$2d614deb-5bfb-4cf2-92ab-62b124747693",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 512
+        }
+      },
+      {
+        "$type": "4b6c2ac95f357d845ae3a30d6fc6641a, RecommendationNoFeatFromGroup",
+        "m_Flags": 0,
+        "name": "$RecommendationNoFeatFromGroup$72056729-b713-4944-b14b-d7c8e42efe50",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Features": [
+          "!bp_739c1e842bf77994baf963f4ad964379"
+        ],
+        "m_FeaturesExlude": [
+          "!bp_30493b3bd627435aa6b1cf3011dc762c"
+        ],
+        "GoodIfNoFeature": false
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$029dd9da-affc-4eea-affb-bd7f9ae4f574",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_e17df9977b879b64e8a8cbb4b3569f19",
+        "SpellLevel": 3
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "0eaa806603772fc498adad2a6ac4ac16",
+        "stringkey": "769e60f8-aca1-44c9-a812-06828117c68f"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "c4f4613eee104ba42b586080b3c1bb67",
+        "stringkey": "be1b650c-c839-4552-a939-c659fe20b6a6"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "fbaf42ee1c1548442a8d0ff6dcaf8b22",
+      "fileid": 21300000
+    },
+    "m_DefaultAiAction": null,
+    "m_AutoUseIsForbidden": false,
+    "Type": "Spell",
+    "Range": "Close",
+    "IgnoreMinimalRangeLimit": false,
+    "CustomRange": {
+      "m_Value": 0.0
+    },
+    "ShowNameForVariant": false,
+    "OnlyForAllyCaster": false,
+    "CanTargetPoint": true,
+    "CanTargetEnemies": false,
+    "CanTargetFriends": false,
+    "CanTargetSelf": true,
+    "ShouldTurnToTarget": true,
+    "SpellResistance": false,
+    "IgnoreSpellResistanceForAlly": false,
+    "ActionBarAutoFillIgnored": false,
+    "Hidden": false,
+    "NeedEquipWeapons": false,
+    "UseCurrentWeaponAsReasonItem": false,
+    "NotOffensive": false,
+    "EffectOnAlly": "None",
+    "EffectOnEnemy": "None",
+    "m_Parent": null,
+    "Animation": "Point",
+    "HasFastAnimation": false,
+    "AnimationStyle": "CastActionTouch",
+    "m_TargetMapObjects": false,
+    "ActionType": "Standard",
+    "MinimalTransitionOut": 0.0,
+    "AvailableMetamagic": "Empower, Maximize, Quicken, Extend, Heighten, Reach, CompletelyNormal",
+    "m_IsFullRoundAction": true,
+    "LocalizedDuration": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "ce23d48c23024d84b8d5f2f0fa9b6abb",
+        "stringkey": "6250ccf0-1ed0-460f-8ce7-094c2da7e198"
+      }
+    },
+    "LocalizedSavingThrow": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "MaterialComponent": {
+      "m_Item": null,
+      "Count": 1
+    },
+    "DisableLog": false,
+    "ResourceAssetIds": []
+  }
+}

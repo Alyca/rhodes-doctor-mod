@@ -1,0 +1,24 @@
+# ============ 构建产物 ============
+bin/
+obj/
+_build/
+
+# ============ 发布 DLL 备份 ============
+*.bak-*
+
+# ============ 本机相关（机器 ACL 备份，不入库）============
+.acl-reports/
+_tools/acl-recovery/
+
+# ============ .NET / IDE ============
+*.user
+*.suo
+*.userprefs
+.vs/
+.idea/
+
+# ============ 临时文件 ============
+*.tmp
+*.log
+Thumbs.db
+desktop.ini

@@ -1,0 +1,71 @@
+{
+  "AssetId": "7687aa3764cb651448a50016e1758069",
+  "SourcePath": "Classes/Paladin/Mercy/MercyFrightened.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c",
+      "$PrerequisiteFeature$6b5ab019-2ad7-4b04-9b3b-9192a64d240a"
+    ],
+    "Components": [
+      {
+        "$type": "17030ee91bfc7f24e93d3b6fa583dd09, PrerequisiteFeature",
+        "name": "$PrerequisiteFeature$6b5ab019-2ad7-4b04-9b3b-9192a64d240a",
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": false,
+        "m_Feature": "!bp_c4732ca5b0af7214a98f9b4dafe87da9"
+      },
+      {
+        "$type": "fb876f3084f01754db3a4acbbb328a89, PrerequisiteClassLevel",
+        "name": "$PrerequisiteClassLevel$ec5e1615-a3b5-4c11-b036-b986c33061e2",
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": false,
+        "m_CharacterClass": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "Level": 9
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "5a6a7ea7-7ee7-48d3-b491-06de853a6596",
+      "m_OwnerString": "7687aa3764cb651448a50016e1758069",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyFrightened_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "0e7d9c42-8357-40b0-9612-dd4ea56fb887",
+      "m_OwnerString": "7687aa3764cb651448a50016e1758069",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyFrightened_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "1073814f90e84ca4fa7ec4005c66446b",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

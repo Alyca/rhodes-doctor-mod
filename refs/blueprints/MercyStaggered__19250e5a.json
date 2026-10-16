@@ -1,0 +1,65 @@
+{
+  "AssetId": "19250e5a12db1fc448970b81e0f38922",
+  "SourcePath": "Classes/Paladin/Mercy/MercyStaggered.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c"
+    ],
+    "Components": [
+      {
+        "$type": "fb876f3084f01754db3a4acbbb328a89, PrerequisiteClassLevel",
+        "name": "$PrerequisiteClassLevel$972874fd-96a6-4ec6-b409-75676969df8e",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": false,
+        "m_CharacterClass": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "Level": 6
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "3ee6503a-333f-49b4-9257-274c769c224d",
+      "m_OwnerString": "19250e5a12db1fc448970b81e0f38922",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyStaggered_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "c0af7401-99d5-40cb-b808-3584e438f89f",
+      "m_OwnerString": "19250e5a12db1fc448970b81e0f38922",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyStaggered_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "990cc5572d19fac4fa5839bb92514415",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": []
+  }
+}

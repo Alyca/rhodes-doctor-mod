@@ -1,0 +1,81 @@
+{
+  "AssetId": "8a5b5e272e5c34e41aa8b4facbb746d3",
+  "SourcePath": "Classes/Paladin/DivineGrace.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c",
+      "$DerivativeStatBonus$9d3ad965-8372-4b5f-b931-6090031c21a4",
+      "$DerivativeStatBonus$87813e83-1fd2-4f64-b06b-b6748d42f802",
+      "$DerivativeStatBonus$aa197669-907f-4768-83e5-0eb62c916542",
+      "$RecalculateOnStatChange$b5d314de-ede5-42cf-826b-221054b29c96"
+    ],
+    "Components": [
+      {
+        "$type": "dab84a4694546c749a1d0022ff45baa0, DerivativeStatBonus",
+        "name": "$DerivativeStatBonus$9d3ad965-8372-4b5f-b931-6090031c21a4",
+        "m_Overrides": [],
+        "BaseStat": "Charisma",
+        "DerivativeStat": "SaveFortitude",
+        "Descriptor": "None"
+      },
+      {
+        "$type": "dab84a4694546c749a1d0022ff45baa0, DerivativeStatBonus",
+        "name": "$DerivativeStatBonus$87813e83-1fd2-4f64-b06b-b6748d42f802",
+        "m_Overrides": [],
+        "BaseStat": "Charisma",
+        "DerivativeStat": "SaveReflex",
+        "Descriptor": "None"
+      },
+      {
+        "$type": "dab84a4694546c749a1d0022ff45baa0, DerivativeStatBonus",
+        "name": "$DerivativeStatBonus$aa197669-907f-4768-83e5-0eb62c916542",
+        "m_Overrides": [],
+        "BaseStat": "Charisma",
+        "DerivativeStat": "SaveWill",
+        "Descriptor": "None"
+      },
+      {
+        "$type": "018ffdf3c815bfa4189c0fc4cf1c9b19, RecalculateOnStatChange",
+        "name": "$RecalculateOnStatChange$b5d314de-ede5-42cf-826b-221054b29c96",
+        "m_Overrides": [],
+        "UseKineticistMainStat": false,
+        "Stat": "Charisma"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "ccae2b83-3fbc-47a8-8f34-82cb18db423f",
+      "m_OwnerString": "8a5b5e272e5c34e41aa8b4facbb746d3",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/DivineGrace_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "f16e064f-96a7-46a6-9afa-089964d1f877",
+      "m_OwnerString": "8a5b5e272e5c34e41aa8b4facbb746d3",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/DivineGrace_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": null,
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

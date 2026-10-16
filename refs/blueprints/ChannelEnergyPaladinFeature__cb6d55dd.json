@@ -1,0 +1,69 @@
+{
+  "AssetId": "cb6d55dda5ab906459d18a435994a760",
+  "SourcePath": "Classes/Paladin/ChannelEnergyPaladin/ChannelEnergyPaladinFeature.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1"
+    ],
+    "Components": [
+      {
+        "$type": "d79ad4ed064aa4f43ace0e9c238fb9b9, AddFacts",
+        "name": "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+        "m_Overrides": [],
+        "m_Facts": [
+          "!bp_4937473d1cfd7774a979b625fb833b47",
+          "!bp_6670f0f21a1d7f04db2b8b115e8e6abf"
+        ],
+        "Dummy": null,
+        "CasterLevel": 0,
+        "DoNotRestoreMissingFacts": false,
+        "HasDifficultyRequirements": false,
+        "InvertDifficultyRequirements": false,
+        "MinDifficulty": "Story"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "e0d5f0fc-424a-4b6e-8bd0-34394935177e",
+      "m_OwnerString": "cb6d55dda5ab906459d18a435994a760",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/ChannelEnergyPaladin/ChannelEnergyPaladinFeature_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "992da6dde96000442a99cf4394f8d3a8",
+        "stringkey": "12b466ab-13f7-418a-b5b7-df7887499e9d"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "636f55d7ac7635e459967e29e1c71cdd",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [
+      "!bp_fd30c69417b434d47b6b03b9c1f568ff"
+    ]
+  }
+}

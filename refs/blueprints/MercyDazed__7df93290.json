@@ -1,0 +1,62 @@
+{
+  "AssetId": "7df9329013baaec4fac20ae08bc1f849",
+  "SourcePath": "Classes/Paladin/Mercy/MercyDazed.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c",
+      "$PrerequisiteClassLevel$f3391562-9eac-496b-ba84-c91613ef26d9"
+    ],
+    "Components": [
+      {
+        "$type": "fb876f3084f01754db3a4acbbb328a89, PrerequisiteClassLevel",
+        "name": "$PrerequisiteClassLevel$f3391562-9eac-496b-ba84-c91613ef26d9",
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": false,
+        "m_CharacterClass": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "Level": 6
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "28b3a513-7029-45ff-981b-d57f9fdbe96b",
+      "m_OwnerString": "7df9329013baaec4fac20ae08bc1f849",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyDazed_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "97a0fda6-ff86-46f1-a884-476338fc1397",
+      "m_OwnerString": "7df9329013baaec4fac20ae08bc1f849",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyDazed_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "60fe3c2dbd23eae45843f2334f960ec5",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

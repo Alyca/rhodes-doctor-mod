@@ -1,0 +1,80 @@
+{
+  "AssetId": "a28693b24cc412c478b8b85877f2dad2",
+  "SourcePath": "Classes/Paladin/AuraOfResolve/AuraOfResolveFeature.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c",
+      "$BuffDescriptorImmunity$9a30ec41-7f2a-4839-9f60-53b02661434a",
+      "$AuraFeatureComponent$1a931668-7e39-4917-a25b-e47accea7d37"
+    ],
+    "Components": [
+      {
+        "$type": "3577eb7fd5b1caa4ca13855b16201704, BuffDescriptorImmunity",
+        "name": "$BuffDescriptorImmunity$9a30ec41-7f2a-4839-9f60-53b02661434a",
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 32768
+        },
+        "m_IgnoreFeature": null,
+        "CheckFact": false,
+        "m_FactToCheck": null
+      },
+      {
+        "$type": "33c6c6711d174884ba995663e0f64b63, AuraFeatureComponent",
+        "name": "$AuraFeatureComponent$1a931668-7e39-4917-a25b-e47accea7d37",
+        "m_Overrides": [],
+        "m_Buff": "!bp_317cf91bc976f49498b445d06ed89add"
+      },
+      {
+        "$type": "2fcb3a86db6cbf846bb0252ef04ba9b8, SpellImmunityToSpellDescriptor",
+        "name": "$SpellImmunityToSpellDescriptor$d82ed78d-9c59-43c3-81e1-6e0388b8c0f9",
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 32768
+        },
+        "m_CasterIgnoreImmunityFact": null
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "13614766-7f77-412f-82f8-950ef8a62ca2",
+      "m_OwnerString": "a28693b24cc412c478b8b85877f2dad2",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/AuraOfResolve/AuraOfResolveFeature_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "8131d14a8fe49f14b8e99b75b0454d03",
+        "stringkey": "48bfce1b-87a7-449f-951a-b59e323e619e"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "80afc29b4d3cdf44a96d7d5ab7038b14",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

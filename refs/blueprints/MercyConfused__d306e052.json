@@ -1,0 +1,61 @@
+{
+  "AssetId": "d306e052d2f85b24cb5082951459045e",
+  "SourcePath": "Classes/Paladin/Mercy/MercyConfused.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c"
+    ],
+    "Components": [
+      {
+        "$type": "fb876f3084f01754db3a4acbbb328a89, PrerequisiteClassLevel",
+        "name": "$PrerequisiteClassLevel$f044fbce-0fa4-4fb3-9369-5ccedee7ecee",
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": false,
+        "m_CharacterClass": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "Level": 9
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "752613b9-c7e8-44a3-874f-7d3f68082a63",
+      "m_OwnerString": "d306e052d2f85b24cb5082951459045e",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyConfused_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "882241c4-fd52-4eea-8a2d-d5720c97e442",
+      "m_OwnerString": "d306e052d2f85b24cb5082951459045e",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyConfused_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "767a6ba6e391aff4388d2350778e899c",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

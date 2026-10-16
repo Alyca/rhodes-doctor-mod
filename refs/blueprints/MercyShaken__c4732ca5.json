@@ -1,0 +1,52 @@
+{
+  "AssetId": "c4732ca5b0af7214a98f9b4dafe87da9",
+  "SourcePath": "Classes/Paladin/Mercy/MercyShaken.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c"
+    ],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "376fa701-0db8-4a48-bf45-8fe192b9cb48",
+      "m_OwnerString": "c4732ca5b0af7214a98f9b4dafe87da9",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyShaken_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "9bb43309-874d-45e0-9b5e-35fac7841162",
+      "m_OwnerString": "c4732ca5b0af7214a98f9b4dafe87da9",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercyShaken_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "45798f988ea9f254780b54f6355a7ada",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [
+      "!bp_7687aa3764cb651448a50016e1758069"
+    ]
+  }
+}

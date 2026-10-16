@@ -1,0 +1,52 @@
+{
+  "AssetId": "7ee2ef06226a4884f80b7647a2aa2dee",
+  "SourcePath": "Classes/Paladin/Mercy/MercySickened.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c"
+    ],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "79b6fa3f-6098-493c-b645-dd304219ec4c",
+      "m_OwnerString": "7ee2ef06226a4884f80b7647a2aa2dee",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercySickened_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "8af891bb-1211-4d6c-b5aa-c79eb076457d",
+      "m_OwnerString": "7ee2ef06226a4884f80b7647a2aa2dee",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/Mercy/MercySickened_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "d03c40abdab34d9498d7c492e4e8fecc",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [
+      "Mercy"
+    ],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [
+      "!bp_a0cacf71d872d2a42ae3deb6bf977962"
+    ]
+  }
+}

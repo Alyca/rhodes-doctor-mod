@@ -1,0 +1,23 @@
+# E5 证据：圣域“是不是法术”已含类法术能力（N10，无需改）
+来源：游戏本体 Assembly-CSharp.dll（ilspycmd 9.0）
+
+## Kingmaker.UnitLogic.Abilities.Blueprints.BlueprintAbility.IsSpell（本体原文）
+# public bool IsSpell {
+#   get {
+#     if (Type != 0) {
+#       return Type == AbilityType.SpellLike;
+#     }
+#     return true;
+#   }
+# }
+
+## Kingmaker.UnitLogic.Abilities.Blueprints.AbilityType（本体原文）
+# public enum AbilityType { Spell, SpellLike, Extraordinary, Supernatural, CombatManeuver, Special, Physical }
+# 即 Type==Spell(0) 或 Type==SpellLike 时 IsSpell 为真。
+
+## 调用链（本 mod Components.cs SaveBonusVsSpells）
+# if (evt.Reason?.Context?.SourceAbility?.IsSpell == true)
+# Reason.Context.SourceAbility 取自 MechanicsContext.SourceAbility（AssociatedBlueprint 为 BlueprintAbility，
+# 否则追 ParentContext），与存档无关。
+
+结论：类法术能力（SpellLike）本来就算在内，设计“法术与类法术能力”已覆盖，无需改。

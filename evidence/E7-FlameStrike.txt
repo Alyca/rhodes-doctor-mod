@@ -1,0 +1,241 @@
+# E7-FlameStrike 证据：原版焰击术一半火焰一半神圣（G6）
+来源：blueprints.zip Spells/Level5/FlameStrike.jbp（AssetId f9910c76efc34af41b6e43d5d8752f0f）
+
+AbilityEffectRunAction 含 2 个 ContextActionDealDamage：
+{
+ "$type": "bdc93cbacbdc05843a933659f15c1302, ContextActionDealDamage",
+ "name": "$ContextActionDealDamage$0eb839de-483c-41ae-8230-03583e4cb0d2",
+ "m_Type": "Damage",
+ "DamageType": {
+  "Type": "Energy",
+  "Common": {
+   "Reality": 0,
+   "Alignment": 0,
+   "Precision": false
+  },
+  "Physical": {
+   "Material": 0,
+   "Form": "Slashing",
+   "Enhancement": 0,
+   "EnhancementTotal": 0
+  },
+  "Energy": "Fire"
+ },
+ "Drain": false,
+ "AbilityType": "Unknown",
+ "EnergyDrainType": "Temporary",
+ "Duration": {
+  "Rate": "Rounds",
+  "DiceType": "Zero",
+  "DiceCountValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "BonusValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "m_IsExtendable": true
+ },
+ "ReadPreRolledFromSharedValue": false,
+ "PreRolledSharedValue": "Damage",
+ "Value": {
+  "DiceType": "D6",
+  "DiceCountValue": {
+   "ValueType": "Rank",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "BonusValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  }
+ },
+ "Half": true,
+ "DisableSneakDamage": false,
+ "AlreadyHalved": false,
+ "IsAoE": true,
+ "HalfIfSaved": true,
+ "IgnoreCritical": false,
+ "IgnoreUnitModifiers": false,
+ "AddAdditionalDamage": false,
+ "AddFavoredEnemyDamage": false,
+ "UseWeaponDamageModifiers": false,
+ "UseMinHPAfterDamage": false,
+ "MinHPAfterDamage": 0,
+ "WriteResultToSharedValue": true,
+ "WriteRawResultToSharedValue": true,
+ "ResultSharedValue": "Damage",
+ "WriteCriticalToSharedValue": false,
+ "CriticalSharedValue": "Damage",
+ "SetFactAsReason": false
+}
+
+{
+ "$type": "bdc93cbacbdc05843a933659f15c1302, ContextActionDealDamage",
+ "name": "$ContextActionDealDamage$7f2fbbc4-19c5-4e46-b532-f4c2d52dda9c",
+ "m_Type": "Damage",
+ "DamageType": {
+  "Type": "Energy",
+  "Common": {
+   "Reality": 0,
+   "Alignment": 0,
+   "Precision": false
+  },
+  "Physical": {
+   "Material": 0,
+   "Form": "Slashing",
+   "Enhancement": 0,
+   "EnhancementTotal": 0
+  },
+  "Energy": "Divine"
+ },
+ "Drain": false,
+ "AbilityType": "Unknown",
+ "EnergyDrainType": "Temporary",
+ "Duration": {
+  "Rate": "Rounds",
+  "DiceType": "Zero",
+  "DiceCountValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "BonusValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "m_IsExtendable": true
+ },
+ "ReadPreRolledFromSharedValue": true,
+ "PreRolledSharedValue": "Damage",
+ "Value": {
+  "DiceType": "D6",
+  "DiceCountValue": {
+   "ValueType": "Rank",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  },
+  "BonusValue": {
+   "ValueType": "Simple",
+   "Value": 0,
+   "ValueRank": "Default",
+   "ValueShared": "Damage",
+   "Property": "None",
+   "m_CustomProperty": null,
+   "m_AbilityParameter": "Level",
+   "PropertyName": "Value1"
+  }
+ },
+ "Half": true,
+ "DisableSneakDamage": false,
+ "AlreadyHalved": false,
+ "IsAoE": true,
+ "HalfIfSaved": true,
+ "IgnoreCritical": false,
+ "IgnoreUnitModifiers": false,
+ "AddAdditionalDamage": false,
+ "AddFavoredEnemyDamage": false,
+ "UseWeaponDamageModifiers": false,
+ "UseMinHPAfterDamage": false,
+ "MinHPAfterDamage": 0,
+ "WriteResultToSharedValue": false,
+ "WriteRawResultToSharedValue": false,
+ "ResultSharedValue": "Damage",
+ "WriteCriticalToSharedValue": false,
+ "CriticalSharedValue": "Damage",
+ "SetFactAsReason": false
+}
+
+ContextRankConfig（伤害骰档）：
+{
+ "$type": "a15673bd9e3879442825226335fd8fe2, ContextRankConfig",
+ "m_Flags": 0,
+ "name": "$AbilityRankConfig$b1d0c610-d9bf-4112-8c4e-546a6b8318b5",
+ "PrototypeLink": {
+  "guid": "",
+  "name": ""
+ },
+ "m_Overrides": [],
+ "m_Type": "Default",
+ "m_BaseValueType": "CasterLevel",
+ "useArmorBaseAc": false,
+ "useArmorBonusAc": false,
+ "useArmorFocusAc": false,
+ "userShieldBaseAc": false,
+ "useShieldBonusAc": false,
+ "useShieldFocusAc": false,
+ "m_OnlyFromItems": false,
+ "m_OnlyForItemTypes": false,
+ "m_ItemsTypes": [],
+ "m_Feature": null,
+ "m_FeatureList": [],
+ "m_Stat": "Unknown",
+ "m_SpecificModifier": "None",
+ "m_Buff": null,
+ "m_BuffRankMultiplier": 1,
+ "m_Progression": "AsIs",
+ "m_CustomProgression": [],
+ "m_StartLevel": 0,
+ "m_StepLevel": 0,
+ "m_UseMin": false,
+ "m_Min": 0,
+ "m_UseMax": true,
+ "m_AffectedByIntensifiedMetamagic": true,
+ "m_Max": 15,
+ "m_ExceptClasses": false,
+ "Archetype": null,
+ "m_AdditionalArchetypes": [],
+ "m_Class": [],
+ "m_CustomProperty": null,
+ "m_CustomPropertyList": [],
+ "m_DisableRankBonus": false
+}
+
+结论：
+1. 第一击 Energy=Fire，第二击 Energy=Divine；两击 Half=true、HalfIfSaved=true。
+2. 第一击 WriteResultToSharedValue/WriteRawResultToSharedValue=true（ResultSharedValue=Damage），
+   第二击 ReadPreRolledFromSharedValue=true（同一 Damage），即同一骰数拆两半结算。
+3. Divine 与 Fire 是不同能量类型（DamageEnergyType 枚举含 Fire/Cold/.../Holy/Unholy/Divine/Magic），
+   火焰抗力/免疫只作用于 Fire 那一半，Divine 那一半照常生效；火焰免疫目标自然只吃一半总伤害。
+4. 本 mod 黑蛇之焰照做：DealDamage(Fire, half, halfIfSaved, shared Damage) +
+   DealDamagePreRolled(Divine, shared Damage, half, halfIfSaved)；豁免成败都挂灼烧增益。

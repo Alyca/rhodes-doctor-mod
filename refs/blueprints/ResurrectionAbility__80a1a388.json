@@ -1,0 +1,258 @@
+{
+  "AssetId": "80a1a388ee938aa4e90d427ce9a7a3e9",
+  "SourcePath": "Spells/Level7/Resurrection.jbp",
+  "Data": {
+    "$type": "da11db195c86e0d4dae17a2c03a4ba9a, BlueprintAbility",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$SpellComponent$4ab9e8bb-eee5-4a13-9d60-b12917d32d2a",
+      "$SpellListComponent$1ed20f4f-08bc-4f59-9929-32ce8654d643",
+      "$AbilityEffectRunAction$faa60e46-e266-49d5-858d-dfdd9b0f9600",
+      "$AbilityTargetIsDeadCompanion$d4de2e1a-8e64-4a10-8858-e4703fd7d1a7",
+      "$AbilitySpawnFx$03a851a3-f64b-402f-a250-d8c4993dce22",
+      "$SpellListComponent$4d62996c-5f3b-4253-88c4-b3a8b0164e76",
+      "$CraftInfoComponent$39b8eb0a-3f84-4516-9826-3317b9f5cf1a"
+    ],
+    "Components": [
+      {
+        "$type": "bbf7e743804d40a47bde0b27174f33a9, SpellComponent",
+        "m_Flags": 0,
+        "name": "$SpellComponent$4ab9e8bb-eee5-4a13-9d60-b12917d32d2a",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "School": "Conjuration"
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$1ed20f4f-08bc-4f59-9929-32ce8654d643",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_8443ce803d2d31347897a3d85cc32f53",
+        "SpellLevel": 7
+      },
+      {
+        "$type": "66e032e5cf38801428940a1a0d14b946, AbilityEffectRunAction",
+        "m_Flags": 0,
+        "name": "$AbilityEffectRunAction$faa60e46-e266-49d5-858d-dfdd9b0f9600",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SavingThrowType": "Unknown",
+        "Actions": {
+          "Actions": [
+            {
+              "$type": "9b265905a4c4bf7419492ef8dd825e1d, ContextActionResurrect",
+              "name": "$AbilityActionResurrect$48dc170c-e81c-41cc-a8eb-fade711acdc6",
+              "FullRestore": true,
+              "ResultHealth": 0.0,
+              "m_CustomResurrectionBuff": null
+            }
+          ]
+        }
+      },
+      {
+        "$type": "cc4b8099545662d4396cbbbe993330b4, AbilityTargetIsDeadCompanion",
+        "m_Flags": 0,
+        "name": "$AbilityTargetIsDeadCompanion$d4de2e1a-8e64-4a10-8858-e4703fd7d1a7",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": []
+      },
+      {
+        "$type": "c788cf748ec86bc45b986ac4de28cf45, AbilitySpawnFx",
+        "m_Flags": 0,
+        "name": "$AbilitySpawnFx$03a851a3-f64b-402f-a250-d8c4993dce22",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "PrefabLink": {
+          "AssetId": "ee0c5b9397ffec54d86acf56c94f4b06"
+        },
+        "Time": "OnPrecastFinished",
+        "Anchor": "SelectedTarget",
+        "WeaponTarget": "None",
+        "DestroyOnCast": false,
+        "Delay": 0.0,
+        "PositionAnchor": "None",
+        "OrientationAnchor": "None",
+        "OrientationMode": "Copy"
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$4d62996c-5f3b-4253-88c4-b3a8b0164e76",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_c074062863fbc1e4bab02f9e6e4eb78d",
+        "SpellLevel": 7
+      },
+      {
+        "$type": "4b6c2ac95f357d845ae3a30d6fc6641a, RecommendationNoFeatFromGroup",
+        "m_Flags": 0,
+        "name": "$RecommendationNoFeatFromGroup$dd2b040e-1f97-4fd9-8b6d-ce78eb8dc618",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Features": [
+          "!bp_cad7c2fdabeb9574f95f4b9ffee20afe"
+        ],
+        "GoodIfNoFeature": false
+      },
+      {
+        "$type": "faae7c00f379e66488a537d47a2919ad, CraftInfoComponent",
+        "m_Flags": 0,
+        "name": "$CraftInfoComponent$39b8eb0a-3f84-4516-9826-3317b9f5cf1a",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SpellType": "Other",
+        "SavingThrow": "None",
+        "AOEType": "None"
+      },
+      {
+        "$type": "471113ce4758b9b4d8a3162276d8d570, AbilityTargetHasFact",
+        "m_Flags": 0,
+        "name": "$AbilityTargetHasFact$f57f48aa-214e-45e6-9088-b51913e7eb2f",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_CheckedFacts": [
+          "!bp_734a29b693e9ec346ba2951b27987e33",
+          "!bp_fd389783027d63343b4a5634bd81645f"
+        ],
+        "Inverted": true
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$8de6af78-8532-4d19-a569-5fe4e43c423a",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_e17df9977b879b64e8a8cbb4b3569f19",
+        "SpellLevel": 8
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$2f78dfdb-2662-450a-8c8f-262a7498f2c7",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_c0c40e42f07ff104fa85492da464ac69",
+        "SpellLevel": 8
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "b21b6bc73955b6342b60581d95d07d6d",
+        "stringkey": "25c550cb-96d6-4d3e-b498-9b7ac90844a0"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "9e30f93ba25c9554db5afb068454163c",
+        "stringkey": "1893195f-61a7-4ced-9275-18ef3b75628c"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "2142320b407ab78428332e4ffef696e9",
+      "fileid": 21300000
+    },
+    "m_DefaultAiAction": null,
+    "Type": "Spell",
+    "Range": "Unlimited",
+    "IgnoreMinimalRangeLimit": false,
+    "CustomRange": {
+      "m_Value": 0.0
+    },
+    "ShowNameForVariant": false,
+    "OnlyForAllyCaster": false,
+    "CanTargetPoint": false,
+    "CanTargetEnemies": false,
+    "CanTargetFriends": true,
+    "CanTargetSelf": true,
+    "ShouldTurnToTarget": true,
+    "SpellResistance": false,
+    "IgnoreSpellResistanceForAlly": false,
+    "ActionBarAutoFillIgnored": false,
+    "Hidden": false,
+    "NeedEquipWeapons": false,
+    "NotOffensive": false,
+    "EffectOnAlly": "None",
+    "EffectOnEnemy": "None",
+    "m_Parent": null,
+    "Animation": "Point",
+    "HasFastAnimation": false,
+    "AnimationStyle": "CastActionPoint",
+    "m_TargetMapObjects": false,
+    "ActionType": "Standard",
+    "AvailableMetamagic": "Quicken, Heighten, CompletelyNormal",
+    "m_IsFullRoundAction": true,
+    "LocalizedDuration": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "LocalizedSavingThrow": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "MaterialComponent": {
+      "m_Item": "!bp_6a7cdeb14fc6ef44580cf639c5cdc113",
+      "Count": 2
+    },
+    "DisableLog": false,
+    "ResourceAssetIds": [
+      "ee0c5b9397ffec54d86acf56c94f4b06"
+    ]
+  }
+}

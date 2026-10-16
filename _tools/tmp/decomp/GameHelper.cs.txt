@@ -1,0 +1,461 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Kingmaker.AreaLogic.Cutscenes;
+using Kingmaker.AreaLogic.QuestSystem;
+using Kingmaker.AreaLogic.SummonPool;
+using Kingmaker.Armies.TacticalCombat;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Area;
+using Kingmaker.Blueprints.Items.Armors;
+using Kingmaker.Blueprints.Items.Ecnchantments;
+using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Blueprints.Quests;
+using Kingmaker.Blueprints.Root;
+using Kingmaker.Controllers;
+using Kingmaker.Controllers.Projectiles;
+using Kingmaker.Designers.Mechanics.Facts;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Persistence;
+using Kingmaker.EntitySystem.Stats;
+using Kingmaker.Enums.Damage;
+using Kingmaker.Items;
+using Kingmaker.PubSubSystem;
+using Kingmaker.QA.Statistics;
+using Kingmaker.RuleSystem;
+using Kingmaker.RuleSystem.Rules;
+using Kingmaker.RuleSystem.Rules.Damage;
+using Kingmaker.Settings;
+using Kingmaker.UI;
+using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Buffs.Blueprints;
+using Kingmaker.UnitLogic.Commands;
+using Kingmaker.UnitLogic.Mechanics;
+using Kingmaker.Utility;
+using Kingmaker.View.Spawners;
+using Owlcat.Runtime.Core.Utils;
+using Owlcat.Runtime.Visual.RenderPipeline.RendererFeatures.FogOfWar;
+using UnityEngine;
+
+namespace Kingmaker.Designers;
+
+public static class GameHelper
+{
+	public static class Quests
+	{
+		public static void GiveObjective(BlueprintQuestObjective objecive)
+		{
+			Game.Instance.Player.QuestBook.GiveObjective(objecive);
+		}
+
+		public static void CompleteObjective(BlueprintQuestObjective objecive)
+		{
+			Game.Instance.Player.QuestBook.CompleteObjective(objecive);
+		}
+
+		public static void FailObjective(BlueprintQuestObjective objecive)
+		{
+			Game.Instance.Player.QuestBook.FailObjective(objecive);
+		}
+
+		public static IEnumerable<Quest> GetList()
+		{
+			return Game.Instance.Player.QuestBook.Quests;
+		}
+
+		public static QuestState GetQuestState(BlueprintQuest quest)
+		{
+			return Game.Instance.Player.QuestBook.GetQuestState(quest);
+		}
+
+		public static QuestObjectiveState GetObjectiveState(BlueprintQuestObjective objective)
+		{
+			return Game.Instance.Player.QuestBook.GetObjectiveState(objective);
+		}
+
+		public static bool IsObjectiveStarted([NotNull] BlueprintQuestObjective objective)
+		{
+			return Game.Instance.Player.QuestBook.Quests.FirstOrDefault((Quest q) => q.IsActive && q.Objectives.FirstOrDefault((QuestObjective o) => o.Blueprint == objective && o.IsVisible && o.State == QuestObjectiveState.Started) != null) != null;
+		}
+	}
+
+	public static UnitSpawnerBase GetUnitSpawner(EntityReference entityReference)
+	{
+		return entityReference.FindView() as UnitSpawnerBase;
+	}
+
+	public static UnitEntityData GetPlayerCharacter()
+	{
+		return Game.Instance.Player.MainCharacter.Value;
+	}
+
+	public static UnitEntityData RecruitNPC([CanBeNull] UnitEntityData npc, BlueprintUnit blueprint)
+	{
+		return Game.Instance.EntityCreator.RecruitNPC(npc, blueprint);
+	}
+
+	public static void DealDirectDamage(UnitEntityData source, UnitEntityData target, int damage)
+	{
+		Game.Instance.Rulebook.TriggerEvent(new RuleDealDamage(source, target, new DirectDamage(DiceFormula.Zero, damage)));
+	}
+
+	public static void HealDamage(UnitEntityData source, UnitEntityData target, int amount, EntityFact sourceFact)
+	{
+		Game.Instance.Rulebook.TriggerEvent(new RuleHealDamage(source, target, DiceFormula.Zero, amount)
+		{
+			SourceFact = sourceFact
+		});
+	}
+
+	public static void BeginAttack(UnitEntityData source, UnitEntityData target)
+	{
+		source.Commands.Run(new UnitAttack(target, null));
+	}
+
+	public static void LaunchProjectile(UnitEntityData source, TargetWrapper target, BlueprintProjectile blueprint)
+	{
+		Game.Instance.ProjectileController.Launch(source, target, blueprint);
+	}
+
+	public static void LaunchProjectile(TargetWrapper source, TargetWrapper target, BlueprintProjectile blueprint)
+	{
+		Game.Instance.ProjectileController.Launch(source, target, blueprint, null);
+	}
+
+	public static void LaunchProjectile(UnitEntityData source, TargetWrapper target, BlueprintProjectile blueprint, Action<Projectile> callback)
+	{
+		Game.Instance.ProjectileController.Launch(source, target, blueprint, callback);
+	}
+
+	public static Buff ApplyBuff(UnitEntityData target, BlueprintBuff buff, Rounds? duration = null)
+	{
+		TimeSpan? duration2 = (duration.HasValue ? new TimeSpan?(duration.Value.Seconds) : ((TimeSpan?)null));
+		return target.Descriptor.AddBuff(buff, target, duration2);
+	}
+
+	public static void RemoveBuff(UnitEntityData target, BlueprintBuff blueprint)
+	{
+		if (target.Buffs != null)
+		{
+			target.Descriptor.RemoveFact(blueprint);
+		}
+	}
+
+	public static bool FlagsAreUnlocked(IEnumerable<BlueprintUnlockableFlag> flags)
+	{
+		return flags.All((BlueprintUnlockableFlag flag) => flag.IsUnlocked);
+	}
+
+	public static void UnlockFlags(IEnumerable<BlueprintUnlockableFlag> flags)
+	{
+		foreach (BlueprintUnlockableFlag flag in flags)
+		{
+			flag.Unlock();
+		}
+	}
+
+	public static bool IsUnitInSummonPool(UnitEntityData unit, BlueprintSummonPool summonPool)
+	{
+		return GetSummonPool(summonPool).Units.Contains(unit);
+	}
+
+	public static void LockFlags(IEnumerable<BlueprintUnlockableFlag> flags)
+	{
+		foreach (BlueprintUnlockableFlag flag in flags)
+		{
+			flag.Lock();
+		}
+	}
+
+	public static void RegisterUnitInSummonPool(BlueprintSummonPool pool, UnitEntityData unit)
+	{
+		Game.Instance.SummonPools.Register(pool, unit);
+	}
+
+	public static void UnregisterUnitInSummonPool(BlueprintSummonPool pool, UnitEntityData unit)
+	{
+		Game.Instance.SummonPools.Unregister(pool, unit);
+	}
+
+	public static bool HasSummonPool(BlueprintSummonPool poolId)
+	{
+		return Game.Instance.SummonPools.HasPool(poolId);
+	}
+
+	public static ISummonPool GetSummonPool(BlueprintSummonPool poolId)
+	{
+		return Game.Instance.SummonPools.GetPool(poolId);
+	}
+
+	public static void KillUnit(UnitEntityData unit, UnitEntityData killer = null, bool byCrit = false, bool noForce = false)
+	{
+		if (noForce && !TacticalCombatHelper.IsActive)
+		{
+			unit.Descriptor.State.MarkedForDeath = true;
+		}
+		else
+		{
+			unit.Descriptor.State.ForceKill = true;
+		}
+		unit.Wake(1f);
+		if (killer != null)
+		{
+			unit.LastHandledDamage = new RuleDealDamage(killer, unit, new DirectDamage(DiceFormula.Zero)
+			{
+				CriticalModifier = (byCrit ? new int?(DamageCriticalModifierType.X4.IntValue()) : ((int?)null))
+			});
+		}
+		else
+		{
+			unit.LastHandledDamage = null;
+		}
+	}
+
+	public static void DestroyUnit(UnitEntityData unit)
+	{
+		unit.MarkForDestroy();
+	}
+
+	public static bool CheckStatResult(UnitEntityData unit, StatType statType, int difficultyClass, RuleSkillCheck.VoicingType voice = RuleSkillCheck.VoicingType.All, bool? ensureSuccess = null, bool allowPartyCheckInCamp = true)
+	{
+		return TriggerStatCheck(RuleStatCheck.Create(unit, statType, difficultyClass, voice, ensureSuccess), null, allowPartyCheckInCamp).Success;
+	}
+
+	public static bool CheckPartySkillResult(StatType statType, int difficultyClass, RuleSkillCheck.VoicingType voice = RuleSkillCheck.VoicingType.All, bool? ensureSuccess = null, bool allowPets = false)
+	{
+		RulePartySkillCheck obj = new RulePartySkillCheck(statType, difficultyClass, applyPartyChecksInCapital: true, allowPets)
+		{
+			Voice = voice,
+			EnsureSuccess = ensureSuccess
+		};
+		Rulebook.Trigger(obj);
+		return obj.Success;
+	}
+
+	public static RuleSkillCheck TriggerSkillCheck(RuleSkillCheck skillCheck, MechanicsContext context = null, bool allowPartyCheckInCamp = true)
+	{
+		if (allowPartyCheckInCamp && Game.Instance.Player.CapitalPartyMode)
+		{
+			RulePartySkillCheck rulePartySkillCheck = new RulePartySkillCheck(skillCheck);
+			TriggerRule(rulePartySkillCheck, context);
+			return rulePartySkillCheck.SkillCheck;
+		}
+		return TriggerRule(skillCheck, context);
+	}
+
+	public static RuleStatCheck TriggerStatCheck(RuleStatCheck statCheck, MechanicsContext context = null, bool allowPartyCheckInCamp = true)
+	{
+		if (allowPartyCheckInCamp && Game.Instance.Player.CapitalPartyMode)
+		{
+			RulePartyStatCheck rulePartyStatCheck = new RulePartyStatCheck(statCheck);
+			TriggerRule(rulePartyStatCheck, context);
+			return rulePartyStatCheck.StatCheck;
+		}
+		return TriggerRule(statCheck);
+	}
+
+	public static TEvent TriggerRule<TEvent>(TEvent rule, MechanicsContext context = null) where TEvent : RulebookEvent
+	{
+		if (context != null)
+		{
+			return context.TriggerRule(rule);
+		}
+		return Rulebook.Trigger(rule);
+	}
+
+	public static void EnterToArea(BlueprintAreaEnterPoint areaEnterPoint, AutoSaveMode autoSaveMode)
+	{
+		Game.Instance.LoadArea(areaEnterPoint, autoSaveMode);
+	}
+
+	public static void AddFogOfWarRevealPoint(Transform transform)
+	{
+		FogOfWarController.AddRevealer(transform);
+	}
+
+	public static void RemoveFogOfWarRevealPoint(Transform transform)
+	{
+		FogOfWarController.RemoveRevealer(transform);
+	}
+
+	public static bool CheckLOS(Vector3 p1, Vector3 p2)
+	{
+		return !LineOfSightGeometry.Instance.HasObstacle(p1, p2);
+	}
+
+	public static bool CheckLOS(UnitEntityData unit1, UnitEntityData unit2)
+	{
+		return unit1.HasLOS(unit2);
+	}
+
+	public static IEnumerable<UnitEntityData> GetTargetsAround(Vector3 point, Feet radius, bool checkLOS = true, bool includeDead = false)
+	{
+		return GetTargetsAround(point, radius.Meters, checkLOS, includeDead);
+	}
+
+	public static IEnumerable<UnitEntityData> GetTargetsAround(Vector3 point, float radius, bool checkLOS = true, bool includeDead = false)
+	{
+		foreach (UnitEntityData unit in Game.Instance.State.Units)
+		{
+			if ((!unit.Descriptor.State.IsDead || includeDead) && !unit.Descriptor.State.Features.IsUntargetable && unit.IsUnitInRange(point, radius, checkLOS))
+			{
+				yield return unit;
+			}
+		}
+	}
+
+	public static bool IsUnitInRange(this UnitEntityData unit, Vector3 point, float radius, bool checkLOS = true)
+	{
+		float num = unit.DistanceTo(point);
+		float num2 = radius + unit.Corpulence;
+		if (num <= num2)
+		{
+			if (checkLOS)
+			{
+				return CheckLOS(point, unit.Position);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static int GetItemEnhancementBonus(ItemEntityWeapon weapon)
+	{
+		List<WeaponEnhancementBonus> source = weapon.Enchantments.SelectMany((ItemEnchantment p) => p.SelectComponents<WeaponEnhancementBonus>()).ToTempList();
+		List<WeaponEnhancementBonus> source2 = source.Where((WeaponEnhancementBonus p) => p.Stack).ToTempList();
+		List<WeaponEnhancementBonus> source3 = source.Where((WeaponEnhancementBonus p) => !p.Stack).ToTempList();
+		int num = ((!source3.Empty()) ? source3.Max((WeaponEnhancementBonus p) => p.EnhancementBonus) : 0);
+		int num2 = ((!source2.Empty()) ? source2.Sum((WeaponEnhancementBonus p) => p.EnhancementBonus) : 0);
+		if (num < 5)
+		{
+			return Math.Min(num + num2, 5);
+		}
+		return num;
+	}
+
+	public static int GetItemEnhancementBonus(ItemEntity item)
+	{
+		if (item is ItemEntityWeapon weapon)
+		{
+			GetItemEnhancementBonus(weapon);
+		}
+		ItemEntityArmor itemEntityArmor = (item as ItemEntityArmor) ?? (item as ItemEntityShield)?.ArmorComponent;
+		if (itemEntityArmor != null)
+		{
+			int? num = null;
+			foreach (ItemEnchantment enchantment in itemEntityArmor.Enchantments)
+			{
+				ArmorEnhancementBonus component = enchantment.GetComponent<ArmorEnhancementBonus>();
+				if (component != null && (!num.HasValue || component.EnhancementValue > num))
+				{
+					num = component.EnhancementValue;
+					if ((bool)itemEntityArmor.Wielder?.State.Features.AdvancedFakeEnhancement)
+					{
+						num += 2;
+					}
+					else if ((bool)itemEntityArmor.Wielder?.State.Features.FakeEnhancement)
+					{
+						num++;
+					}
+				}
+			}
+			return num.GetValueOrDefault();
+		}
+		return 0;
+	}
+
+	public static int GetArmorEnhancementBonus(BlueprintItemArmor blueprint)
+	{
+		int? num = null;
+		foreach (BlueprintItemEnchantment enchantment in blueprint.Enchantments)
+		{
+			ArmorEnhancementBonus component = enchantment.GetComponent<ArmorEnhancementBonus>();
+			if (component != null && (!num.HasValue || component.EnhancementValue > num))
+			{
+				num = component.EnhancementValue;
+			}
+		}
+		return num.GetValueOrDefault();
+	}
+
+	public static int GetWeaponEnhancementBonus(BlueprintItemWeapon weapon)
+	{
+		List<WeaponEnhancementBonus> source = weapon.Enchantments.SelectMany((BlueprintItemEnchantment p) => p.GetComponents<WeaponEnhancementBonus>()).ToList();
+		List<WeaponEnhancementBonus> source2 = source.Where((WeaponEnhancementBonus p) => p.Stack).ToList();
+		List<WeaponEnhancementBonus> source3 = source.Where((WeaponEnhancementBonus p) => !p.Stack).ToList();
+		int num = (source3.Any() ? source3.Max((WeaponEnhancementBonus p) => p.EnhancementBonus) : 0);
+		int num2 = (source2.Any() ? source2.Sum((WeaponEnhancementBonus p) => p.EnhancementBonus) : 0);
+		if (num < 5)
+		{
+			return Math.Min(num + num2, 5);
+		}
+		return num;
+	}
+
+	public static void GainExperience(int gained, UnitEntityData unit = null, ExperienceGainStatistic.GainType statType = ExperienceGainStatistic.GainType.Quest)
+	{
+		unit = unit?.Master ?? unit;
+		if (unit != null && (bool)SettingsRoot.Difficulty.OnlyActiveCompanionsReceiveExperience)
+		{
+			unit.Descriptor.Progression.GainExperience(gained * 6, log: true, allowForPet: false, statType);
+		}
+		else
+		{
+			Game.Instance.Player.GainPartyExperience(gained, statType);
+		}
+	}
+
+	public static void GainExperienceForSkillCheck(int gained, [NotNull] UnitEntityData unit, ExperienceGainStatistic.GainType statType = ExperienceGainStatistic.GainType.Check)
+	{
+		unit = unit.Master ?? unit;
+		if ((bool)SettingsRoot.Difficulty.OnlyInitiatorReceiveSkillCheckExperience)
+		{
+			unit.Descriptor.Progression.GainExperience(gained * 6, log: true, allowForPet: false, statType);
+		}
+		else
+		{
+			Game.Instance.Player.GainPartyExperience(gained, statType);
+		}
+	}
+
+	public static bool IsAttackingGreenNPC([NotNull] UnitEntityData attacker, [NotNull] UnitEntityData target)
+	{
+		if (!ContextData<CommandAction.PlayerData>.Current && !target.IsPlayerFaction && !target.Faction.Neutral && !GetPlayerCharacter().Group.IsEnemy(target))
+		{
+			return !target.IsInCombat;
+		}
+		return false;
+	}
+
+	public static void RemoveCompanionFromParty(UnitEntityData value)
+	{
+		Game.Instance.Player.RemoveCompanion(value);
+	}
+
+	public static void AddCompanionToParty(UnitEntityData value)
+	{
+		Game.Instance.Player.AddCompanion(value);
+	}
+
+	public static void ShowWarning(WarningNotificationType type)
+	{
+		EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+		{
+			h.HandleWarning(type);
+		});
+	}
+
+	public static TimeSpan GetGameTimeFromStart()
+	{
+		return Game.Instance.TimeController.GameTime - BlueprintRoot.Instance.Calendar.GetStartTime();
+	}
+
+	public static bool HideParty()
+	{
+		return SimpleBlueprintExtendAsObject.Or(Game.Instance.CurrentlyLoadedArea, null)?.HideParty ?? false;
+	}
+}

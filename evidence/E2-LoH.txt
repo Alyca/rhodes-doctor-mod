@@ -1,0 +1,14 @@
+# E2 证据：圣疗次数“半级 + 智力”
+# 来源：WW-Blueprint-Core 2.8.7（NuGet）BlueprintCore.xml 文档
+
+## ResourceAmountBuilder.IncreaseByLevelStartPlusDivStep(classes, single, startingLevel, startingBonus, levelsPerStep, bonusPerStep, minBonus)
+# 文档原文：
+# "Beginning at StartingLevel, increases the amount by
+#   StartingBonus + BonusPerStep * (Levels - StartingLevel)/LevelsPerStep or MinBonus, whichever is larger.
+#  Note that Levels is calculated as ClassLevels + (CharacterLevel - ClassLevels) * OtherClassLevelsMultiplier"
+# 本 mod 调用：
+#   ResourceAmountBuilder.New(0)
+#     .IncreaseByLevelStartPlusDivStep(classes:[Paladin], startingLevel:0, startingBonus:0, levelsPerStep:2, bonusPerStep:1)
+#     .IncreaseByStat(Intelligence)
+# 代入：0 + 1*(PaladinLevel-0)/2（整数除法向下取整）+ 智力调整值
+# 即 floor(圣武士等级/2) + 智力调整值 = 设计“半级 + 智力”。与 V6 一致，无需再改。

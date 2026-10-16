@@ -1,0 +1,2902 @@
+{
+  "AssetId": "8d6073201e5395d458b8251386d72df1",
+  "SourcePath": "Classes/Paladin/LayOnHands/LayOnHandsSelf.jbp",
+  "Data": {
+    "$type": "da11db195c86e0d4dae17a2c03a4ba9a, BlueprintAbility",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$AbilityResourceLogic$90f5c894-592c-44bf-87e0-cff854149038",
+      "$AbilityTargetsAround$d808edf4-218d-4428-98ce-a1b2d146ac77",
+      "$AbilitySpawnFx$36d09a24-03db-4769-89a5-39ba7d1594c2",
+      "$AbilityRankConfig$a8f474f1-ee0f-44e3-96a8-9db3970f668d",
+      "$AbilitySpawnFx$3ae4e56c-81f2-401c-88a2-ee5a35ede5ea",
+      "$AbilityUseOnRest$cf2c20bb-5b2f-4a77-b6ab-b399074d6436",
+      "$TacticalCombatResurrection$33a0b5f5-b1b1-4582-b8b7-7f6d89e1da61"
+    ],
+    "Components": [
+      {
+        "$type": "2945aafe5b353dc49b283c982269ade6, AbilityResourceLogic",
+        "m_Flags": 0,
+        "name": "$AbilityResourceLogic$90f5c894-592c-44bf-87e0-cff854149038",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_RequiredResource": "!bp_9dedf41d995ff4446a181f143c3db98c",
+        "m_IsSpendResource": true,
+        "CostIsCustom": false,
+        "Amount": 1,
+        "ResourceCostIncreasingFacts": [],
+        "ResourceCostDecreasingFacts": []
+      },
+      {
+        "$type": "c788cf748ec86bc45b986ac4de28cf45, AbilitySpawnFx",
+        "m_Flags": 0,
+        "name": "$AbilitySpawnFx$36d09a24-03db-4769-89a5-39ba7d1594c2",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "PrefabLink": {
+          "AssetId": "224fb8fd952ec4d45b6d3436a77663d9"
+        },
+        "Time": "OnApplyEffect",
+        "Anchor": "SelectedTarget",
+        "WeaponTarget": "None",
+        "DestroyOnCast": false,
+        "Delay": 0.0,
+        "PositionAnchor": "None",
+        "OrientationAnchor": "None",
+        "OrientationMode": "Copy"
+      },
+      {
+        "$type": "a15673bd9e3879442825226335fd8fe2, ContextRankConfig",
+        "m_Flags": 0,
+        "name": "$AbilityRankConfig$a8f474f1-ee0f-44e3-96a8-9db3970f668d",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Type": "Default",
+        "m_BaseValueType": "ClassLevel",
+        "useArmorBaseAc": false,
+        "useArmorBonusAc": false,
+        "useArmorFocusAc": false,
+        "userShieldBaseAc": false,
+        "useShieldBonusAc": false,
+        "useShieldFocusAc": false,
+        "m_Feature": null,
+        "m_FeatureList": [],
+        "m_Stat": "Unknown",
+        "m_SpecificModifier": "None",
+        "m_Buff": null,
+        "m_BuffRankMultiplier": 1,
+        "m_Progression": "Div2",
+        "m_CustomProgression": [],
+        "m_StartLevel": 0,
+        "m_StepLevel": 0,
+        "m_UseMin": false,
+        "m_Min": 0,
+        "m_UseMax": false,
+        "m_Max": 20,
+        "m_ExceptClasses": false,
+        "Archetype": null,
+        "m_AdditionalArchetypes": [],
+        "m_Class": [
+          "!bp_bfa11238e7ae3544bbeb4d0b92e897ec"
+        ],
+        "m_CustomProperty": null,
+        "m_CustomPropertyList": [],
+        "m_DisableRankBonus": false
+      },
+      {
+        "$type": "fb300f49c72e4ea4ba7f03bfb2b1d5a3, AbilityUseOnRest",
+        "m_Flags": 0,
+        "name": "$AbilityUseOnRest$cf2c20bb-5b2f-4a77-b6ab-b399074d6436",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Type": "HealSelf",
+        "BaseValue": 1,
+        "AddCasterLevel": false,
+        "MultiplyByCasterLevel": true,
+        "MaxCasterLevel": 20
+      },
+      {
+        "$type": "66e032e5cf38801428940a1a0d14b946, AbilityEffectRunAction",
+        "m_Flags": 0,
+        "name": "$AbilityEffectRunAction$8cc0c0c4-da78-4af5-92b0-23670ae63788",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SavingThrowType": "Unknown",
+        "Actions": {
+          "Actions": [
+            {
+              "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+              "name": "$Conditional$8808a9ed-fe36-4b89-9589-90cdc6c6479c",
+              "Comment": "not negative energy affinity",
+              "ConditionsChecker": {
+                "Operation": "And",
+                "Conditions": [
+                  {
+                    "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                    "name": "$ContextConditionCasterHasFact$9febf7cc-fc81-4494-aa2e-2141b7069591",
+                    "Not": true,
+                    "m_Fact": "!bp_d5ee498e19722854198439629c1841a5"
+                  }
+                ]
+              },
+              "IfTrue": {
+                "Actions": [
+                  {
+                    "$type": "8abf85d8c6ea04343a2e4fe6bb27a3bb, ContextActionHealTarget",
+                    "name": "$ContextActionHealTarget$a9120d7a-48f1-4386-8bc8-9dfff52b9303",
+                    "Value": {
+                      "DiceType": "D6",
+                      "DiceCountValue": {
+                        "ValueType": "Shared",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      },
+                      "BonusValue": {
+                        "ValueType": "Simple",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      }
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$30ee6a37-ab8c-4ad8-ad8b-c32d0e149456",
+                    "Comment": "fatigued mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$afdf5db8-8f55-4a4d-9305-fb1c01a34e5f",
+                          "Not": false,
+                          "m_Fact": "!bp_e5aa306af9b91974a9b2f2cbe702f562"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$7ee27275-abea-471e-8871-4a221e8ef50e",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 524288
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$5c8efb44-8385-402b-83dd-70f73333b2a6",
+                    "Comment": "dazed mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$dfb01be1-807c-4a37-8d4c-a66e7dedfa86",
+                          "Not": false,
+                          "m_Fact": "!bp_7df9329013baaec4fac20ae08bc1f849"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$d2577bff-04b0-4bd0-914b-1199e1e84270",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 65536
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$a4f38459-3ca7-4c5e-b1a0-e519aff2bdae",
+                    "Comment": "sickened mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$94be5c6e-2219-47aa-a509-7e29b25a8fce",
+                          "Not": false,
+                          "m_Fact": "!bp_7ee2ef06226a4884f80b7647a2aa2dee"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$69245331-8375-4bd5-9e9a-59fe2036f5ae",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 131072
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$3b6a42d2-150f-4546-ae1c-a182470022e7",
+                    "Comment": "shaken mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$be253d58-9797-45eb-becd-d3301ff27ca8",
+                          "Not": false,
+                          "m_Fact": "!bp_c4732ca5b0af7214a98f9b4dafe87da9"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$63cca878-09bd-4c99-be68-3fd5b111e674",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 262144
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$6fcdab86-ffac-4e90-bf90-cea895c41f0a",
+                    "Comment": "staggered mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$6b982a65-9c63-460c-8624-aa4d3d387da9",
+                          "Not": false,
+                          "m_Fact": "!bp_19250e5a12db1fc448970b81e0f38922"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$7a766d01-ca05-4820-bf32-eb31038bc114",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 1048576
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$9fcd21e7-e6b2-4885-8c9c-17399f8ea29f",
+                    "Comment": "nauseated mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$8e9f8253-94f0-49be-bf36-89ef302d4170",
+                          "Not": false,
+                          "m_Fact": "!bp_a0cacf71d872d2a42ae3deb6bf977962"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$32bad7ab-f59d-4a51-a619-e04e0da72faf",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 2097152
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$92169286-c766-4419-a5d3-ff751d5258e0",
+                    "Comment": "frightened mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$3882716e-a4c2-43dd-9e41-17f494034e2f",
+                          "Not": false,
+                          "m_Fact": "!bp_7687aa3764cb651448a50016e1758069"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$63242e76-b575-4b05-8879-61f1018dba21",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 4194304
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$d9082663-dd51-4226-8ec3-658a73d7181a",
+                    "Comment": "exhausted mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$de207506-9ef6-4245-a6b3-620259e5cfc6",
+                          "Not": false,
+                          "m_Fact": "!bp_25641bda25467224e930e8c70eaf9a83"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$4be1d471-66f5-4960-8a64-ed944b4fa251",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 8388608
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$089e5109-bfcb-46f0-b285-12b06e108b24",
+                    "Comment": "stunned mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$f09f7e14-ba63-42ae-81c7-7f11fb4c2d00",
+                          "Not": false,
+                          "m_Fact": "!bp_7775c915661f8fb449c38dd873524389"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$e8418548-8d58-4c60-95a3-4ead1ab7a970",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 16777216
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$ac96e05a-f645-4fd9-b2af-9818a46d8893",
+                    "Comment": "paralyzed mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$0bf60096-e2f5-4041-8901-17eef535a504",
+                          "Not": false,
+                          "m_Fact": "!bp_62582b4636218d74db34606f872c9c05"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$90050257-763d-4fa8-bbab-0968670eb5d3",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 33554432
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$ffed3311-6ef7-46e9-abdc-c13488d50a79",
+                    "Comment": "confused mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$78581ade-56f3-40be-baed-50ab39844687",
+                          "Not": false,
+                          "m_Fact": "!bp_d306e052d2f85b24cb5082951459045e"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$bcc70cfa-747f-4270-b9cf-3f4c6126a218",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 67108864
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$13937f92-9c63-4aaf-8bfa-b3b6e0a7695e",
+                    "Comment": "blinded mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$3ea62514-bcd6-42ad-b779-19c86c791be6",
+                          "Not": false,
+                          "m_Fact": "!bp_23c3fb906c6346440b4e7d92fc25319b"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$0e05c47b-6d18-486c-ac2a-b2c1bfa2587a",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "None",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 134217728
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$2148ed0f-bed1-42df-a6fa-6be0332a63c0",
+                    "Comment": "diseased mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$b4dc33d0-1033-44ef-ba10-e44353895f0f",
+                          "Not": false,
+                          "m_Fact": "!bp_3990a92ce97efa3439e55c160412ce14"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$e94dca1d-49b8-4683-be7e-2e3a337993af",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "DC",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 16384
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$eb50f701-22d6-480e-ab08-2794997a620a",
+                    "Comment": "poisoned mercy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$3f088df4-168e-47e8-91d7-f78abc3f6fb4",
+                          "Not": false,
+                          "m_Fact": "!bp_19f936eb38c3d224988e2a02cbe12878"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$1786108f-bcf7-4abc-99d4-99020222677f",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "DC",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 256
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$c9d0c8ba-af1e-4be0-a44a-166228ce2dbf",
+                    "Comment": "cursed mersy",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$04b82bd9-8e86-47ff-8ff0-a3173fc0e3b4",
+                          "Not": false,
+                          "m_Fact": "!bp_445c696bead5140459909ffbed14750e"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                          "name": "$ContextActionDispelBuffs$a81ffde2-a544-4a54-bbba-ee1f75871f9f",
+                          "m_StopAfterCountRemoved": false,
+                          "m_CountToRemove": {
+                            "ValueType": "Simple",
+                            "Value": 1,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_BuffType": "All",
+                          "m_MaxSpellLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_UseMaxCasterLevel": false,
+                          "m_MaxCasterLevel": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "m_CheckType": "DC",
+                          "m_Skill": "Unknown",
+                          "CheckBonus": 0,
+                          "ContextBonus": {
+                            "ValueType": "Simple",
+                            "Value": 0,
+                            "ValueRank": "Default",
+                            "ValueShared": "Damage",
+                            "Property": "None",
+                            "m_CustomProperty": null,
+                            "m_AbilityParameter": "Level",
+                            "PropertyName": "Value1"
+                          },
+                          "Schools": [],
+                          "Descriptor": {
+                            "m_IntValue": 268435456
+                          },
+                          "OnSuccess": {
+                            "Actions": []
+                          },
+                          "OnFail": {
+                            "Actions": []
+                          },
+                          "OnlyTargetEnemyBuffs": false,
+                          "OnlyEnemyAreaEffects": false,
+                          "CheckSchoolOrDescriptor": false,
+                          "OneRollForAll": false
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$d2cb68b1-3704-4dd9-a579-1df1bab8e229",
+                    "Comment": "Если включено избавление от физических состояний",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$bf3b7487-ce5d-44d5-9b8d-be50781edc65",
+                          "Not": false,
+                          "m_Fact": "!bp_b636127171ae4c20b8e3f4d531c89905"
+                        },
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$4df4415a-d524-404f-a00d-dd94d4d8edc5",
+                          "Not": true,
+                          "m_Fact": "!bp_cfbec3b1709b28d4dac24aba45c8c683"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$b840db26-d545-4840-8ff6-9f890094c879",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "Or",
+                            "Conditions": [
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$430e69e5-383e-4535-9eef-aa93c1f4cbbc",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 655360
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$116888ad-24ca-459b-ba7b-c33b91a2c96d",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 655360
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$453d47c2-22fe-43a3-96a9-ae20303b5962",
+                                "m_Buff": "!bp_cfbec3b1709b28d4dac24aba45c8c683",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$cccb7776-f40e-47a3-9299-b68dd12f48e0",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$aec433ea-f9bb-45c6-be52-2dfe227106a6",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 6,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$aabe7660-2a89-4c6d-9008-3eda973a77ad",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 16384
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$1fdd7df8-03b8-43cd-b13c-4efdc6d8109b",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 16384
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$abd94f0a-43a4-445f-8cd1-35c2074cbb3d",
+                                "m_Buff": "!bp_cfbec3b1709b28d4dac24aba45c8c683",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$c4e93168-ed84-4eb9-b8f9-8cd84ed15442",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$569eefb3-1504-430a-8ade-33216e8009a7",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 9,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$13d5fa04-3318-46f0-81d0-0cd13a33a53d",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 10486016
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$8930e8e1-fa7f-4d0a-96ec-57229a31b690",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 10486016
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$b165b163-bdbb-4f1a-bcd0-2d55da975081",
+                                "m_Buff": "!bp_cfbec3b1709b28d4dac24aba45c8c683",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$b787ae9a-584e-4ac9-91ae-dde636bfaebd",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$5a5cb3ee-72fa-4cbf-9dac-c23817e238ec",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 12,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$229ad186-e25c-4a39-85c7-acba7db3ca42",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 134217728
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$c408db94-cf07-43f6-be4c-6fdd290b358b",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 134217728
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$57f21f4c-7d99-4a28-8070-d9c8e5f3bf89",
+                                "m_Buff": "!bp_cfbec3b1709b28d4dac24aba45c8c683",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  },
+                  {
+                    "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                    "name": "$Conditional$23e10151-1cbb-4837-9611-0e3f6ee0773e",
+                    "Comment": "Если включено избавление от ментальных состояний",
+                    "ConditionsChecker": {
+                      "Operation": "And",
+                      "Conditions": [
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$a5ac8929-e858-4eea-bdb5-5e9dec14c450",
+                          "Not": false,
+                          "m_Fact": "!bp_11c6495354ad4ac09a57882646917c64"
+                        },
+                        {
+                          "$type": "43f75bd73450e1f4aa1f6163f51956e3, ContextConditionCasterHasFact",
+                          "name": "$ContextConditionCasterHasFact$852a9314-9fe1-44af-a9de-fb9a661b1e23",
+                          "Not": true,
+                          "m_Fact": "!bp_1993114ecda289d4e8dc681530cbe0b8"
+                        }
+                      ]
+                    },
+                    "IfTrue": {
+                      "Actions": [
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$0596d849-4b7d-4687-a680-fc77f44b1e34",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "Or",
+                            "Conditions": [
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$54a02785-e148-4053-b0cd-5abc2d9afe4a",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 262144
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$053d3c98-56ad-481b-ad9e-f0b3be035407",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 262144
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$ff1360ef-228c-4991-98ab-d2dc730e8319",
+                                "m_Buff": "!bp_1993114ecda289d4e8dc681530cbe0b8",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$dd48ff81-3184-41d3-944e-1dee84ddabb0",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$bf7944da-fc13-4893-b17b-eb42e4dfec28",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 6,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$56bd8319-c1b5-4a00-9687-c7dff9afa39b",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 1114112
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$2ac39a54-203b-43f8-95ac-61660ec10fe0",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 1114112
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$cb17b095-3f9a-4b16-92bd-3c28c4ed6ff2",
+                                "m_Buff": "!bp_1993114ecda289d4e8dc681530cbe0b8",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$1ad7f7d8-21ea-439f-854f-31a0eb0e3933",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$28ecd217-97ef-4b26-a65e-bf46ca4e58d1",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 9,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$c0ca9df5-b6a6-42d7-8f1d-fb747fc5ff45",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 339738624
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$12f1ddd7-4dc7-46b6-8fa2-2579f627b4ab",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 339738624
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$3adfc603-ce48-4791-88da-387bbb40a80a",
+                                "m_Buff": "!bp_1993114ecda289d4e8dc681530cbe0b8",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        },
+                        {
+                          "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+                          "name": "$Conditional$171f2922-68a2-4c5d-8158-eb98a4971470",
+                          "Comment": "",
+                          "ConditionsChecker": {
+                            "Operation": "And",
+                            "Conditions": [
+                              {
+                                "$type": "cc0199579fccd3444a099b4cfcfc729b, ContextConditionSharedValueHigher",
+                                "name": "$ContextConditionSharedValueHigher$e0f0391c-5f26-48db-be1b-0466abf3c2b8",
+                                "Not": false,
+                                "SharedValue": "StatBonus",
+                                "HigherOrEqual": 12,
+                                "Inverted": false
+                              },
+                              {
+                                "$type": "434d0c6f10abbd84b86cf64a99dc8833, ContextConditionHasBuffWithDescriptor",
+                                "name": "$ContextConditionHasBuffWithDescriptor$4c50a1e0-175c-4a11-920f-ba31fc7924c4",
+                                "Not": false,
+                                "SpellDescriptor": {
+                                  "m_IntValue": 50331648
+                                }
+                              }
+                            ]
+                          },
+                          "IfTrue": {
+                            "Actions": [
+                              {
+                                "$type": "920d409ea2c340eea999f494c1d51cb7, ContextActionDispelMagic",
+                                "name": "$ContextActionDispelMagic$2bad1281-db76-40ce-8801-1220209283ae",
+                                "m_StopAfterCountRemoved": false,
+                                "m_CountToRemove": {
+                                  "ValueType": "Simple",
+                                  "Value": 1,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_BuffType": "All",
+                                "m_MaxSpellLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_UseMaxCasterLevel": false,
+                                "m_MaxCasterLevel": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "m_CheckType": "None",
+                                "m_Skill": "Unknown",
+                                "CheckBonus": 0,
+                                "ContextBonus": {
+                                  "ValueType": "Simple",
+                                  "Value": 0,
+                                  "ValueRank": "Default",
+                                  "ValueShared": "Damage",
+                                  "Property": "None",
+                                  "m_CustomProperty": null,
+                                  "m_AbilityParameter": "Level",
+                                  "PropertyName": "Value1"
+                                },
+                                "Schools": [],
+                                "Descriptor": {
+                                  "m_IntValue": 50331648
+                                },
+                                "OnSuccess": {
+                                  "Actions": []
+                                },
+                                "OnFail": {
+                                  "Actions": []
+                                },
+                                "OnlyTargetEnemyBuffs": false,
+                                "OnlyEnemyAreaEffects": false,
+                                "CheckSchoolOrDescriptor": false,
+                                "OneRollForAll": false
+                              },
+                              {
+                                "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                                "name": "$ContextActionApplyBuff$b39c9c7e-fcdc-4ff8-b45a-f123b08d0335",
+                                "m_Buff": "!bp_cfbec3b1709b28d4dac24aba45c8c683",
+                                "Permanent": false,
+                                "UseDurationSeconds": false,
+                                "DurationValue": {
+                                  "Rate": "Rounds",
+                                  "DiceType": "Zero",
+                                  "DiceCountValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 0,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "BonusValue": {
+                                    "ValueType": "Simple",
+                                    "Value": 1,
+                                    "ValueRank": "Default",
+                                    "ValueShared": "Damage",
+                                    "Property": "None",
+                                    "m_CustomProperty": null,
+                                    "m_AbilityParameter": "Level",
+                                    "PropertyName": "Value1"
+                                  },
+                                  "m_IsExtendable": true
+                                },
+                                "DurationSeconds": 0.0,
+                                "IsFromSpell": false,
+                                "IsNotDispelable": false,
+                                "ToCaster": true,
+                                "AsChild": true,
+                                "SameDuration": false,
+                                "NotLinkToAreaEffect": false,
+                                "IgnoreParentContext": false
+                              }
+                            ]
+                          },
+                          "IfFalse": {
+                            "Actions": []
+                          }
+                        }
+                      ]
+                    },
+                    "IfFalse": {
+                      "Actions": []
+                    }
+                  }
+                ]
+              },
+              "IfFalse": {
+                "Actions": [
+                  {
+                    "$type": "bdc93cbacbdc05843a933659f15c1302, ContextActionDealDamage",
+                    "name": "$ContextActionDealDamage$67895727-0c20-4103-98a4-65b779ca658f",
+                    "m_Type": "Damage",
+                    "DamageType": {
+                      "Type": "Energy",
+                      "Common": {
+                        "Reality": 0,
+                        "Alignment": 0,
+                        "Precision": false
+                      },
+                      "Physical": {
+                        "Material": 0,
+                        "Form": "Slashing",
+                        "Enhancement": 0,
+                        "EnhancementTotal": 0
+                      },
+                      "Energy": "PositiveEnergy"
+                    },
+                    "Drain": false,
+                    "AbilityType": "Unknown",
+                    "EnergyDrainType": "Temporary",
+                    "Duration": {
+                      "Rate": "Rounds",
+                      "DiceType": "Zero",
+                      "DiceCountValue": {
+                        "ValueType": "Simple",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      },
+                      "BonusValue": {
+                        "ValueType": "Simple",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      },
+                      "m_IsExtendable": true
+                    },
+                    "ReadPreRolledFromSharedValue": false,
+                    "PreRolledSharedValue": "Damage",
+                    "Value": {
+                      "DiceType": "D6",
+                      "DiceCountValue": {
+                        "ValueType": "Shared",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      },
+                      "BonusValue": {
+                        "ValueType": "Simple",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level",
+                        "PropertyName": "Value1"
+                      }
+                    },
+                    "Half": false,
+                    "DisableSneakDamage": false,
+                    "AlreadyHalved": false,
+                    "IsAoE": false,
+                    "HalfIfSaved": false,
+                    "IgnoreCritical": false,
+                    "IgnoreUnitModifiers": false,
+                    "AddAdditionalDamage": false,
+                    "AddFavoredEnemyDamage": false,
+                    "UseWeaponDamageModifiers": false,
+                    "UseMinHPAfterDamage": false,
+                    "MinHPAfterDamage": 0,
+                    "WriteResultToSharedValue": false,
+                    "WriteRawResultToSharedValue": false,
+                    "ResultSharedValue": "Damage",
+                    "WriteCriticalToSharedValue": false,
+                    "CriticalSharedValue": "Damage",
+                    "SetFactAsReason": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "$type": "10227e91fb64f48458b65c4a93b2c6dc, AbilityCasterAlignment",
+        "m_Flags": 0,
+        "name": "$AbilityCasterAlignment$a39cf0e5-7bfc-48e6-aacf-35bce40445af",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Alignment": "LawfulGood",
+        "m_IgnoreFact": "!bp_24e78475f0a243e1a810452d14d0a1bd"
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$0b1b7d91-1883-46f9-81f3-508ce2c010e2",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 137438953472
+        }
+      },
+      {
+        "$type": "7223130f56c817b4990bee93dfa7f114, TacticalCombatResurrection",
+        "m_Flags": 0,
+        "name": "$TacticalCombatResurrection$33a0b5f5-b1b1-4582-b8b7-7f6d89e1da61",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": []
+      },
+      {
+        "$type": "a6777ad03deb60a4e8ef6b7067ac836b, ContextCalculateSharedValue",
+        "m_Flags": 0,
+        "name": "$ContextCalculateSharedValue$5c9a62dc-e34f-47bd-b0d5-8adc98a5ac64",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "ValueType": "StatBonus",
+        "Value": {
+          "DiceType": "Zero",
+          "DiceCountValue": {
+            "ValueType": "Simple",
+            "Value": 0,
+            "ValueRank": "Default",
+            "ValueShared": "Damage",
+            "Property": "None",
+            "m_CustomProperty": null,
+            "m_AbilityParameter": "Level",
+            "PropertyName": "Value1"
+          },
+          "BonusValue": {
+            "ValueType": "CasterProperty",
+            "Value": 0,
+            "ValueRank": "Default",
+            "ValueShared": "Damage",
+            "Property": "Level",
+            "m_CustomProperty": null,
+            "m_AbilityParameter": "Level",
+            "PropertyName": "Value1"
+          }
+        },
+        "Modifier": 1.0
+      },
+      {
+        "$type": "a6777ad03deb60a4e8ef6b7067ac836b, ContextCalculateSharedValue",
+        "m_Flags": 0,
+        "name": "$ContextCalculateSharedValue$ad19290e-1125-4bc2-93cc-0f8b66d5e0d6",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "ValueType": "Damage",
+        "Value": {
+          "DiceType": "One",
+          "DiceCountValue": {
+            "ValueType": "Rank",
+            "Value": 0,
+            "ValueRank": "Default",
+            "ValueShared": "Damage",
+            "Property": "None",
+            "m_CustomProperty": null,
+            "m_AbilityParameter": "Level",
+            "PropertyName": "Value1"
+          },
+          "BonusValue": {
+            "ValueType": "CasterCustomProperty",
+            "Value": 2,
+            "ValueRank": "Default",
+            "ValueShared": "Damage",
+            "Property": "None",
+            "m_CustomProperty": "!bp_0f49bfc6c59242429f948061f0c432e1",
+            "m_AbilityParameter": "Level",
+            "PropertyName": "Value1"
+          }
+        },
+        "Modifier": 1.0
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "9df14baf5243c1944b160021efa315c7",
+        "stringkey": "147aed76-e916-43b3-aa56-bdbdc6508908"
+      }
+    },
+    "m_Description": {
+      "m_Key": "af1e37c3-78e9-41b3-82a5-9db4d1c778e1",
+      "m_OwnerString": "8d6073201e5395d458b8251386d72df1",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/LayOnHands/LayOnHandsSelf_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "240eccecc0e081d49929cb31fd7be406",
+      "fileid": 21300000
+    },
+    "m_DefaultAiAction": null,
+    "m_AutoUseIsForbidden": false,
+    "Type": "Supernatural",
+    "Range": "Personal",
+    "IgnoreMinimalRangeLimit": false,
+    "CustomRange": {
+      "m_Value": 0.0
+    },
+    "ShowNameForVariant": false,
+    "OnlyForAllyCaster": false,
+    "CanTargetPoint": false,
+    "CanTargetEnemies": false,
+    "CanTargetFriends": false,
+    "CanTargetSelf": true,
+    "ShouldTurnToTarget": true,
+    "SpellResistance": false,
+    "IgnoreSpellResistanceForAlly": false,
+    "ActionBarAutoFillIgnored": false,
+    "Hidden": false,
+    "NeedEquipWeapons": false,
+    "UseCurrentWeaponAsReasonItem": false,
+    "NotOffensive": false,
+    "EffectOnAlly": "Helpful",
+    "EffectOnEnemy": "Harmful",
+    "m_Parent": null,
+    "Animation": "SelfTouch",
+    "HasFastAnimation": false,
+    "AnimationStyle": "CastActionOmni",
+    "m_TargetMapObjects": false,
+    "ActionType": "Swift",
+    "MinimalTransitionOut": 0.0,
+    "AvailableMetamagic": "Empower, Maximize, Heighten",
+    "m_IsFullRoundAction": false,
+    "LocalizedDuration": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "LocalizedSavingThrow": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "MaterialComponent": {
+      "m_Item": null,
+      "Count": 1
+    },
+    "DisableLog": false,
+    "ResourceAssetIds": [
+      "224fb8fd952ec4d45b6d3436a77663d9"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+# E8-Mercy 证据：博士保留圣武士慈悲成长，紧急救治慈悲链有效（E8）
+来源：blueprints.zip Classes/Paladin/PaladinProgression.jbp、
+Classes/Paladin/Mercy/SelectionMercy.jbp；本 mod src/ArchetypeSetup.cs。
+
+## 1. 原版圣武士成长表授予慈悲自选（PaladinProgression.jbp）
+含 SelectionMercy（02b187038a8dce545bb34bbfb346428d）的等级行：
+8b4facbb746d3",           "!bp_858a3689c285c844d9e6ce278e686491"         ]       },       {         "Level": 3,         "m_Features": [           "!bp_e45ab30f49215054e83b4ea12165409f",           "!bp_41d1d0de15e672349bf4262a5acf06ce",           "!bp_02b187038a8dce545bb34bbfb346428d"         ]      
+"!bp_5451c9b8530f4b71aadcaea42bd54ab7"         ]       },       {         "Level": 5,         "m_Features": [           "!bp_ad7dc4eba7bf92f4aba23f716d7a9ba6"         ]       },       {         "Level": 6,         "m_Features": [           "!bp_02b187038a8dce545bb34bbfb346428d"         ]       },
+"!bp_0f5c99ffb9c084545bbbe960b825d137"         ]       },       {         "Level": 8,         "m_Features": [           "!bp_a28693b24cc412c478b8b85877f2dad2"         ]       },       {         "Level": 9,         "m_Features": [           "!bp_02b187038a8dce545bb34bbfb346428d"         ]       },
+"!bp_0f5c99ffb9c084545bbbe960b825d137"         ]       },       {         "Level": 11,         "m_Features": [           "!bp_9f13fdd044ccb8a439f27417481cb00e"         ]       },       {         "Level": 12,         "m_Features": [           "!bp_02b187038a8dce545bb34bbfb346428d"         ]       },
+"!bp_0f5c99ffb9c084545bbbe960b825d137"         ]       },       {         "Level": 14,         "m_Features": [           "!bp_0437f4af5ad49b544bccf48aa7a51319"         ]       },       {         "Level": 15,         "m_Features": [           "!bp_02b187038a8dce545bb34bbfb346428d"         ]       },
+"!bp_0f5c99ffb9c084545bbbe960b825d137"         ]       },       {         "Level": 17,         "m_Features": [           "!bp_6bd4a71232014254e80726f3a3756962"         ]       },       {         "Level": 18,         "m_Features": [           "!bp_02b187038a8dce545bb34bbfb346428d"         ]       },
+
+结论：3、6、9、12、15、18 级各授予一次 SelectionMercy。
+
+## 2. SelectionMercy 可选 15 个核心慈悲（m_AllFeatures）
+[
+ "!bp_23c3fb906c6346440b4e7d92fc25319b",
+ "!bp_d306e052d2f85b24cb5082951459045e",
+ "!bp_445c696bead5140459909ffbed14750e",
+ "!bp_7df9329013baaec4fac20ae08bc1f849",
+ "!bp_3990a92ce97efa3439e55c160412ce14",
+ "!bp_25641bda25467224e930e8c70eaf9a83",
+ "!bp_e5aa306af9b91974a9b2f2cbe702f562",
+ "!bp_7687aa3764cb651448a50016e1758069",
+ "!bp_a0cacf71d872d2a42ae3deb6bf977962",
+ "!bp_62582b4636218d74db34606f872c9c05",
+ "!bp_19f936eb38c3d224988e2a02cbe12878",
+ "!bp_c4732ca5b0af7214a98f9b4dafe87da9",
+ "!bp_7ee2ef06226a4884f80b7647a2aa2dee",
+ "!bp_19250e5a12db1fc448970b81e0f38922",
+ "!bp_7775c915661f8fb449c38dd873524389"
+]
+
+## 3. 本 mod 变体未移除慈悲（ArchetypeSetup.cs SetRemoveFeatures）
+移除列表：SmiteEvilFeature、DivineGraceFeature、LayOnHandsFeature、
+ChannelEnergyPaladinFeature、SmiteEvilAdditionalFeature、AuraOfResolveFeature、
+AuraOfJusticeFeature、HolyChampionFeature。
+慈悲（SelectionMercy 及各级授予）不在移除列表中，博士照常在 3/6/9/12/15/18 级自选慈悲。
+
+## 4. 紧急救治 17 条慈悲链说明（见 E6-Mercy.txt）
+其中 15 条对应上列核心慈悲（GUID 与描述符与 LayOnHandsOthers 蓝图一致）；
+另 2 条（b636127171ae4c20b8e3f4d531c89905、11c6495354ad4ac09a57882646917c64）为
+Martyr 变体相关增益（MartyrMartyrsMercyNoAuraOfHealthBuff / NoSeeNoEvilBuff），
+博士无法获得，对应两条 Conditional 永不触发，无副作用（与原版 LayOnHandsOthers 结构一致，照抄保留）。
+
+结论：博士确实能拿到慈悲特性，附加慈悲代码会正常触发；无需作者决定，代码不改。

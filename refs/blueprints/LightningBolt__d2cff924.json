@@ -1,0 +1,426 @@
+{
+  "AssetId": "d2cff9243a7ee804cb6d5be47af30c73",
+  "SourcePath": "Spells/Level3/LightningBolt.jbp",
+  "Data": {
+    "$type": "da11db195c86e0d4dae17a2c03a4ba9a, BlueprintAbility",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$SpellComponent$5b77c4ff-8422-48c2-a3e6-20ad860fc4ab",
+      "$AbilityEffectRunAction$529488f4-532e-4726-a3a6-773b2f464128",
+      "$SpellListComponent$6bf8314e-4042-4f9c-a82f-2351ee01ac75",
+      "$AbilityDeliverProjectile$3f449f28-f442-42d9-afcd-87b8f49918c6",
+      "$AbilityRankConfig$12ee50cc-6e58-4c9e-8937-87135121ebd5",
+      "$SpellListComponent$0dd3fa57-87e6-4879-abfc-a1283dc2eb3c",
+      "$RecommendationNoFeatFromGroup$d58506d5-275c-45ea-9891-20a6497c8346",
+      "$SpellListComponent$cfb459f0-d929-457b-951a-f6ee3f65bfab",
+      "$CraftInfoComponent$3f1c6d63-c39c-404f-9ec2-4b6ece123f13"
+    ],
+    "Components": [
+      {
+        "$type": "bbf7e743804d40a47bde0b27174f33a9, SpellComponent",
+        "m_Flags": 0,
+        "name": "$SpellComponent$5b77c4ff-8422-48c2-a3e6-20ad860fc4ab",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "School": "Evocation"
+      },
+      {
+        "$type": "66e032e5cf38801428940a1a0d14b946, AbilityEffectRunAction",
+        "m_Flags": 0,
+        "name": "$AbilityEffectRunAction$529488f4-532e-4726-a3a6-773b2f464128",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SavingThrowType": "Reflex",
+        "Actions": {
+          "Actions": [
+            {
+              "$type": "bdc93cbacbdc05843a933659f15c1302, ContextActionDealDamage",
+              "name": "$ContextActionDealDamage$c2822073-07cd-4b1c-aa08-91dc4520e5ca",
+              "m_Type": "Damage",
+              "DamageType": {
+                "Type": "Energy",
+                "Common": {
+                  "Reality": 0,
+                  "Alignment": 0,
+                  "Precision": false
+                },
+                "Physical": {
+                  "Material": 0,
+                  "Form": 0,
+                  "Enhancement": 0,
+                  "EnhancementTotal": 0
+                },
+                "Energy": "Electricity"
+              },
+              "Drain": false,
+              "AbilityType": "Unknown",
+              "EnergyDrainType": "Temporary",
+              "Duration": {
+                "Rate": "Rounds",
+                "DiceType": "Zero",
+                "DiceCountValue": {
+                  "ValueType": "Simple",
+                  "Value": 0,
+                  "ValueRank": "Default",
+                  "ValueShared": "Damage",
+                  "Property": "None",
+                  "m_CustomProperty": null,
+                  "m_AbilityParameter": "Level",
+                  "PropertyName": "Value1"
+                },
+                "BonusValue": {
+                  "ValueType": "Simple",
+                  "Value": 0,
+                  "ValueRank": "Default",
+                  "ValueShared": "Damage",
+                  "Property": "None",
+                  "m_CustomProperty": null,
+                  "m_AbilityParameter": "Level",
+                  "PropertyName": "Value1"
+                },
+                "m_IsExtendable": true
+              },
+              "ReadPreRolledFromSharedValue": false,
+              "PreRolledSharedValue": "Damage",
+              "Value": {
+                "DiceType": "D6",
+                "DiceCountValue": {
+                  "ValueType": "Rank",
+                  "Value": 0,
+                  "ValueRank": "Default",
+                  "ValueShared": "Damage",
+                  "Property": "None",
+                  "m_CustomProperty": null,
+                  "m_AbilityParameter": "Level",
+                  "PropertyName": "Value1"
+                },
+                "BonusValue": {
+                  "ValueType": "Simple",
+                  "Value": 0,
+                  "ValueRank": "Default",
+                  "ValueShared": "Damage",
+                  "Property": "None",
+                  "m_CustomProperty": null,
+                  "m_AbilityParameter": "Level",
+                  "PropertyName": "Value1"
+                }
+              },
+              "Half": false,
+              "DisableSneakDamage": false,
+              "AlreadyHalved": false,
+              "IsAoE": true,
+              "HalfIfSaved": true,
+              "IgnoreCritical": false,
+              "IgnoreUnitModifiers": false,
+              "DisableKineticCache": false,
+              "AddAdditionalDamage": false,
+              "AddFavoredEnemyDamage": false,
+              "UseWeaponDamageModifiers": false,
+              "UseMinHPAfterDamage": false,
+              "MinHPAfterDamage": 0,
+              "WriteResultToSharedValue": false,
+              "WriteRawResultToSharedValue": false,
+              "ResultSharedValue": "Damage",
+              "WriteCriticalToSharedValue": false,
+              "CriticalSharedValue": "Damage",
+              "SetFactAsReason": false
+            }
+          ]
+        }
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$6bf8314e-4042-4f9c-a82f-2351ee01ac75",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_ba0401fdeb4062f40a7aa95b6f07fe89",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "a7ec15576fb827040bfe609a904482cd, AbilityDeliverProjectile",
+        "m_Flags": 0,
+        "name": "$AbilityDeliverProjectile$3f449f28-f442-42d9-afcd-87b8f49918c6",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Projectiles": [
+          "!bp_c7734162c01abdc478418bfb286ed7a5"
+        ],
+        "Type": "Line",
+        "UseCastPositionInsteadCasterPosition": false,
+        "IsHandOfTheApprentice": false,
+        "m_Length": {
+          "m_Value": 120.0
+        },
+        "m_LineWidth": {
+          "m_Value": 5.0
+        },
+        "NeedAttackRoll": false,
+        "m_Weapon": null,
+        "ReplaceAttackRollBonusStat": false,
+        "AttackRollBonusStat": "Unknown",
+        "UseMaxProjectilesCount": false,
+        "MaxProjectilesCountRank": "Default",
+        "DelayBetweenProjectiles": 0.0,
+        "m_ControlledProjectileHolderBuff": null
+      },
+      {
+        "$type": "a15673bd9e3879442825226335fd8fe2, ContextRankConfig",
+        "m_Flags": 0,
+        "name": "$AbilityRankConfig$12ee50cc-6e58-4c9e-8937-87135121ebd5",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Type": "Default",
+        "m_BaseValueType": "CasterLevel",
+        "useArmorBaseAc": false,
+        "useArmorBonusAc": false,
+        "useArmorFocusAc": false,
+        "userShieldBaseAc": false,
+        "useShieldBonusAc": false,
+        "useShieldFocusAc": false,
+        "m_OnlyFromItems": false,
+        "m_OnlyForItemTypes": false,
+        "m_ItemsTypes": [],
+        "m_Feature": null,
+        "m_FeatureList": [],
+        "m_Stat": "Unknown",
+        "m_SpecificModifier": "None",
+        "m_Buff": null,
+        "m_BuffRankMultiplier": 1,
+        "m_Progression": "AsIs",
+        "m_CustomProgression": [],
+        "m_StartLevel": 0,
+        "m_StepLevel": 0,
+        "m_UseMin": false,
+        "m_Min": 0,
+        "m_UseMax": true,
+        "m_AffectedByIntensifiedMetamagic": true,
+        "m_Max": 10,
+        "m_ExceptClasses": false,
+        "Archetype": null,
+        "m_AdditionalArchetypes": [],
+        "m_Class": [],
+        "m_CustomProperty": null,
+        "m_CustomPropertyList": [],
+        "m_DisableRankBonus": false
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$9f7eec9e-c24d-406b-895f-ac31505e5816",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_4d72e1e7bd6bc4f4caaea7aa43a14639",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$4f70abe9-9926-4cf0-96e5-0c84bd7c465a",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 8
+        }
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$954d5e93-95e3-47f8-a854-9c0932b088a9",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_9678d121f669f864d9da5dabf1ca1ce0",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$4bc88cef-2033-4053-9083-5d9408f880c5",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_e17df9977b879b64e8a8cbb4b3569f19",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$0dd3fa57-87e6-4879-abfc-a1283dc2eb3c",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_98c05aeff6e3d384f8aec6d584973642",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "4b6c2ac95f357d845ae3a30d6fc6641a, RecommendationNoFeatFromGroup",
+        "m_Flags": 0,
+        "name": "$RecommendationNoFeatFromGroup$d58506d5-275c-45ea-9891-20a6497c8346",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Features": [
+          "!bp_aeff0a749e20ffe4b9e2846eae29c386"
+        ],
+        "m_FeaturesExlude": [],
+        "GoodIfNoFeature": false
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$cfb459f0-d929-457b-951a-f6ee3f65bfab",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_78721d556676f264da947bfe263b1da0",
+        "SpellLevel": 3
+      },
+      {
+        "$type": "faae7c00f379e66488a537d47a2919ad, CraftInfoComponent",
+        "m_Flags": 0,
+        "name": "$CraftInfoComponent$3f1c6d63-c39c-404f-9ec2-4b6ece123f13",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SpellType": "Damage",
+        "SavingThrow": "Reflex",
+        "AOEType": "AOE"
+      },
+      {
+        "$type": "4b6c2ac95f357d845ae3a30d6fc6641a, RecommendationNoFeatFromGroup",
+        "m_Flags": 0,
+        "name": "$RecommendationNoFeatFromGroup$189ca5af-ce9a-452e-a380-82a85cf17c1b",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_Features": [
+          "!bp_7c1fdd831af747b47bb2cce0051f309b"
+        ],
+        "m_FeaturesExlude": [],
+        "GoodIfNoFeature": false
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "09244d84-d4f9-4fbe-a7e7-7e4cc8a8cd02",
+      "m_OwnerString": "d2cff9243a7ee804cb6d5be47af30c73",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Spells/Level3/LightningBolt_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "45c5cee4-7955-4f78-a73e-9eb26964879c",
+      "m_OwnerString": "d2cff9243a7ee804cb6d5be47af30c73",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Spells/Level3/LightningBolt_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "b7b732bbeca55044885bfc6da279a09b",
+      "fileid": 21300000
+    },
+    "m_DefaultAiAction": null,
+    "m_AutoUseIsForbidden": false,
+    "Type": "Spell",
+    "Range": "Projectile",
+    "IgnoreMinimalRangeLimit": false,
+    "CustomRange": {
+      "m_Value": 0.0
+    },
+    "ShowNameForVariant": false,
+    "OnlyForAllyCaster": false,
+    "CanTargetPoint": true,
+    "CanTargetEnemies": true,
+    "CanTargetFriends": true,
+    "CanTargetSelf": true,
+    "ShouldTurnToTarget": true,
+    "SpellResistance": true,
+    "IgnoreSpellResistanceForAlly": false,
+    "ActionBarAutoFillIgnored": false,
+    "Hidden": false,
+    "NeedEquipWeapons": false,
+    "UseCurrentWeaponAsReasonItem": false,
+    "NotOffensive": false,
+    "EffectOnAlly": "None",
+    "EffectOnEnemy": "Harmful",
+    "m_Parent": null,
+    "Animation": "Directional",
+    "HasFastAnimation": false,
+    "AnimationStyle": "CastActionDirectional",
+    "m_TargetMapObjects": false,
+    "ActionType": "Standard",
+    "MinimalTransitionOut": 0.0,
+    "AvailableMetamagic": "Empower, Maximize, Quicken, Heighten, CompletelyNormal, Persistent, Selective, Bolstered, Piercing, Intensified",
+    "m_IsFullRoundAction": false,
+    "LocalizedDuration": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "LocalizedSavingThrow": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "0ea4bf256fa2da34eba11ee4d14ade6a",
+        "stringkey": "dccd7029-0a51-4e5b-9cb2-7a2969b61516"
+      }
+    },
+    "MaterialComponent": {
+      "m_Item": null,
+      "Count": 1
+    },
+    "DisableLog": false,
+    "ResourceAssetIds": [
+      "c8785ab9b1fee5d489f5137ccfe42e3b",
+      "34ccd443373cd3e4aad528c35cc304e0"
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Kingmaker.AreaLogic.Cutscenes;
+using Kingmaker.Blueprints.Area;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.View.MapObjects.SriptZones;
+using Locations.Alushenyrra;
+
+namespace Kingmaker.EntitySystem;
+
+public class PersistentState
+{
+	public readonly List<AreaPersistentState> SavedAreaStates = new List<AreaPersistentState>();
+
+	public readonly EntityPool<EntityDataBase> Entities = new EntityPool<EntityDataBase>();
+
+	public readonly EntityPool<EntityDataBase> SuppressibleEntities = new EntityPool<EntityDataBase>(CanBeSuppressed);
+
+	public readonly EntityPool<EntityDataBase> EntitiesWithBounds = new EntityPool<EntityDataBase>(RequiresBounds);
+
+	public readonly EntityPool<EntityDataBase> EntitiesAffectedByFogOfWar = new EntityPool<EntityDataBase>(AffectedByFogOfWar);
+
+	public readonly EntityPool<UnitEntityData> Units = new EntityPool<UnitEntityData>(NotFake);
+
+	public readonly EntityPool<UnitEntityData> ExtraUnits = new EntityPool<UnitEntityData>(IsExtra);
+
+	public readonly EntityPool<CutscenePlayerData> Cutscenes = new EntityPool<CutscenePlayerData>();
+
+	public readonly EntityPool<MapObjectEntityData> MapObjects = new EntityPool<MapObjectEntityData>();
+
+	public readonly EntityPool<AreaEffectEntityData> AreaEffects = new EntityPool<AreaEffectEntityData>();
+
+	public readonly EntityPool<ScriptZone.ScriptZoneData> ScriptZones = new EntityPool<ScriptZone.ScriptZoneData>();
+
+	public readonly EntityPool<IsleStateControllerView.IsleData> FlyingIsles = new EntityPool<IsleStateControllerView.IsleData>();
+
+	public readonly List<UnitEntityData> AwakeUnits = new List<UnitEntityData>();
+
+	public Player PlayerState = new Player();
+
+	public AreaPersistentState LoadedAreaState { get; set; }
+
+	public AreaPersistentState GetStateForArea(BlueprintArea area)
+	{
+		AreaPersistentState areaPersistentState = SavedAreaStates.SingleOrDefault((AreaPersistentState s) => s.Blueprint == area);
+		if (areaPersistentState == null)
+		{
+			SavedAreaStates.Add(areaPersistentState = new AreaPersistentState(area));
+		}
+		return areaPersistentState;
+	}
+
+	public void SetNewAwakeUnits(IEnumerable<UnitEntityData> awakeUnits)
+	{
+		AwakeUnits.Clear();
+		AwakeUnits.AddRange(awakeUnits);
+	}
+
+	public void ClearAwakeUnits()
+	{
+		AwakeUnits.Clear();
+	}
+
+	private static bool NotFake(UnitEntityData unit)
+	{
+		return !unit.Blueprint.IsFake;
+	}
+
+	private static bool IsExtra(UnitEntityData unit)
+	{
+		if (NotFake(unit))
+		{
+			return unit.IsExtra;
+		}
+		return false;
+	}
+
+	private static bool CanBeSuppressed(EntityDataBase entity)
+	{
+		return entity.IsSuppressible;
+	}
+
+	private static bool RequiresBounds(EntityDataBase entity)
+	{
+		return entity.RequiresSphereBoundsCollider;
+	}
+
+	private static bool AffectedByFogOfWar(EntityDataBase entity)
+	{
+		return entity.IsAffectedByFogOfWar;
+	}
+}

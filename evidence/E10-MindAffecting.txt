@@ -1,0 +1,64 @@
+# E10 证据：恍惚仍带影响心灵标记，亡灵/构装体不受影响（E10，不用改）
+
+来源：Assembly-CSharp.dll（ilspycmd 9.0）+ blueprints.zip
+设计文档：docs/rhodes-doctor-archetype.txt:206-207 醉梦为“惑控（睡眠、影响心灵）”，以此为准。
+
+## 1. 原版 Daze 增益自身带影响心灵标记
+blueprints.zip :: Buffs/Daze.jbp（AssetId d2e35b870e4ac574d9873b36402487e5）Data.Components 要点：
+- AddCondition：Condition = Dazed
+- SpellDescriptorComponent：Descriptor.m_IntValue = 16842832 = 0x1010050
+  = MindAffecting(0x10) | Compulsion(0x40) | Daze(0x10000) | Stun(0x1000000)
+同款：Spells/Level0/DazeBuff.jbp（9934fedff1b14994ea90205d189c8759）同样自带 16842832；
+Spells/Level0/Daze.jbp 法术能力自带 SpellDescriptorComponent = 80（= MA|Compulsion）。
+枚举依据：反编译 enum SpellDescriptor : long（MindAffecting = 0x10L … Daze = 0x10000L … Stun = 0x1000000L … Sleep = 0x100000000L）。
+
+## 2. IgnoreParentContext=true 后的新上下文仍带 MindAffecting
+调用链原文：
+1) Kingmaker.UnitLogic.Mechanics.Actions.ContextActionApplyBuff.RunAction：
+```csharp
+MechanicsContext parentContext = (IgnoreParentContext ? null : mechanicsContext);
+Buff buff = buffTarget.Descriptor.AddBuff(Buff, parentContext, duration);
+```
+2) Kingmaker.UnitLogic.UnitHelper.AddBuff(UnitDescriptor, BlueprintBuff, MechanicsContext parentContext, …)：
+```csharp
+if (parentContext == null) { return _this.AddBuff(blueprint, _this.Unit, duration); }
+```
+回落到以目标自己为 caster 的重载 → BuffCollection.AddBuff → new MechanicsContext(caster, Owner, blueprint)，其中 blueprint = Daze 增益蓝图。
+3) Kingmaker.UnitLogic.MechanicsContext.MechanicsContext(caster, owner, blueprint, parent, …)：
+```csharp
+SpellDescriptor = (ParentContext?.SpellDescriptor ?? SpellDescriptor.None) | (SpellDescriptor)(AssociatedBlueprint.GetComponent<SpellDescriptorComponent>()?.Descriptor ?? None);
+```
+ParentContext=null，只丢掉父法术上下文的描述符（含 Sleep）；Daze 蓝图自带的 MA|Compulsion|Daze|Stun 被 OR 进新上下文。
+所以新上下文仍含 MindAffecting，只是不再含 Sleep。
+
+## 3. 免疫影响心灵靠两道门，双门都看上下文描述符
+- 挂增益门 Kingmaker.UnitLogic.FactLogic.BuffDescriptorImmunity：
+```csharp
+public void OnEventAboutToTrigger(RuleCanApplyBuff evt)
+{
+    if (IsImmune(evt.Context)) evt.Immunity = true;
+}
+// IsImmune 核心：
+bool num = Descriptor.HasAnyFlag(context.SpellDescriptor);
+...
+return num && flag2 && flag3;
+```
+亡灵/MA 免疫的 BuffDescriptorImmunity 描述符都含 MA 位（下节蓝图值已验算 v & 16 != 0），与 Daze 新上下文的 MA 相交 → RuleCanApplyBuff.Immunity=true → BuffCollection.PrepareFactForAttach 返回 null → 恍惚挂不上。
+- 投递门 Kingmaker.UnitLogic.FactLogic.SpellImmunityToSpellDescriptor.OnTurnOn → Owner.Ensure<UnitPartSpellResistance>().AddImmunity(SpellImmunityType.SpellDescriptor, …, Descriptor, …)；
+  Kingmaker.Controllers.AbilityExecutionProcess.DoApplyEffect：
+```csharp
+flag = Rulebook.Trigger(new RuleSpellResistanceCheck(context, target.Unit)).IsSpellResisted;
+if (!flag) { applyEffect.Apply(context, target); … }
+```
+mod 醉梦法术上下文描述符 = Sleep | MindAffecting（src/SpellsSetup.cs:163，经 :521-522 写入 SpellDescriptorComponent；SR 默认 true），故亡灵/MA 免疫者在投递门即整法术被挡。
+
+## 4. 亡灵/构装体蓝图原文
+- CreatureAbilities/Immunities/UndeadImmunities.jbp（BlueprintFeature）：BuffDescriptorImmunity 4383408368（0x1054580F0，含 MA）、BuffDescriptorImmunity 4611727800450809856、SpellImmunityToSpellDescriptor 70373127586032（含 MA）、SpellImmunityToSpellDescriptor 4611727800450809856、BuffDescriptorImmunity/SpellImmunityToSpellDescriptor 16640（= Poison|Disease）＋若干 AddConditionImmunity。被 Traits/Races/Common/UndeadType.jbp 等 33 处引用。
+- CreatureAbilities/Immunities/ImmunityToMindAffecting.jbp（3eb606c0…）：BuffDescriptorImmunity 与 SpellImmunityToSpellDescriptor 均为 32848（= MA|Compulsion|Charm）。
+- Traits/Races/Common/ConstructImmunities.jbp（ccf4b37a…）经 AddFacts.m_Facts 引用 !bp_3eb606c0564d0814ea01a824dbe42fb0（即 ImmunityToMindAffecting），另有能量伤害免疫若干。92 处引用 MA 免疫，含构装体/inevitable/植物等。
+
+## 5. 结论
+不用改代码。ignoreParentContext:true 只剥离父法术上下文（含 Sleep 描述符），Daze 增益自身的 SpellDescriptorComponent 把 MindAffecting 带回了新上下文，因此：
+- 睡眠免疫者：沉眠被挡、恍惚照常生效 —— 符合设计“免疫睡眠者仍承受恍惚 1 轮”；
+- 亡灵/构装体等 MA 免疫者：投递门（整法术，上下文 Sleep|MA）与挂增益门（Daze 上下文 MA|Compulsion|Daze|Stun）双双命中，恍惚挂不上 —— 符合“醉梦属于影响心灵”。
+附带修正：evidence/E7-Sleep.txt §4“BuffDescriptorImmunity 的上下文判定不再命中”应限定为睡眠描述符判定不再命中，影响心灵判定仍命中。Wake 路径（src/Components.cs DrunkenDreamWake 用睡眠增益上下文 Owner.Buffs.AddBuff(daze, context, 6s)，上下文含 Sleep|MA）同样对 MA 免疫被挡；睡眠免疫者根本挂不上睡眠增益故 Wake 不触发，无漏洞。

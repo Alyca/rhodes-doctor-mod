@@ -1,0 +1,1367 @@
+﻿[
+  {
+    "Key": "rhodesdoctor.archetype.name",
+    "zhCN": "罗德岛博士",
+    "enGB": "Rhodes Island Doctor"
+  },
+  {
+    "Key": "rhodesdoctor.archetype.desc",
+    "zhCN": "罗德岛的博士从石棺中醒来时，几乎失去了全部记忆，却保留着洞悉战局的头脑。博士很少亲自挥剑，而是以简短的指令调度同伴；战局需要时，博士会放任\"巴别塔的恶灵\"短暂苏醒，把全部智慧化为最锋利的战斗本能。",
+    "enGB": "The Doctor of Rhodes Island awoke from the sarcophagus with nearly all memories lost, yet with a mind that reads the battlefield like an open book. Rarely raising a blade in person, the Doctor directs allies with brief orders — and when the battle demands it, lets the Specter of Babel wake, turning wisdom into the sharpest fighting instinct."
+  },
+  {
+    "Key": "rhodesdoctor.spellbook.name",
+    "zhCN": "战术指令",
+    "enGB": "Tactical Orders"
+  },
+  {
+    "Key": "rhodesdoctor.spellcasting.desc",
+    "zhCN": "1 级起，博士获得战术指令法术书：以智力自发施法，每日法术位与已知指令数与术士相同；0 环指令为可无限施展的戏法。",
+    "enGB": "From 1st level the Doctor gains the Tactical Orders spellbook: spontaneous Intelligence casting using the sorcerer's spells-per-day and spells-known tables; 0-level orders are at-will cantrips."
+  },
+  {
+    "Key": "rhodesdoctor.duration.instant",
+    "zhCN": "立即",
+    "enGB": "Instantaneous"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round1",
+    "zhCN": "1 轮",
+    "enGB": "1 round"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round2",
+    "zhCN": "2 轮",
+    "enGB": "2 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round3",
+    "zhCN": "3 轮",
+    "enGB": "3 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round4",
+    "zhCN": "4 轮",
+    "enGB": "4 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round1level",
+    "zhCN": "1 轮/级",
+    "enGB": "1 round/level"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute1",
+    "zhCN": "1 分钟",
+    "enGB": "1 minute"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute1level",
+    "zhCN": "1 分钟/级",
+    "enGB": "1 minute/level"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute10level",
+    "zhCN": "10 分钟/级",
+    "enGB": "10 minutes/level"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.name",
+    "zhCN": "集火",
+    "enGB": "Focus Fire"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.desc",
+    "zhCN": "迅捷动作；60 尺；持续轮数等于智力调整值（至少 1 轮）。标记一名敌人：所有友军对它的攻击与伤害获得 +1 洞察加值，每 4 个圣武士等级再 +1（20 级 +6）。同一时间只能维持一个标记。每日 3 + 智力调整值 次。",
+    "enGB": "Swift action; 60 ft.; duration equals Intelligence modifier rounds (min 1). Mark one enemy: all allies gain +1 insight on attack and damage against it, +1 more per 4 paladin levels (+6 at 20th). One mark at a time. Usable 3 + Intelligence modifier times per day."
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.mark.name",
+    "zhCN": "集火标记",
+    "enGB": "Focus Fire Mark"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.mark.desc",
+    "zhCN": "所有友军对该目标的攻击与伤害获得洞察加值。",
+    "enGB": "All allies gain an insight bonus on attack and damage rolls against this target."
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.feature.desc",
+    "zhCN": "博士每日可使用集火 3 + 智力调整值 次。此能力与战术指令法术书一同替换惩戒邪恶。",
+    "enGB": "The Doctor can use Focus Fire 3 + Intelligence modifier times per day. Together with the spellbook, this replaces smite evil."
+  },
+  {
+    "Key": "rhodesdoctor.mastery1.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery1.desc",
+    "zhCN": "博士克服法术抗力的施法者等级检定获得 +2 加值。巴别塔的恶灵生效期间，此加值失效，且此类检定改为承受等于转移量的减值。此能力替换神恩。",
+    "enGB": "+2 on caster level checks to overcome spell resistance. While the Specter is active this bonus is lost and such checks instead take a penalty equal to the Transfer Value. This ability replaces divine grace."
+  },
+  {
+    "Key": "rhodesdoctor.mastery2.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery2.desc",
+    "zhCN": "博士克服法术抗力的施法者等级检定获得 +4 加值。巴别塔的恶灵生效期间，此加值失效，且此类检定改为承受等于转移量的减值。此能力替换神恩。",
+    "enGB": "+4 on caster level checks to overcome spell resistance. While the Specter is active this bonus is lost and such checks instead take a penalty equal to the Transfer Value. This ability replaces divine grace."
+  },
+  {
+    "Key": "rhodesdoctor.mastery3.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery3.desc",
+    "zhCN": "博士克服法术抗力的施法者等级检定获得 +6 加值。巴别塔的恶灵生效期间，此加值失效，且此类检定改为承受等于转移量的减值。此能力替换神恩。",
+    "enGB": "+6 on caster level checks to overcome spell resistance. While the Specter is active this bonus is lost and such checks instead take a penalty equal to the Transfer Value. This ability replaces divine grace."
+  },
+  {
+    "Key": "rhodesdoctor.mastery4.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery4.desc",
+    "zhCN": "博士克服法术抗力的施法者等级检定获得 +8 加值。巴别塔的恶灵生效期间，此加值失效，且此类检定改为承受等于转移量的减值。此能力替换神恩。",
+    "enGB": "+8 on caster level checks to overcome spell resistance. While the Specter is active this bonus is lost and such checks instead take a penalty equal to the Transfer Value. This ability replaces divine grace."
+  },
+  {
+    "Key": "rhodesdoctor.coolhead.name",
+    "zhCN": "冷静头脑",
+    "enGB": "Cool Head"
+  },
+  {
+    "Key": "rhodesdoctor.coolhead.desc",
+    "zhCN": "博士将智力调整值（若为正）加到所有豁免检定上（不具类型，可叠加）。巴别塔的恶灵生效期间减半；20 级后不再减半。",
+    "enGB": "The Doctor adds their Intelligence modifier (if positive) as an untyped bonus on all saving throws. Halved while the Specter is active; full again at 20th level."
+  },
+  {
+    "Key": "rhodesdoctor.aura.name",
+    "zhCN": "指挥灵光",
+    "enGB": "Aura of Command"
+  },
+  {
+    "Key": "rhodesdoctor.aura.ally.desc",
+    "zhCN": "攻击检定与先攻检定 +1（胜任）。",
+    "enGB": "+1 competence on attack rolls and initiative checks."
+  },
+  {
+    "Key": "rhodesdoctor.aura.self.desc",
+    "zhCN": "10 尺内的友军获得指挥灵光。",
+    "enGB": "Allies within 10 feet gain Aura of Command."
+  },
+  {
+    "Key": "rhodesdoctor.aura.desc",
+    "zhCN": "半径 10 尺灵光：博士与灵光内友军攻击与先攻 +1（胜任）。博士失去意识或恶灵生效期间失效。此能力替换原版圣武士施法。",
+    "enGB": "10-foot aura: +1 competence on attack rolls and initiative checks for the Doctor and allies within. Suppressed while the Specter is active. This ability replaces the paladin's spellcasting."
+  },
+  {
+    "Key": "rhodesdoctor.total.name",
+    "zhCN": "全军指令",
+    "enGB": "Total Command"
+  },
+  {
+    "Key": "rhodesdoctor.total.ally.desc",
+    "zhCN": "攻击检定与先攻检定 +2（胜任）。",
+    "enGB": "+2 competence on attack rolls and initiative checks."
+  },
+  {
+    "Key": "rhodesdoctor.total.self.desc",
+    "zhCN": "30 尺内的友军获得全军指令。",
+    "enGB": "Allies within 30 feet gain Total Command."
+  },
+  {
+    "Key": "rhodesdoctor.total.desc",
+    "zhCN": "指挥灵光扩大到 30 尺、加值提高到 +2。此能力替换正义灵光。",
+    "enGB": "Aura of Command grows to 30 feet and +2. This ability replaces aura of justice."
+  },
+  {
+    "Key": "rhodesdoctor.loh.resource.name",
+    "zhCN": "圣疗次数",
+    "enGB": "Lay on Hands Charges"
+  },
+  {
+    "Key": "rhodesdoctor.loh.name",
+    "zhCN": "圣疗",
+    "enGB": "Lay on Hands"
+  },
+  {
+    "Key": "rhodesdoctor.loh.desc",
+    "zhCN": "每日次数与伤害不死生物的豁免 DC 改用智力调整值，其余同原版圣疗。",
+    "enGB": "Uses per day and the DC against undead use the Intelligence modifier; otherwise as the paladin ability."
+  },
+  {
+    "Key": "rhodesdoctor.channel.name",
+    "zhCN": "引导正能量",
+    "enGB": "Channel Positive Energy"
+  },
+  {
+    "Key": "rhodesdoctor.channel.desc",
+    "zhCN": "豁免 DC 改用智力调整值；每次消耗 2 次圣疗次数，其余同原版。",
+    "enGB": "The DC uses the Intelligence modifier; each use consumes 2 lay-on-hands charges; otherwise unchanged."
+  },
+  {
+    "Key": "rhodesdoctor.specter.resource.name",
+    "zhCN": "恶灵轮数",
+    "enGB": "Specter Rounds"
+  },
+  {
+    "Key": "rhodesdoctor.specter.lock.name",
+    "zhCN": "巴别塔的恶灵（锁定）",
+    "enGB": "Specter of Babel (Lock)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.lock.desc",
+    "zhCN": "恶灵生效期间，博士只能施放【恶灵】指令；源石技艺精通失效且法术穿透倒扣；指挥灵光与全军指令失效。",
+    "enGB": "While the Specter is active, only [Specter] orders can be cast; Originium Arts Mastery inverts to a penalty; the auras are suppressed."
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.name",
+    "zhCN": "恶灵余波",
+    "enGB": "Specter's Aftermath"
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.restrict.desc",
+    "zhCN": "博士只能执行移动动作：无法攻击（包括借机攻击）、施法，或主动使用职业特性与物品。",
+    "enGB": "The Doctor can only take move actions: no attacks (including attacks of opportunity), spellcasting, or active use of abilities or items."
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.speed.desc",
+    "zhCN": "博士的速度获得 +50 尺加值（不具类型，可叠加）。",
+    "enGB": "The Doctor gains a +50-foot untyped bonus to speed."
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.agile.name",
+    "zhCN": "巴别塔的恶灵：敏捷形态",
+    "enGB": "Specter of Babel: Agile Form"
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.agile.desc",
+    "zhCN": "敏捷值获得等于转移量两倍的加值；近战攻击与伤害用敏捷代替力量（取较高者）。",
+    "enGB": "Bonus to Dexterity equal to twice the Transfer Value; melee attack and damage rolls use Dexterity instead of Strength (whichever is higher)."
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.enduring.name",
+    "zhCN": "巴别塔的恶灵：体质形态",
+    "enGB": "Specter of Babel: Enduring Form"
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.enduring.desc",
+    "zhCN": "体质值获得等于转移量两倍的加值，生命值与强韧豁免随之提高。",
+    "enGB": "Bonus to Constitution equal to twice the Transfer Value; hit points and Fortitude saves increase accordingly."
+  },
+  {
+    "Key": "rhodesdoctor.specter.toggle.agile.desc",
+    "zhCN": "唤醒巴别塔的恶灵。结束后进入恶灵余波；可用\"结束恶灵\"提前结束。",
+    "enGB": "Awaken the Specter of Babel. The Specter's Aftermath follows when it ends; use End the Specter to end it early."
+  },
+  {
+    "Key": "rhodesdoctor.specter.toggle.enduring.desc",
+    "zhCN": "唤醒巴别塔的恶灵。结束后进入恶灵余波；可用\"结束恶灵\"提前结束。",
+    "enGB": "Awaken the Specter of Babel. The Specter's Aftermath follows when it ends; use End the Specter to end it early."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder1.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder1.desc",
+    "zhCN": "恶灵形态开关。",
+    "enGB": "Specter form toggles."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder2.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder2.desc",
+    "zhCN": "恶灵形态开关。",
+    "enGB": "Specter form toggles."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder3.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder3.desc",
+    "zhCN": "恶灵形态开关。",
+    "enGB": "Specter form toggles."
+  },
+  {
+    "Key": "rhodesdoctor.specter.name",
+    "zhCN": "巴别塔的恶灵",
+    "enGB": "Specter of Babel"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage1.desc",
+    "zhCN": "唤醒沉睡的另一个自己：开启时选择敏捷或体质形态，将一半的智力调整值转移为战斗本能。每日可维持 4 + 圣武士等级 + 智力调整值 轮。结束后进入 2 轮恶灵余波。此能力替换决意灵光。",
+    "enGB": "Awaken the other self within: choose the Agile or Enduring Form, transferring half your Intelligence modifier into pure fighting instinct. Usable for 4 + paladin level + Intelligence modifier rounds per day. The Specter's Aftermath follows. This ability replaces aura of resolve."
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage2.name",
+    "zhCN": "巴别塔的恶灵（二段）",
+    "enGB": "Specter of Babel (Stage II)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage2.desc",
+    "zhCN": "转移量提高为全部智力调整值。敏捷形态获得反射闪避，体质形态获得伤害减免 3/—（可与其他来源叠加）。",
+    "enGB": "The Transfer Value becomes the full Intelligence modifier. Agile Form gains evasion; Enduring Form gains DR 3/— (stacking)."
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage3.name",
+    "zhCN": "巴别塔的恶灵（三段）",
+    "enGB": "Specter of Babel (Stage III)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage3.desc",
+    "zhCN": "开启恶灵改为迅捷动作；恶灵生效期间可以下达集火。",
+    "enGB": "Activating the Specter becomes a swift action; Focus Fire can be issued while it is active."
+  },
+  {
+    "Key": "rhodesdoctor.specter.end.name",
+    "zhCN": "结束恶灵",
+    "enGB": "End the Specter"
+  },
+  {
+    "Key": "rhodesdoctor.specter.end.desc",
+    "zhCN": "立刻结束巴别塔的恶灵，进入 2 轮恶灵余波。",
+    "enGB": "End the Specter of Babel immediately and suffer its Aftermath for 2 rounds."
+  },
+  {
+    "Key": "rhodesdoctor.capstone.buff.name",
+    "zhCN": "罗德岛的博士",
+    "enGB": "Doctor of Rhodes Island"
+  },
+  {
+    "Key": "rhodesdoctor.capstone.buff.desc",
+    "zhCN": "博士与恶灵合二为一。",
+    "enGB": "The Doctor and the Specter are one."
+  },
+  {
+    "Key": "rhodesdoctor.capstone.name",
+    "zhCN": "罗德岛的博士",
+    "enGB": "Doctor of Rhodes Island"
+  },
+  {
+    "Key": "rhodesdoctor.capstone.desc",
+    "zhCN": "博士不再需要在指挥官与恶灵之间做出选择：恶灵生效期间可下达所有指令，冷静头脑与灵光完整生效；恶灵结束后不受余波限制并可立即再次开启，但仍获得 +50 尺速度。此能力替换神圣斗士。",
+    "enGB": "The Doctor no longer has to choose: all orders remain available during the Specter, Cool Head and auras function at full strength; the Aftermath imposes no restriction and the Specter can be reactivated immediately, though the +50-foot speed remains. This ability replaces holy champion."
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticalMark.name",
+    "zhCN": "战术标记",
+    "enGB": "Tactical Mark"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticalMark.desc",
+    "zhCN": "你洞悉目标的步调。你与友军对其进行的下一次攻击检定获得 +1 洞察加值；同一生物同一轮只能受此效果影响一次。",
+    "enGB": "Divination; 60 ft.; one creature; 1 round; no save. You and your allies gain a +1 insight bonus on the next attack roll against it this round."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.name",
+    "zhCN": "医疗敷料",
+    "enGB": "Field Dressing"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.desc",
+    "zhCN": "目标恢复 1 点生命值。该指令无法治疗在 24 小时内受过本指令治疗的生物。",
+    "enGB": "Transmutation (healing); touch; instantaneous. The target regains 1 hit point; cannot affect a creature healed by it in the last 24 hours."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.treated.name",
+    "zhCN": "医疗敷料（包扎中）",
+    "enGB": "Field Dressing (bandaged)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.treated.desc",
+    "zhCN": "24 小时内无法再次受益于医疗敷料。",
+    "enGB": "Cannot benefit from field dressing again within 24 hours."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BattlefieldSurvey.name",
+    "zhCN": "战场测绘",
+    "enGB": "Battlefield Survey"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BattlefieldSurvey.desc",
+    "zhCN": "学派：预言；距离：个人；目标：你；持续时间：1 分钟。你获得察觉检定 +2 洞察加值。",
+    "enGB": "Divination; personal; 1 minute. +2 insight on Perception checks."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.name",
+    "zhCN": "信标投射",
+    "enGB": "Beacon Projection"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.desc",
+    "zhCN": "学派：幻术（光）；距离：30 尺；持续：10 分钟/级。悬浮信标照亮 20 尺半径。",
+    "enGB": "Illusion (light); 30 ft.; 10 min./level. A floating beacon lights a 20-ft. radius."
+  },
+  {
+    "Key": "rhodesdoctor.spell.SuppressingShot.name",
+    "zhCN": "牵制射击",
+    "enGB": "Suppressing Shot"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SuppressingShot.desc",
+    "zhCN": "学派：惑控（影响心灵）；距离：30 尺；意志无效。目标承受 –1 罚值于其下一次攻击检定；若目标在此轮攻击除你以外的生物，该罚值变为 –2。——克洛丝",
+    "enGB": "Enchantment (mind-affecting); 30 ft.; Will negates. –1 on the target's next attack roll, or –2 if it attacks anyone but you this round. (Kroos)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyExtraction.name",
+    "zhCN": "紧急撤离",
+    "enGB": "Emergency Extraction"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyExtraction.desc",
+    "zhCN": "学派：咒法（传送）；距离：接触；持续时间：立即。目标移动至 10 尺内可见的空格（实现为永远落在施法者身后最近空地）。该移动不引发借机攻击，不能穿越实体障碍。",
+    "enGB": "Conjuration (teleportation); touch; instantaneous. The target moves up to 10 ft. to a visible square (implemented as the nearest open square behind the caster). Provokes no attacks of opportunity."
+  },
+  {
+    "Key": "rhodesdoctor.spell.HoldTheLine.name",
+    "zhCN": "坚守阵地",
+    "enGB": "Hold the Line"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HoldTheLine.desc",
+    "zhCN": "目标获得 +2 洞察加值于 AC，以及 +1 洞察加值于所有豁免检定。以你为中心，30 尺爆发内全部友军，持续 1 分钟/级。——星熊",
+    "enGB": "Abjuration; swift; personal; all allies in a 30-ft. burst centered on you; 1 min./level. +2 insight to AC, +1 insight on saves. (Hoshiguma)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CavalryCharge.name",
+    "zhCN": "骑兵突进",
+    "enGB": "Cavalry Charge"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CavalryCharge.desc",
+    "zhCN": "目标速度获得 +10 尺不具类型加值（10 级起 +20 尺），并对借机攻击获得 +4 闪避加值 AC。以你为中心，30 尺爆发内全部友军，持续 1 分钟/级。——格拉尼",
+    "enGB": "Transmutation; swift; personal; all allies in a 30-ft. burst centered on you; 1 min./level. +10 ft. speed (+20 at 10th; untyped, stacks with haste), +4 dodge to AC vs attacks of opportunity. (Grani)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrostPrayer.name",
+    "zhCN": "寒霜祷言",
+    "enGB": "Frost Prayer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrostPrayer.desc",
+    "zhCN": "目标的 AC 与所有豁免检定承受 −2 罚值。——初雪",
+    "enGB": "Necromancy (cold); swift; one enemy; 3 rounds; Will negates. –2 to AC and all saves. (Pramanix)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyTreatment.name",
+    "zhCN": "紧急救治",
+    "enGB": "Emergency Treatment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyTreatment.desc",
+    "zhCN": "目标获得一次博士圣疗的治疗效果（可附加慈悲）。该指令不能伤害不死生物。——闪灵",
+    "enGB": "Conjuration (healing); move; close; one ally. The target gains the Doctor's lay on hands healing (mercies apply); cannot harm undead. (Shining)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FireRecon.name",
+    "zhCN": "火力侦察",
+    "enGB": "Fire Recon"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FireRecon.desc",
+    "zhCN": "友军攻击目标时忽略由隐形、镜影或掩蔽产生的失手几率。这不移除上述效果。——克洛丝",
+    "enGB": "Divination; swift; medium; one enemy; 1 round/level. Allies ignore the target's miss chance from invisibility, mirror images, or concealment. (Kroos)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MedicalDrone.name",
+    "zhCN": "医疗无人机",
+    "enGB": "Medical Drone"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MedicalDrone.desc",
+    "zhCN": "一架医疗无人机跟随目标友军；每轮开始时，该友军恢复 1d6 + 施法者等级（至多 +5）点生命值。——赫默",
+    "enGB": "Conjuration (creation, healing); standard; close; 1 round/level. A medical drone follows the target ally, healing 1d6 + caster level (max +5) at the start of each round. (Silence)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ura.name",
+    "zhCN": "乌拉！",
+    "enGB": "Ura!"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ura.desc",
+    "zhCN": "学派：惑控（影响心灵）；迅捷动作；以你为中心，30 尺爆发内全部友军；1 分钟/级。结束动摇、恐惧与恐慌；攻击与武器伤害 +1（10 级起 +2，不具类型）。——凛冬",
+    "enGB": "Enchantment; swift; personal; all allies in a 30-ft. burst centered on you; 1 min./level. Ends fear; +1 untyped on attack and weapon damage (+2 at 10th). (Zima)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.UnstablePlasma.name",
+    "zhCN": "不稳定血浆",
+    "enGB": "Unstable Plasma"
+  },
+  {
+    "Key": "rhodesdoctor.spell.UnstablePlasma.desc",
+    "zhCN": "目标攻击检定与武器伤害获得 +2 不具类型加值（伤害每 4 级再 +1）。每轮开始时，目标失去 2 点生命值，但不会因此降至 1 点以下。——华法琳",
+    "enGB": "Necromancy; swift; one ally; 3 rounds. +2 untyped attack and damage (+1 per 4 levels); loses 2 hp each round (not below 1). (Warfarin)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.AntiGravity.name",
+    "zhCN": "反重力",
+    "enGB": "Anti-Gravity"
+  },
+  {
+    "Key": "rhodesdoctor.spell.AntiGravity.desc",
+    "zhCN": "目标陷入缓慢状态，如同缓慢术。——安洁莉娜",
+    "enGB": "Transmutation; standard; one enemy; 2 rounds; Will negates. The target is slowed, as the slow spell. (Angelina)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.name",
+    "zhCN": "烟幕掩护",
+    "enGB": "Smokescreen"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.desc",
+    "zhCN": "区域提供隐蔽（20% 失手几率）；友军可正常视物。——杰西卡",
+    "enGB": "Conjuration (creation); standard; medium; 20-ft. radius; 1 round/level. Concealment (20% miss chance); allies see normally. (Jessica)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.name",
+    "zhCN": "延时爆破",
+    "enGB": "Delayed Blast"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.desc",
+    "zhCN": "在地面放置一枚炸弹：每轮开始时，炸弹 10 尺内有敌人就爆炸，在 10 尺爆发内造成 2d6 点火焰与 2d6 点轰击伤害；你也可以用自由动作手动引爆。——W",
+    "enGB": "Evocation (fire); standard; medium; 1 round/level or until triggered; Reflex half. Place a bomb: at the start of each round it explodes if an enemy is within 10 ft. (10-ft. burst, 2d6 fire + 2d6 bludgeoning); you may also detonate it as a free action. (W)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.name",
+    "zhCN": "缄默",
+    "enGB": "Silencer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.desc",
+    "zhCN": "目标不能施展法术、使用类法术能力或超自然能力；该效果不妨碍被动能力。——拉普兰德",
+    "enGB": "Abjuration; standard; one enemy; 1 round/level; Will negates. The target cannot cast spells or use spell-like or supernatural abilities. (Lappland)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Overloading.name",
+    "zhCN": "过载模式",
+    "enGB": "Overloading Mode"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Overloading.desc",
+    "zhCN": "目标全回合攻击时可额外进行一次全基本攻击加值攻击；攻击检定 +1（不具类型），AC 与反射 +1（闪避），所有速度 +30 尺（不具类型）。各项均可与加速术叠加。近距内选一点为中心，20 尺爆发内全部友军，持续 1 轮/级。——能天使",
+    "enGB": "Transmutation; swift; close; all allies in a 20-ft. burst centered on a point within close range; 1 round/level. One extra attack at full BAB (stacks with haste and speed weapons); +1 untyped attack; +1 dodge AC/Reflex; +30-ft. untyped speed. (Exusiai)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwordRain.name",
+    "zhCN": "剑雨",
+    "enGB": "Sword Rain"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwordRain.desc",
+    "zhCN": "区域内敌人每 2 个施法者等级受到 1d6 点挥砍伤害（最多 10d6）。反射豁免失败的敌人还会恍惚 1 轮。——德克萨斯",
+    "enGB": "Evocation; standard; close; 10-ft. burst (enemies only); Reflex half. 1d6 slashing per 2 levels (max 10d6); failures are dazed 1 round. (Texas)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.name",
+    "zhCN": "钙质化",
+    "enGB": "Calcification"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.desc",
+    "zhCN": "区域内敌人速度减半、所有豁免承受 −2 罚值；友军每轮开始恢复 1d8 点生命值。敌人离开区域后其效果结束。——塞雷娅",
+    "enGB": "Transmutation; standard; 20-ft. radius; 3 rounds; no save. Enemies: half speed, –2 saves; allies regain 1d8 hp each round. (Saria)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.LockOfTime.name",
+    "zhCN": "时之锁",
+    "enGB": "Lock of Time"
+  },
+  {
+    "Key": "rhodesdoctor.spell.LockOfTime.desc",
+    "zhCN": "区域内敌人 AC、反射豁免与攻击检定各 −1，且每轮只能做一个动作（不能做整轮动作）；每轮开始时可再次豁免，成功则解除。——莫斯提马",
+    "enGB": "Transmutation; standard; medium; 20-ft. burst; 3 rounds; Will negates. Enemies in the area take −1 on AC, Reflex saves and attack rolls, and can take only a single move or standard action each round (no full-round actions); a new save each round ends it. (Mostima)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.name",
+    "zhCN": "灼烧",
+    "enGB": "Scorching Breath"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.desc",
+    "zhCN": "直线内敌人每级受到 1d6 点火焰伤害（最多 10d6）。反射豁免失败的敌人火焰抗力降低 10 点，持续 1 轮/级。——伊芙利特",
+    "enGB": "Evocation (fire); standard; 60-ft. line; Reflex half. 1d6 fire per level (max 10d6); failures lose 10 fire resistance for 1 round/level. (Ifrit)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.name",
+    "zhCN": "处决",
+    "enGB": "Execution"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.desc",
+    "zhCN": "【恶灵】你的下一次近战命中若目标当前生命值不高于其最大值的一半，则该次武器伤害骰翻倍；额外精确伤害不翻倍。触发后法术结束。——红",
+    "enGB": "[Specter] Transmutation; swift; personal; 1 round/level or until triggered. Your next melee hit against a target at half hp or less doubles its weapon damage dice. (Projekt Red)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Sanctuary.name",
+    "zhCN": "圣域",
+    "enGB": "Sanctuary"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Sanctuary.desc",
+    "zhCN": "学派：防护；迅捷动作；以你为中心，30 尺爆发内全部友军；1 轮/级。对抗法术与类法术能力的豁免 +4（神圣）；火、寒、电、酸、音波抗力各 10，可与其他来源叠加。——夜莺",
+    "enGB": "Abjuration; swift; personal; all allies in a 30-ft. burst centered on you; 1 round/level. +4 sacred on saves vs spells and spell-like abilities; resistance 10 to the five energies, stacking with other sources. (Nightingale)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.name",
+    "zhCN": "火山",
+    "enGB": "Volcano"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.desc",
+    "zhCN": "敌人立即每 2 个施法者等级受到 1d6 点火焰伤害（最多 10d6），之后 2 轮内每轮每 4 个施法者等级受到 1d6 点火焰伤害（最多 5d6）。每次伤害单独豁免。——艾雅法拉",
+    "enGB": "Evocation (fire); standard; medium; 20-ft. burst; Reflex half. 1d6 per 2 levels now (max 10d6), then 1d6 per 4 levels (max 5d6) for 2 rounds. (Eyjafjalla)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Dragnet.name",
+    "zhCN": "牵引",
+    "enGB": "Dragnet"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Dragnet.desc",
+    "zhCN": "学派：咒法（传送）；标准动作；中距；半径 20 尺内的敌人；强韧无效。失败目标被传送至法术点附近并倒地；不能送入危险地形。——歌蕾蒂娅",
+    "enGB": "Conjuration (teleportation); standard; medium; enemies in a 20-ft. burst; Fortitude negates. Failing targets are teleported near the spell point and knocked prone. (Gladiia)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Nightterror.name",
+    "zhCN": "梦魇",
+    "enGB": "Nightterror"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Nightterror.desc",
+    "zhCN": "意志豁免失败的目标恐慌 2 轮，之后动摇至持续时间结束；豁免成功则仅动摇 1 轮。——夜魔",
+    "enGB": "Enchantment (fear, mind-affecting); standard; medium; one enemy; Will partial. Failure: panicked 2 rounds then shaken; success: shaken 1 round. (Nightmare)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.name",
+    "zhCN": "迅捷突破",
+    "enGB": "Swift Breach"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.desc",
+    "zhCN": "【恶灵】学派：变化；迅捷动作；个人；加速 3 轮。本轮内直到你下一次近战命中为止，你不引发借机攻击（包括移动）；下一次近战命中额外 3d6。加速：速度提升、全力攻击多一次攻击（不含加速术其他加值，可与加速术叠加）。——风笛",
+    "enGB": "[Specter] Transmutation; swift; personal. Haste-like acceleration for 3 rounds; until your next melee hit this round you provoke no attacks of opportunity (including movement); your next melee hit deals +3d6. (Bagpipe)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.name",
+    "zhCN": "闪光弹",
+    "enGB": "Flashbang"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.desc",
+    "zhCN": "学派：塑能（光）；标准动作；中距内选一点为中心，15 尺爆发；反射部分通过。反射豁免失败的敌人目盲 1 轮，之后目眩至持续时间结束；豁免成功则仅目眩 1 轮。隐形生物豁免失败时显形 1 轮。——灰烬",
+    "enGB": "Evocation (light); standard; a 15-ft. burst centered on a point within medium range; Reflex partial. Failure: blinded 1 round then dazzled; success: dazzled 1 round. Invisible creatures that fail become visible for 1 round. (Ash)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chimera.name",
+    "zhCN": "奇美拉",
+    "enGB": "Chimera"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chimera.desc",
+    "zhCN": "目标攻击检定获得 +4 不具类型加值，武器伤害获得等于你等级一半的不具类型加值，且其攻击无视所有伤害减免。——阿米娅",
+    "enGB": "Transmutation; swift; one ally; 3 rounds. +4 untyped attack (stacks with Focus Fire); weapon damage + half your level; attacks ignore all DR. (Amiya)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Mon3tr.name",
+    "zhCN": "Mon3tr",
+    "enGB": "Mon3tr"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Mon3tr.desc",
+    "zhCN": "目标恢复每级 1d6 点生命值（最多 20d6），并解除震慑、恍惚、麻痹与恶心。——凯尔希",
+    "enGB": "Conjuration (healing); standard; medium; one ally. Heals 1d6 per level (max 20d6); cures stunned, dazed, paralyzed, nauseated. (Kal'tsit)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ironcast.name",
+    "zhCN": "铸铁",
+    "enGB": "Ironcast"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ironcast.desc",
+    "zhCN": "学派：防护；标准动作；近距；一名友军；1 轮/级。获得伤害减免 10/—、免疫重击与偷袭；该减免为常规伤害减免，不与同类效果叠加。——年",
+    "enGB": "Abjuration; standard; close; one ally; 1 round/level. DR 10/—, immunity to critical hits and sneak attacks; standard DR that does not stack with similar effects. (Nian)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.InkedMountains.name",
+    "zhCN": "墨染山河",
+    "enGB": "Inked Mountains"
+  },
+  {
+    "Key": "rhodesdoctor.spell.InkedMountains.desc",
+    "zhCN": "召唤两只墨灵。每只墨灵以你的基本攻击加值进行攻击，命中造成 2d6 点力场伤害；被摧毁时在相邻敌人处爆发，造成 2d6 点力场伤害并使其目眩 1 轮（意志无效）。——夕",
+    "enGB": "Illusion (creation); standard; close; 1 round/level. Summons two ink spirits attacking with your BAB (2d6 force); they burst for 2d6 force on destruction. (Dusk)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.name",
+    "zhCN": "冰封领域",
+    "enGB": "Frozen Domain"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.desc",
+    "zhCN": "敌人进入区域或在区域内开始回合时，受 4d6 点寒冷伤害；反射豁免失败者定身 1 轮，成功者速度减半 1 轮。——霜星",
+    "enGB": "Evocation (cold); standard; medium; 20-ft. radius; 1 round/level; Reflex partial. Enemies entering the area or starting their turn inside take 4d6 cold; entangled 1 round on failure, half speed 1 round on success. (FrostNova)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.RoyalCharge.name",
+    "zhCN": "王者冲锋",
+    "enGB": "Royal Charge"
+  },
+  {
+    "Key": "rhodesdoctor.spell.RoyalCharge.desc",
+    "zhCN": "【恶灵】学派：变化；标准动作；40 尺；选一点。沿直线冲锋至多 40 尺并撞击路径上的敌人；路径上每个敌人受 4d6 轰击（反射成功仅免倒地，不减伤）。——推进之王",
+    "enGB": "[Specter] Transmutation; standard; 40 ft.; one point. Charge up to 40 ft. in a line; every enemy in the path takes 4d6 bludgeoning (a successful Reflex only avoids being knocked prone, not the damage). (Siege)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalElegy.name",
+    "zhCN": "涌潮悲歌",
+    "enGB": "Tidal Elegy"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalElegy.desc",
+    "zhCN": "【恶灵】学派：变化；迅捷动作；个人；1 轮/级。攻击 +6（不具类型），武器伤害 + 施法者等级，获得 60 点临时生命，速度 +20 尺。——斯卡蒂",
+    "enGB": "[Specter] Transmutation; swift; personal; 1 round/level. +6 untyped attack, damage + caster level, 60 temp hp, +20-ft. speed. (Skadi)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.name",
+    "zhCN": "儿时的舞乐",
+    "enGB": "Dance of Childhood"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.desc",
+    "zhCN": "意志豁免失败的敌人陷入缓慢，且受到的所有伤害提高 30%；离开区域后结束。区域内友军每轮开始恢复 2d8 + 施法者等级一半点生命值。——铃兰",
+    "enGB": "Enchantment; standard; medium; 20-ft. radius; 4 rounds; Will negates. Enemies slowed and take +30% damage; allies regain 2d8 + half caster level each round. (Suzuran)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.name",
+    "zhCN": "醉梦",
+    "enGB": "Drunken Dream"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.desc",
+    "zhCN": "学派：惑控（睡眠、影响心灵）；标准动作；中距；半径 20 尺爆发；1 轮/级；意志无效。失败敌人魔法沉眠（不受 HD 限制），被打醒后恍惚 1 轮；对睡眠免疫的目标：若其免疫挡下整个法术（如精灵）则完全不受影响，若只免疫睡眠效果则不沉眠但仍恍惚 1 轮。——令",
+    "enGB": "Enchantment (sleep, mind-affecting); standard; medium; 20-ft. burst; 1 round/level; Will negates. Failures fall into magical slumber (no HD limit) and are dazed 1 round when woken; sleep-immune targets: if the immunity stops the whole spell (e.g. elves) they are unaffected, if it stops only the sleep effect they do not sleep but are still dazed 1 round. (Ling)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.name",
+    "zhCN": "黑蛇之焰",
+    "enGB": "Black Snake's Flame"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.desc",
+    "zhCN": "目标每级受到 1d6 点火焰伤害（最多 20d6，其中一半为不受火焰抗力影响的神圣伤害，火焰免疫仅将总伤害减半）。无论豁免成败，之后目标每轮受到 3d6 点火焰伤害。——塔露拉",
+    "enGB": "Evocation (fire); standard; medium; one enemy; Reflex half. 1d6 fire per level (max 20d6, half of it divine damage unaffected by fire resistance; fire immunity only halves the total); the target then takes 3d6 fire each round regardless of the save. (Talulah)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.name",
+    "zhCN": "炮火延伸",
+    "enGB": "Artillery Barrage"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.desc",
+    "zhCN": "同一点连续三轮，每轮开始时落点发生半径 15 尺爆炸，造成 8d6 点轰击与 8d6 点火焰伤害；敌人可预见落点并离开。——号角",
+    "enGB": "Evocation; standard; long; same point for three rounds; Reflex half. Each round the point bursts (15-ft.): 8d6 bludgeoning + 8d6 fire. (Horn)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.name",
+    "zhCN": "罪罚",
+    "enGB": "Sin and Punishment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.desc",
+    "zhCN": "每轮第一次该敌人对其他生物造成生命值伤害时，它受到等量伤害的一半，伤害类型与原伤害相同。反弹伤害不触发该效果。——斥罪",
+    "enGB": "Necromancy; standard; medium; one enemy; 1 round/level; Will negates. The first time each round the target deals damage, it takes half that much itself. (Penance)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.name",
+    "zhCN": "黄昏",
+    "enGB": "Twilight"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.desc",
+    "zhCN": "敌人每级受到 1d6 点火焰伤害（最多 20d6）。反射豁免失败的敌人附着熔火，之后两轮各受到 4d6 点火焰伤害，每次可再进行反射豁免以减半。——史尔特尔",
+    "enGB": "Evocation (fire); standard; medium; 20-ft. burst; Reflex half. 1d6 fire per level (max 20d6); failures burn for 4d6 on the next 2 rounds. (Surtr)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MirrorFlow.name",
+    "zhCN": "镜中流形",
+    "enGB": "Mirror Flow"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MirrorFlow.desc",
+    "zhCN": "学派：幻术（阴影）；标准动作；近距；一名友军；1 轮/级。制造目标的镜像复制体：属性、AC、攻击加值与武器与目标相同，生命值为目标当前生命值，法术位与资源均为满值；它在目标回合后行动，可正常行动与施法；持续 1 轮/级或生命归零时消散。——缪尔赛思",
+    "enGB": "Illusion (shadow); standard; close; one ally; 1 round/level. A duplicate with the target's stats, AC, attack bonus and weapon, at the target's current hp, with full spell slots and resources; it acts after the target and can act and cast normally; it lasts 1 round/level or until destroyed. (Muelsyse)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.name",
+    "zhCN": "终末狙击",
+    "enGB": "Final Snipe"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.desc",
+    "zhCN": "学派：预言；标准动作；极距；一名敌人；直到下轮开始；反射减半。下轮开始目标被必中狙击命中：15d6 穿刺 + 2d6 体质伤害；若届时隐形则失效。——黑",
+    "enGB": "Divination; standard; long; one enemy; until your next turn; Reflex half. An unmissable shot hits for 15d6 piercing + 2d6 Constitution; fizzles if the target is invisible. (Schwarz)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.name",
+    "zhCN": "连锁殉爆",
+    "enGB": "Chain Detonation"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.desc",
+    "zhCN": "学派：死灵；标准动作；中距；以目标为中心 20 尺内的全部敌人；1 轮/级；反射减半。标记者死亡时在其周围 20 尺爆炸（10d6 力场，只伤敌人）。——维什戴尔",
+    "enGB": "Necromancy; standard; medium; all enemies within 20 ft. of the target; 1 round/level; Reflex half. Marked creatures explode on death (10d6 force, 20 ft., enemies only). (Wis'adel)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ThunderousJudgment.name",
+    "zhCN": "雷霆审判",
+    "enGB": "Thunderous Judgment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ThunderousJudgment.desc",
+    "zhCN": "敌人受到 12d6 点电击伤害；反射豁免失败者倒地并恍惚 1 轮，成功者仅受半伤且不倒地。——艾丽妮",
+    "enGB": "Evocation (electricity); standard; medium; 30-ft. burst; Reflex partial. 12d6 electricity; failures fall prone and are dazed 1 round. (Irene)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.name",
+    "zhCN": "潮",
+    "enGB": "Tide"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.desc",
+    "zhCN": "【恶灵】你每次近战命中恢复 2d6 点生命值（每轮至多三次）；每轮首次造成重击或击杀敌人时，返还 1 轮恶灵持续时间（最多返还三轮）。——幽灵鲨",
+    "enGB": "[Specter] Necromancy; swift; personal; 3 rounds. Melee hits heal 2d6 (max 3/round); the first crit or kill each round returns 1 round of Specter duration. (Specter)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.name",
+    "zhCN": "画中世界",
+    "enGB": "Painted World"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.desc",
+    "zhCN": "学派：幻术（阴影）；标准动作；中距；一名敌人；意志无效。失败目标被收进画境 2 轮：这几轮它无法行动、也无法被攻击或选为目标；返回原位后麻痹 1 轮/级。——夕",
+    "enGB": "Illusion (shadow); standard; medium; one enemy; Will negates. A failing target is drawn into a painting for 2 rounds: it cannot act and cannot be attacked or targeted; when it returns it is paralyzed for 1 round/level. (Dusk)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.banish.name",
+    "zhCN": "画中世界（画境）",
+    "enGB": "Painted World (imprisoned)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.paralysis.name",
+    "zhCN": "画中世界（麻痹）",
+    "enGB": "Painted World (paralyzed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.name",
+    "zhCN": "耀阳颔首",
+    "enGB": "Blazing Sun's Bow"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.desc",
+    "zhCN": "直线内敌人受到 15d6 点神圣伤害，反射豁免失败者目盲 1 轮/级，成功者半伤且目眩 1 轮；直线内友军恢复 10d6 点生命值并解除目盲。——耀骑士临光",
+    "enGB": "Evocation (light); standard; 120-ft. line; Reflex partial. 15d6 holy to enemies in the line (blinded 1 round/level on failure, dazzled 1 round on success); allies in the line heal 10d6 and are cured of blindness. (Nearl the Radiant Knight)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalVigil.name",
+    "zhCN": "潮汐守望",
+    "enGB": "Tidal Vigil"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalVigil.desc",
+    "zhCN": "学派：防护；标准动作；以你为中心，30 尺爆发内全部友军；1 分钟/级。每轮开始获得 15 临时生命（刷新不叠加）；免疫魅惑与强迫。——浊心斯卡蒂",
+    "enGB": "Abjuration; standard; personal; all allies in a 30-ft. burst centered on you; 1 min./level. 15 temp hp each round (refreshing, not stacking); immunity to charm and compulsion. (Skadi the Corrupting Heart)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.name",
+    "zhCN": "影之疆域",
+    "enGB": "Shadow Realm"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.desc",
+    "zhCN": "以目标为中心形成 15 尺暗影领域并随其移动：区域内友军获得隐形；敌人进场或每轮开始时意志豁免失败者目盲 1 轮，成功者目眩 1 轮。离开区域者立即失去相关效果。——伊内丝",
+    "enGB": "Illusion (shadow); standard; medium; one ally; 1 round/level; Will partial. A 15-ft. realm follows the target: allies inside are invisible; enemies failing on entry or each round are blinded 1 round, dazzled 1 round on success. (Ines)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.name",
+    "zhCN": "岁稔",
+    "enGB": "Harvest of Years"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.desc",
+    "zhCN": "学派：咒法（治疗）；标准动作；以你为中心，30 尺爆发内全部友军；3 轮。每轮恢复 4d8 + 施法者等级；结束时未用掉的治疗转为临时生命（最多 60，持续 1 分钟）。——种地的大姐姐",
+    "enGB": "Conjuration (healing); standard; personal; all allies in a 30-ft. burst centered on you; 3 rounds. 4d8 + caster level each round; unused healing becomes temp hp (max 60, 1 minute) when it ends. (the farming big sister)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.name",
+    "zhCN": "旗帜不倒",
+    "enGB": "The Banner Stands"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.desc",
+    "zhCN": "学派：惑控；迅捷动作；以你为中心，30 尺爆发内全部友军；1 轮/级。目标生命值降至 0 或以下时不会死亡或昏迷，并能正常行动；法术结束时若仍低于 0 点生命则按通常规则结算。该效果不阻止即死效果。——琴柳",
+    "enGB": "Enchantment; swift; personal; all allies in a 30-ft. burst centered on you; 1 round/level. Targets at 0 or fewer hp stay conscious and act; normal rules apply when it ends. Does not stop death effects. (Saileach)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowBladeDraw.name",
+    "zhCN": "影霄·拔刀",
+    "enGB": "Shadow Blade: Draw"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowBladeDraw.desc",
+    "zhCN": "强韧豁免失败的目标立即死亡；豁免成功者仍受到 10d6 + 施法者等级点伤害。免疫即死的目标自动视为豁免成功。——阿米娅",
+    "enGB": "Necromancy; standard; medium; one enemy; Fortitude partial; SR no. Failure: death; success: 10d6 + caster level damage. Targets immune to death effects count as having succeeded. (Amiya)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chronostasis.name",
+    "zhCN": "时空静止",
+    "enGB": "Chronostasis"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chronostasis.desc",
+    "zhCN": "如同原版时间停止（表观 1d4+1 轮）。你不能直接影响其他生物或其装备，但可移动、布置区域效果并对自己施法。——莫斯提马",
+    "enGB": "Transmutation; standard; personal. As time stop (vanilla: 1d4+1 apparent rounds); you cannot directly affect others. (Mostima)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Cloudpiercer.name",
+    "zhCN": "穿云",
+    "enGB": "Cloudpiercer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Cloudpiercer.desc",
+    "zhCN": "学派：塑能；标准动作；极距；5 尺宽直线；反射减半。直线内敌人 20d6 穿刺，忽略伤害减免。——提丰",
+    "enGB": "Evocation; standard; long; 5-ft.-wide line; Reflex half. 20d6 piercing to enemies in the line, ignoring damage reduction. (Typhon)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EarthFury.name",
+    "zhCN": "大地之怒",
+    "enGB": "Earth's Fury"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EarthFury.desc",
+    "zhCN": "学派：塑能；标准动作；以你为中心，半径 30 尺；反射部分通过。敌人 10d6 轰击并倒地（成功半伤不倒地）；召唤物受双倍伤害。——卡涅利安",
+    "enGB": "Evocation; standard; personal; 30-ft. radius centered on you; Reflex partial. 10d6 bludgeoning and prone (half, no prone on success); summoned creatures take double damage. (Carnelian)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Reconstruction.name",
+    "zhCN": "重构",
+    "enGB": "Reconstruction"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Reconstruction.desc",
+    "zhCN": "学派：咒法（治疗）；标准动作；以你为中心，半径 30 尺。只复活友军（召唤物不复活，其余效果照常）；解除除诅咒、疾病、中毒以外的所有负面效果；阵亡者复活并恢复一半生命（至多三名）。——凯尔希",
+    "enGB": "Conjuration (healing); standard; personal; 30-ft. burst centered on you. Only allies revive (summons do not revive, other effects apply normally); cleanses all negative effects except curses, diseases and poisons; the dead return at half hp (max three). (Kal'tsit)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.name",
+    "zhCN": "旧日的战术家",
+    "enGB": "Tactician of Old"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.desc",
+    "zhCN": "【恶灵】变化；迅捷动作；个人；1 轮/级。补足你当前恶灵形态缺的另一半：同时获得敏捷与体质两个形态的全部收益，转移量额外 +2。需先开启恶灵形态（不在形态时无法施放）；不解除恶灵对普通指令的限制。",
+    "enGB": "[Specter] Transmutation; swift; personal; 1 round/level. Completes the other half of your current Specter form: gain both forms' full benefits, Transfer Value +2. Requires an active Specter form (cannot be cast otherwise); the restriction on normal orders remains."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.name",
+    "zhCN": "文明的存续",
+    "enGB": "The Survival of Civilization"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.desc",
+    "zhCN": "【10 环】学派：咒法（治疗）；标准动作；以你为中心 30 尺。30 尺内的友军完全恢复、解除除诅咒、疾病、中毒以外的所有负面效果、复活（至多五名）；其后 1 分钟攻击、伤害、AC、豁免 +4，且仅一次将降至 0 生命时保留 1 点。不清除剧情诅咒。",
+    "enGB": "[10th level] Conjuration (healing); standard; 30-ft. burst on you. Allies within 30 ft. are fully healed, cleansed of all negative effects except curses, diseases and poisons, revive up to five; then +4 to attacks, damage, AC, saves for 1 minute, surviving death at 1 hp once. Does not remove story curses."
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.name",
+    "zhCN": "永恒的注视",
+    "enGB": "Eternal Gaze"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.desc",
+    "zhCN": "【10 环】学派：防护；标准动作；以你为中心，30 尺爆发内全部友军；1 分钟/级。每个目标第一次将要死亡时，改为回满生命、传送至你身旁，并立刻获得 1 分钟加速。每个目标仅触发一次。——普瑞赛斯",
+    "enGB": "[10th level] Abjuration; standard; personal; all allies in a 30-ft. burst centered on you; 1 min./level. The first time each target would die: full hp, teleport beside you, and 1 minute of haste-like acceleration. Once per target. (Priestess)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CrownEcho.name",
+    "zhCN": "王冠的回响",
+    "enGB": "Echo of the Crown"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CrownEcho.desc",
+    "zhCN": "【10 环】学派：惑控（影响心灵）；标准动作；个人；以你为中心半径 60 尺爆发；意志部分通过。豁免失败者失去所有可驱散的法术增益并恍惚 1 轮（不过驱散检定；每人至多两个增益分给友军）；豁免成功者随机失去一个可驱散的法术增益，该增益直接消失。只取敌方的增益。——特蕾西娅",
+    "enGB": "[10th level] Enchantment; standard; personal; 60-ft. burst centred on you; Will partial. Failures lose all dispellable spell buffs and are dazed 1 round (no dispel check; up to two per enemy redistributed to allies); success loses one random dispellable spell buff, which vanishes. Only the enemy's own buffs are taken. (Theresa)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Catastrophe.name",
+    "zhCN": "天灾降临",
+    "enGB": "Catastrophe Descends"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Catastrophe.desc",
+    "zhCN": "【10 环】学派：塑能；整轮动作；极距；半径 40 尺；1 分钟；反射减半。每轮开始时，区域内每个敌人受一次 12d6 火焰、12d6 轰击与 12d6 电击伤害；同一生物每轮只受一次。",
+    "enGB": "[10th level] Evocation; full-round; long; 40-ft. radius; 1 minute; Reflex half. At the start of each round every enemy in the area takes 12d6 fire, 12d6 bludgeoning and 12d6 electricity once per round."
+  },
+  {
+    "Key": "rhodesdoctor.inkling.name",
+    "zhCN": "墨灵",
+    "enGB": "Ink Spirit"
+  },
+  {
+    "Key": "rhodesdoctor.inkling.deathburst.name",
+    "zhCN": "墨灵爆发",
+    "enGB": "Ink Burst"
+  },
+  {
+    "Key": "rhodesdoctor.inkling.deathburst.desc",
+    "zhCN": "墨灵被摧毁时在相邻敌人处爆发：2d6 力场伤害并目眩 1 轮（意志无效）。",
+    "enGB": "When destroyed, the ink spirit bursts: 2d6 force damage to an adjacent enemy and dazzled 1 round (Will negates)."
+  },
+  {
+    "Key": "rhodesdoctor.mirrorlock.name",
+    "zhCN": "镜像限制",
+    "enGB": "Mirror Restriction"
+  },
+  {
+    "Key": "rhodesdoctor.mirrorlock.desc",
+    "zhCN": "镜像复制体只能攻击、移动与使用普通物品，不能施法或使用职业能力。",
+    "enGB": "The mirror duplicate can only attack, move, and use ordinary items — no spells or abilities."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.debuff.name",
+    "zhCN": "缄默",
+    "enGB": "Silenced"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.buff.name",
+    "zhCN": "处决（蓄势）",
+    "enGB": "Execution (readied)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.enemy.name",
+    "zhCN": "钙质化（凝滞）",
+    "enGB": "Calcification (hindered)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.ally.name",
+    "zhCN": "钙质化（治疗）",
+    "enGB": "Calcification (healing)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.after.name",
+    "zhCN": "文明的存续（众志）",
+    "enGB": "Survival of Civilization (as one)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.after.desc",
+    "zhCN": "攻击、伤害、AC、豁免 +4；第一次将降至 0 生命时保留 1 点。",
+    "enGB": "+4 on attacks, damage, AC, saves; survive death once at 1 hp."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.buff.name",
+    "zhCN": "炮火延伸（炮击中）",
+    "enGB": "Artillery Barrage (incoming)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.buff.name",
+    "zhCN": "旗帜不倒",
+    "enGB": "The Banner Stands"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.blind.name",
+    "zhCN": "影之疆域（致盲）",
+    "enGB": "Shadow Realm (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.hide.name",
+    "zhCN": "影之疆域（隐形）",
+    "enGB": "Shadow Realm (invisible)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.touch.name",
+    "zhCN": "影之疆域（影触）",
+    "enGB": "Shadow Realm (touch)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.dazzle.name",
+    "zhCN": "影之疆域（目眩）",
+    "enGB": "Shadow Realm (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.slow.name",
+    "zhCN": "儿时的舞乐（迟缓）",
+    "enGB": "Dance of Childhood (slowed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.regen.name",
+    "zhCN": "儿时的舞乐（回生）",
+    "enGB": "Dance of Childhood (mending)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.buff.name",
+    "zhCN": "罪罚",
+    "enGB": "Sin and Punishment"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.name",
+    "zhCN": "测试木桩",
+    "enGB": "Test Dummy"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.lowhp.name",
+    "zhCN": "脆皮木桩（10 血）",
+    "enGB": "Frail Dummy (10 HP)"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.armor.name",
+    "zhCN": "测试增益·护甲",
+    "enGB": "Test Buff: Armor"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.armor.desc",
+    "zhCN": "测试木桩自带：AC 获得 +4 天生护甲加值。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +4 natural armor to AC. Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.resist.name",
+    "zhCN": "测试增益·抗力",
+    "enGB": "Test Buff: Resistance"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.resist.desc",
+    "zhCN": "测试木桩自带：火、寒、电、酸、音波抗力各 10 点（可与其他来源叠加）。可被驱散与偷取。",
+    "enGB": "Test dummy buff: resistance 10 to fire, cold, electricity, acid and sonic (stacking). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.buff.hasteaccel.name",
+    "zhCN": "加速",
+    "enGB": "Hastened"
+  },
+  {
+    "Key": "rhodesdoctor.buff.hasteaccel.desc",
+    "zhCN": "速度提升，全力攻击时多一次攻击；不含加速术的其他加值，可与加速术叠加。",
+    "enGB": "Increased speed and one extra attack on a full attack; no other haste bonuses, and it stacks with haste."
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.residual.name",
+    "zhCN": "岁稔（余温）",
+    "enGB": "Harvest of Years (lingering)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.residual.desc",
+    "zhCN": "把未用完的治疗转为临时生命，持续 1 分钟。",
+    "enGB": "Unused healing becomes temporary hit points for 1 minute."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buffed.name",
+    "zhCN": "增益木桩（6 个常见增益）",
+    "enGB": "Buffed Dummy (6 buffs)"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.haste.name",
+    "zhCN": "测试增益·加速",
+    "enGB": "Test Buff: Haste"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.haste.desc",
+    "zhCN": "测试木桩自带：AC 与反射 +1（闪避），攻击 +1（不具类型）——加速术的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +1 dodge AC and Reflex, +1 untyped attack (haste-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bless.name",
+    "zhCN": "测试增益·祝福",
+    "enGB": "Test Buff: Bless"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bless.desc",
+    "zhCN": "测试木桩自带：攻击 +1（士气）——祝福术的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +1 morale attack (bless-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.magearmor.name",
+    "zhCN": "测试增益·法师护甲",
+    "enGB": "Test Buff: Mage Armor"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.magearmor.desc",
+    "zhCN": "测试木桩自带：AC +4（护甲）——法师护甲的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +4 armor AC (mage armor-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.shield.name",
+    "zhCN": "测试增益·护盾",
+    "enGB": "Test Buff: Shield"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.shield.desc",
+    "zhCN": "测试木桩自带：AC +4（盾牌）——护盾术的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +4 shield AC (shield-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.heroism.name",
+    "zhCN": "测试增益·英雄气概",
+    "enGB": "Test Buff: Heroism"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.heroism.desc",
+    "zhCN": "测试木桩自带：攻击与三项豁免 +2（士气）——英雄气概的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +2 morale on attacks and all saves (heroism-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bearendurance.name",
+    "zhCN": "测试增益·熊之坚韧",
+    "enGB": "Test Buff: Bear's Endurance"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bearendurance.desc",
+    "zhCN": "测试木桩自带：体质 +4（增强）——熊之坚韧的近似。可被驱散与偷取。",
+    "enGB": "Test dummy buff: +4 enhancement Constitution (bear's endurance-like). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.panic.name",
+    "zhCN": "惊惧",
+    "enGB": "Frightened"
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.panic.desc",
+    "zhCN": "恐惧：必须逃离恐惧源；攻击检定、豁免、技能与属性检定 −2。",
+    "enGB": "Fear: must flee from the source; −2 penalty on attack rolls, saving throws, skill and ability checks."
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.shaken.name",
+    "zhCN": "动摇",
+    "enGB": "Shaken"
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.shaken.desc",
+    "zhCN": "恐惧：攻击检定、豁免、技能与属性检定 −2。",
+    "enGB": "Fear: −2 penalty on attack rolls, saving throws, skill and ability checks."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.mark.name",
+    "zhCN": "连锁殉爆（标记）",
+    "enGB": "Chain Detonation (marked)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.enduring.name",
+    "zhCN": "旧日的战术家（坚韧）",
+    "enGB": "Tactician of Old (enduring)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.agile.name",
+    "zhCN": "旧日的战术家（敏捷）",
+    "enGB": "Tactician of Old (agile)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.mark.name",
+    "zhCN": "终末狙击（标记）",
+    "enGB": "Final Snipe (marked)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.buff.name",
+    "zhCN": "永恒的注视",
+    "enGB": "Eternal Gaze"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.buff.name",
+    "zhCN": "潮",
+    "enGB": "Tide"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.buff.name",
+    "zhCN": "迅捷突破",
+    "enGB": "Swift Breach"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.conceal.name",
+    "zhCN": "烟幕掩护（隐蔽）",
+    "enGB": "Smokescreen (concealed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.reveal.name",
+    "zhCN": "信标投射（显形）",
+    "enGB": "Beacon Projection (revealed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.buff.name",
+    "zhCN": "岁稔（积攒）",
+    "enGB": "Harvest of Years (accumulating)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.holder.name",
+    "zhCN": "影之疆域（领域）",
+    "enGB": "Shadow Realm (field)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.blind.name",
+    "zhCN": "耀阳颔首（目盲）",
+    "enGB": "Blazing Sun Bow (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.dazzle.name",
+    "zhCN": "耀阳颔首（目眩）",
+    "enGB": "Blazing Sun Bow (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.bomb.name",
+    "zhCN": "延时爆破（炸弹）",
+    "enGB": "Delayed Blast (bomb)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.ember.name",
+    "zhCN": "火山（余焰）",
+    "enGB": "Volcano (ember)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.melt.name",
+    "zhCN": "黄昏（熔火）",
+    "enGB": "Twilight (molten)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.dazzle.name",
+    "zhCN": "闪光弹（目眩）",
+    "enGB": "Flashbang (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.blind.name",
+    "zhCN": "闪光弹（目盲）",
+    "enGB": "Flashbang (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.resist.name",
+    "zhCN": "灼烧（抗性降低）",
+    "enGB": "Scorch (resistance lowered)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.burn.name",
+    "zhCN": "黑蛇之焰（灼烧）",
+    "enGB": "Black Snake Flame (burning)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.entangled.name",
+    "zhCN": "冰封领域（定身）",
+    "enGB": "Frozen Domain (entangled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.halfspeed.name",
+    "zhCN": "冰封领域（减速）",
+    "enGB": "Frozen Domain (slowed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.sleep.name",
+    "zhCN": "醉梦（沉眠）",
+    "enGB": "Drunken Dream (asleep)"
+  }
+]

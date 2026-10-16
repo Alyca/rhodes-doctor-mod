@@ -1,0 +1,2403 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Core.Cheats;
+using JetBrains.Annotations;
+using Kingmaker.AI;
+using Kingmaker.AreaLogic;
+using Kingmaker.AreaLogic.AlushenyrraIsles;
+using Kingmaker.AreaLogic.Cutscenes;
+using Kingmaker.AreaLogic.QuestSystem;
+using Kingmaker.AreaLogic.SummonPool;
+using Kingmaker.Armies.TacticalCombat.Controllers;
+using Kingmaker.Assets.Controllers.GlobalMap;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Area;
+using Kingmaker.Blueprints.Root;
+using Kingmaker.BundlesLoading;
+using Kingmaker.Cheats;
+using Kingmaker.Controllers;
+using Kingmaker.Controllers.Clicks;
+using Kingmaker.Controllers.Clicks.Handlers;
+using Kingmaker.Controllers.Combat;
+using Kingmaker.Controllers.Dialog;
+using Kingmaker.Controllers.MapObjects;
+using Kingmaker.Controllers.Optimization;
+using Kingmaker.Controllers.Projectiles;
+using Kingmaker.Controllers.Rest;
+using Kingmaker.Controllers.Units;
+using Kingmaker.DLC;
+using Kingmaker.Designers;
+using Kingmaker.Designers.EventConditionActionSystem.ContextData;
+using Kingmaker.DialogSystem.Blueprints;
+using Kingmaker.Dungeon;
+using Kingmaker.Dungeon.Blueprints;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Persistence;
+using Kingmaker.EntitySystem.Persistence.Scenes;
+using Kingmaker.GameModes;
+using Kingmaker.Globalmap;
+using Kingmaker.Globalmap.Blueprints;
+using Kingmaker.GradientSystem;
+using Kingmaker.Items;
+using Kingmaker.Kingdom;
+using Kingmaker.Localization;
+using Kingmaker.PubSubSystem;
+using Kingmaker.QA;
+using Kingmaker.RandomEncounters;
+using Kingmaker.ResourceLinks;
+using Kingmaker.RuleSystem;
+using Kingmaker.Settings;
+using Kingmaker.Sound;
+using Kingmaker.Tutorial;
+using Kingmaker.UI;
+using Kingmaker.UI.Common;
+using Kingmaker.UI.DragNDrop;
+using Kingmaker.UI.MVVM;
+using Kingmaker.UI.MVVM._VM.ChoseControllerMode;
+using Kingmaker.UI.Models.Log;
+using Kingmaker.UI.Models.Log.CombatLog_ThreadSystem;
+using Kingmaker.UI.PhotoMode;
+using Kingmaker.UI.SettingsUI;
+using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Class.LevelUp;
+using Kingmaker.UnitLogic.Groups;
+using Kingmaker.UnitLogic.Parts;
+using Kingmaker.Utility;
+using Kingmaker.View;
+using Kingmaker.Visual.CharacterSystem;
+using Kingmaker.Visual.Particles;
+using Kingmaker.Visual.Particles.FxSpawnSystem;
+using Kingmaker.Visual.Sound;
+using Locations.Alushenyrra;
+using Owlcat.Runtime.Core.Logging;
+using Owlcat.Runtime.Core.Physics.PositionBasedDynamics;
+using Owlcat.Runtime.Core.Utils;
+using Owlcat.Runtime.Core.Utils.Locator;
+using Owlcat.Runtime.Hardware;
+using Owlcat.Runtime.UI.ConsoleTools.GamepadInput;
+using Owlcat.Runtime.UI.Utility;
+using Owlcat.Runtime.Visual.Dxt;
+using Owlcat.Runtime.Visual.RenderPipeline.RendererFeatures.PositionBasedDynamics;
+using TurnBased.Controllers;
+using UniRx;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Kingmaker;
+
+public class Game
+{
+	public enum ControllerModeType
+	{
+		Mouse,
+		Gamepad
+	}
+
+	private static Game s_Instance;
+
+	private ControllerModeType m_ControllerMode;
+
+	private CompositeDisposable m_BugReportDisposable;
+
+	private readonly List<GameTask> m_BeforeTickActions = new List<GameTask>();
+
+	private readonly Stack<GameMode> m_GameModes = new Stack<GameMode>();
+
+	private readonly SceneLoader m_SceneLoader = new SceneLoader();
+
+	private int[] m_ModesCount = new int[0];
+
+	private bool m_GameModeTicking;
+
+	private UnitEntityData m_DefaultUnit;
+
+	private bool m_AlreadyInitialized;
+
+	private AudioFilePackagesSettings.AudioChunk? m_LoadedCampaignAudioChunk;
+
+	public readonly ProjectileController ProjectileController = new ProjectileController();
+
+	public readonly Rulebook Rulebook = new Rulebook();
+
+	public readonly PersistentState State = new PersistentState();
+
+	public StaticInfoCollector StaticInfoCollector = new StaticInfoCollector();
+
+	public readonly UnitGroupsController UnitGroupsController = new UnitGroupsController();
+
+	public readonly KeyboardAccess Keyboard = new KeyboardAccess();
+
+	public readonly TimeController TimeController = new TimeController();
+
+	public readonly TimedEventsController TimedEventsController = new TimedEventsController();
+
+	public readonly EntityCreationController EntityCreator = new EntityCreationController();
+
+	public readonly EntityDestructionController EntityDestroyer = new EntityDestructionController();
+
+	public readonly UnitMemoryController UnitMemoryController = new UnitMemoryController();
+
+	public readonly UnitStealthController StealthController = new UnitStealthController();
+
+	public readonly CursorController CursorController = new CursorController();
+
+	public readonly RandomEncountersController RandomEncountersController = new RandomEncountersController();
+
+	public readonly GlobalMapController GlobalMapController = new GlobalMapController();
+
+	public readonly KingdomController KingdomController = new KingdomController();
+
+	public readonly GroupCommandsController GroupCommands = new GroupCommandsController();
+
+	public readonly DialogController DialogController = new DialogController(headlessMode: false);
+
+	public readonly RestController RestController = new RestController();
+
+	public readonly RealtimeLightsController LightsController = new RealtimeLightsController();
+
+	public readonly AbilityExecutionController AbilityExecutor = new AbilityExecutionController();
+
+	public readonly FogOfWarController FogOfWar = new FogOfWarController();
+
+	public readonly FogOfWarGlobalMapController FogOfWarGM = new FogOfWarGlobalMapController();
+
+	public readonly FollowersFormationController FollowersFormationController = new FollowersFormationController();
+
+	public readonly ProjectileSpawnerController ProjectileSpawnerController = new ProjectileSpawnerController();
+
+	public readonly FxSpawnController FxSpawnController = new FxSpawnController();
+
+	public readonly TacticalCombatController TacticalCombat = new TacticalCombatController();
+
+	public readonly TacticalCombatGridController TacticalGridController = new TacticalCombatGridController();
+
+	public readonly UpdateController<IUpdatable> CustomUpdateController = new UpdateController<IUpdatable>();
+
+	public readonly UpdateController<IUpdatable> GlobalMapViewController = new UpdateController<IUpdatable>();
+
+	public readonly UpdateController<IUpdatable> GlobalMapNavigationArrowsController = new UpdateController<IUpdatable>();
+
+	public readonly UnitVisionRangeController UnitVisionRangeController = new UnitVisionRangeController();
+
+	public readonly EntityBoundsController EntityBoundsController = new EntityBoundsController();
+
+	public readonly TravelLogicController TravelLogicController = new TravelLogicController();
+
+	public readonly SelectionCharacterController SelectionCharacter = new SelectionCharacterController();
+
+	public readonly CombatController TurnBasedCombatController = new CombatController();
+
+	public readonly AiBrainController AiBrainController = new AiBrainController();
+
+	public readonly UnitTicksController UnitTicksController = new UnitTicksController();
+
+	public readonly IslesController IslesController = new IslesController();
+
+	public readonly UnitActivatableAbilitiesController ActivatableAbilitiesController = new UnitActivatableAbilitiesController();
+
+	public readonly SaddledUnitController SaddledUnitController = new SaddledUnitController();
+
+	public readonly DungeonController DungeonController = new DungeonController();
+
+	public readonly GameLogController GameLogController = new GameLogController();
+
+	public readonly PointerController DefaultPointerController = new PointerController(new ClickWithSelectedAbilityHandler(), new PlaceRestMarkerHandler(), new ClickUnitHandler(), new ClickMapObjectHandler(), new ClickGroundHandler(), new ClickOnDetectClicksObjectHandler());
+
+	public readonly LocustController LocustController = new LocustController();
+
+	public readonly PhotoModeController PhotoModeController = new PhotoModeController();
+
+	public readonly UIAccess UI = new UIAccess();
+
+	public readonly UISettingsManager UISettingsManager = new UISettingsManager();
+
+	public readonly UIPhotoModeManager UIPhotoModeManager = new UIPhotoModeManager();
+
+	public readonly SaveManager SaveManager = new SaveManager();
+
+	public readonly VendorLogic Vendor = new VendorLogic();
+
+	private Runner m_Runner;
+
+	public CountableFlag IsBlockUnloadScene = new CountableFlag();
+
+	[CanBeNull]
+	private static BlueprintAreaPreset s_NewGamePreset;
+
+	[CanBeNull]
+	private static SaveInfo s_ImportSave;
+
+	[CanBeNull]
+	private static UnitEntityData s_NewGameUnit;
+
+	private TimeOfDay? m_TimeOfDayOverrideVisual;
+
+	private bool m_WillBePaused;
+
+	public bool m_IsFakePause;
+
+	private ServiceProxy<SummonPoolsManager> m_SummonPoolsProxy;
+
+	private bool m_MatchTimeOfDayScheduled;
+
+	public bool InvertPauseButtonPressed;
+
+	private float m_LoadingProgress;
+
+	private float m_LoadingScenesProgress;
+
+	public ControllerModeType ControllerMode
+	{
+		get
+		{
+			return m_ControllerMode;
+		}
+		set
+		{
+			m_ControllerMode = value;
+			m_BugReportDisposable?.Dispose();
+			m_BugReportDisposable = null;
+			if (m_ControllerMode == ControllerModeType.Gamepad)
+			{
+				m_BugReportDisposable = BugReportControls.AddBugReportControls();
+			}
+			if (BuildModeUtility.IsDevelopment)
+			{
+				return;
+			}
+			try
+			{
+				Cursor.visible = value == ControllerModeType.Mouse;
+			}
+			catch
+			{
+			}
+		}
+	}
+
+	public bool IsControllerMouse => ControllerMode == ControllerModeType.Mouse;
+
+	public bool IsControllerGamepad => ControllerMode == ControllerModeType.Gamepad;
+
+	public bool AlreadyInitialized => m_AlreadyInitialized;
+
+	public GameStatistic Statistic => Services.GetInstance<GameStatistic>();
+
+	public PointerController ClickEventsController { get; private set; }
+
+	public CameraController CameraController { get; private set; }
+
+	public InteractionHighlightController InteractionHighlightController { get; private set; }
+
+	public UnitHandEquipmentController HandsEquipmentController { get; private set; }
+
+	public UnitCombatEngagementController CombatEngagementController { get; private set; }
+
+	[CanBeNull]
+	public static BlueprintAreaPreset NewGamePreset
+	{
+		get
+		{
+			return s_NewGamePreset;
+		}
+		set
+		{
+			PFLog.System.Log($"NewGamePreset setter | old={s_NewGamePreset} | new={value}");
+			s_NewGamePreset = value;
+			UISettingsRoot.Instance.UpdateOverrides();
+			ImportSave = null;
+		}
+	}
+
+	[CanBeNull]
+	public static SaveInfo ImportSave
+	{
+		get
+		{
+			return s_ImportSave;
+		}
+		set
+		{
+			PFLog.System.Log($"ImportSave setter | old={s_ImportSave} | new={value}");
+			s_ImportSave = value;
+		}
+	}
+
+	[CanBeNull]
+	public static UnitEntityData NewGameUnit
+	{
+		get
+		{
+			return s_NewGameUnit;
+		}
+		set
+		{
+			PFLog.System.Log($"NewGameUnit setter | old={s_NewGameUnit} | new={value}");
+			s_NewGameUnit = value;
+		}
+	}
+
+	public static Game Instance
+	{
+		get
+		{
+			if (s_Instance != null)
+			{
+				return s_Instance;
+			}
+			PFLog.Default.Log("Creating Game Instance");
+			EnsureServices();
+			s_Instance = new Game();
+			return s_Instance;
+		}
+	}
+
+	public static bool HasInstance => s_Instance != null;
+
+	public Runner Runner => m_Runner = ObjectExtensions.Or(m_Runner, UnityEngine.Object.FindObjectOfType<Runner>());
+
+	public static bool ClothDisabled { get; private set; }
+
+	public static bool IsBlockCamera
+	{
+		get
+		{
+			Camera camera = Instance.UI.GetCameraRig()?.Camera;
+			if (!camera)
+			{
+				return true;
+			}
+			if (camera.enabled && !camera.targetTexture)
+			{
+				return !camera.gameObject.activeSelf;
+			}
+			return true;
+		}
+	}
+
+	public List<UnitGroup> UnitGroups => UnitGroupsController.Groups;
+
+	public List<UnitGroup> ReadyForCombatUnitGroups => UnitGroupsController.AwakeGroups;
+
+	public BlueprintRoot BlueprintRoot => ResourcesLibrary.GetRoot();
+
+	public AreaPersistentState LoadedAreaState => State.LoadedAreaState;
+
+	public TimeOfDay TimeOfDay { get; private set; }
+
+	public TimeOfDay TimeOfDayVisual => m_TimeOfDayOverrideVisual ?? TimeOfDay;
+
+	public Player Player => State.PlayerState;
+
+	public BlueprintArea CurrentlyLoadedArea => m_SceneLoader.CurrentlyLoadedArea;
+
+	[CanBeNull]
+	public BlueprintAreaPart CurrentlyLoadedAreaPart => m_SceneLoader.CurrentlyLoadedAreaPart;
+
+	public RootGroup DynamicRoot => m_SceneLoader.DynamicRoot;
+
+	public RootGroup CrossSceneRoot => m_SceneLoader.CrossSceneRoot;
+
+	public RootUIContext RootUiContext { get; } = new RootUIContext();
+
+	public bool IsUnloading { get; set; }
+
+	public bool IsLoadingSave => LoadingSave != null;
+
+	public SaveInfo LoadingSave { get; private set; }
+
+	public bool IsFakePause
+	{
+		get
+		{
+			return m_IsFakePause;
+		}
+		set
+		{
+			if (m_IsFakePause != value)
+			{
+				m_IsFakePause = value;
+				if (m_IsFakePause)
+				{
+					TimeController.PlayerTimeScale = 0f;
+				}
+				else
+				{
+					TimeController.PlayerTimeScale = 1f;
+				}
+			}
+		}
+	}
+
+	public bool IsPaused
+	{
+		get
+		{
+			return IsModeActive(GameModeType.Pause);
+		}
+		set
+		{
+			InputLog.Log($"Try to set IsPause property in Game. Current value == {IsPaused}. New value == {value}");
+			if (value == IsPaused || m_WillBePaused)
+			{
+				InputLog.Log("value == IsPaused. return");
+			}
+			else if (value && PauseOnLoadPendingTicks > 0)
+			{
+				InputLog.Log("PauseOnLoadPendingTicks > 0 && value. return");
+			}
+			else if (LoadingProcess.Instance.IsManualLoadingScreenActive && value)
+			{
+				InputLog.Log("LoadingProcess.Instance.IsManualLoadingScreenActive && value. return");
+			}
+			else if (LoadingProcess.Instance.IsLoadingScreenActive && value)
+			{
+				InputLog.Log("LoadingProcess.Instance.IsLoadingScreenActive && value. postpone");
+				PauseAfterLoad();
+			}
+			else if (value)
+			{
+				m_WillBePaused = true;
+				DefaultPointerController.SkipDeactivation = true;
+				InputLog.Log("Try to StartMode(GameModeType.Pause)");
+				StartMode(GameModeType.Pause);
+			}
+			else
+			{
+				DefaultPointerController.SkipDeactivation = true;
+				InputLog.Log("Try to StopMode(GameModeType.Pause)");
+				StopMode(GameModeType.Pause);
+			}
+		}
+	}
+
+	public SummonPoolsManager SummonPools
+	{
+		get
+		{
+			m_SummonPoolsProxy = ((m_SummonPoolsProxy?.Instance != null) ? m_SummonPoolsProxy : Services.GetProxy<SummonPoolsManager>());
+			if (m_SummonPoolsProxy?.Instance == null)
+			{
+				Services.RegisterServiceInstance(new SummonPoolsManager());
+				m_SummonPoolsProxy = Services.GetProxy<SummonPoolsManager>();
+			}
+			return m_SummonPoolsProxy?.Instance;
+		}
+	}
+
+	public UnitEntityData DefaultUnit
+	{
+		get
+		{
+			if (m_DefaultUnit == null)
+			{
+				m_DefaultUnit = new UnitEntityData(GameConsts.DefaultUnitUniqueId, isInGame: false, BlueprintRoot.SystemMechanics.DefaultUnit);
+			}
+			return m_DefaultUnit;
+		}
+	}
+
+	public GameModeType CurrentMode
+	{
+		get
+		{
+			if (m_GameModes.Count > 0)
+			{
+				return m_GameModes.Peek().Type;
+			}
+			return GameModeType.None;
+		}
+	}
+
+	public bool IsFullScreenUI => m_GameModes.Any((GameMode mode) => mode.Type == GameModeType.FullScreenUi);
+
+	public ClickWithSelectedAbilityHandler SelectedAbilityHandler { get; private set; }
+
+	public ClickOnDetectClicksObjectHandler SelectedClicksObjectHandler { get; private set; }
+
+	public PlaceRestMarkerHandler PlaceRestMarkerHandler { get; private set; }
+
+	public CutsceneLock CutsceneLock { get; } = new CutsceneLock();
+
+	public int PauseOnLoadPendingTicks { get; private set; }
+
+	public LevelUpController LevelUpController { get; set; }
+
+	public float UILoadingProgress => m_LoadingProgress * 0.6f + m_LoadingScenesProgress * 0.4f;
+
+	private int[] ModesCount
+	{
+		get
+		{
+			if (m_ModesCount.Length < GameModeType.Count)
+			{
+				int[] array = new int[GameModeType.Count];
+				Array.Copy(m_ModesCount, array, m_ModesCount.Length);
+				m_ModesCount = array;
+			}
+			return m_ModesCount;
+		}
+	}
+
+	public bool IsTempHighlight { get; set; }
+
+	public AreaPersistentState CurrentScene => State.LoadedAreaState;
+
+	public static ControllerModeType? ControllerOverride
+	{
+		get
+		{
+			string text = BuildModeUtility.Data?.ForceControllerMode;
+			if (text.IsNullOrEmpty())
+			{
+				return null;
+			}
+			if (text.ToLower() == "gamepad")
+			{
+				return ControllerModeType.Gamepad;
+			}
+			if (text.ToLower() == "mouse")
+			{
+				return ControllerModeType.Mouse;
+			}
+			PFLog.Default.Error("Strange value in ForceControllerMode in startup.json - defaulting to mouse");
+			return ControllerModeType.Mouse;
+		}
+	}
+
+	[Cheat(Name = "wait_on_start_uuac")]
+	private static int m_WaitOnStart { get; set; } = 100;
+
+	private Game()
+	{
+		if (s_Instance != null)
+		{
+			ControllerMode = s_Instance.ControllerMode;
+			return;
+		}
+		ControllerMode = (GamepadConnectDisconnectVM.GamepadIsConnected ? ControllerModeType.Gamepad : ControllerModeType.Mouse);
+		if (ControllerOverride.HasValue)
+		{
+			ControllerMode = ControllerOverride.Value;
+		}
+		if (BuildModeUtility.Data != null && PlatformManager.ShowSwitchController)
+		{
+			GamePad.Instance.IsSwitchController.Value = true;
+		}
+	}
+
+	public bool IsModeActive(GameModeType gameModeType)
+	{
+		return ModesCount[(int)gameModeType] > 0;
+	}
+
+	public bool IsModeActiveOrActivateSoon(GameModeType gameModeType)
+	{
+		if (IsModeActive(gameModeType))
+		{
+			return true;
+		}
+		lock (m_BeforeTickActions)
+		{
+			return m_BeforeTickActions.HasItem((GameTask i) => (i as GameTaskStartMode)?.GameMode == gameModeType);
+		}
+	}
+
+	public void Initialize()
+	{
+		if (m_AlreadyInitialized)
+		{
+			return;
+		}
+		using (CodeTimer.New("Game ctor"))
+		{
+			CursorController.Activate();
+			LocalizationManager.Init();
+			Keyboard.RegisterBuiltinBindings();
+			Screenshot.Initialize(Keyboard);
+			Keyboard.Bind("QuickSave", delegate
+			{
+				MakeQuickSave();
+			});
+			Keyboard.Bind("QuickLoad", delegate
+			{
+				QuickLoadGame();
+			});
+			Keyboard.Bind("Stop", delegate
+			{
+				UI.SelectionManager.SwitchStop();
+			});
+			Keyboard.Bind("Hold", delegate
+			{
+				UI.SelectionManager.SwitchHold();
+			});
+			if (ResourcesLibrary.GetRoot() == null)
+			{
+				Debug.LogError("Boom! No root!");
+			}
+			if (ResourcesLibrary.GetRoot().RE == null)
+			{
+				Debug.LogError("Boom! No RE in root!");
+				ResourcesLibrary.GetRoot().Foo();
+			}
+			if (BuildModeUtility.IsCheatsEnabled)
+			{
+				CheatsCommon.RegisterCheats(Keyboard);
+				CheatsRelease.RegisterCheats(Keyboard);
+			}
+			CheatsSilly.RegisterCheats(Keyboard);
+			CheatsManagerHolder.Instance.RegisterExternals(SmartConsole.Everyting, SmartConsole.ExecuteLine);
+			InputLog.Log("Try to bind Pause in Game.Initialize()");
+			Keyboard.Bind("Pause", PauseBind);
+			InputLog.Log("End of Pause binding");
+			Keyboard.Bind(UISettingsRoot.Instance.SkipBark.name, SkipBark);
+			Keyboard.Bind(UISettingsRoot.Instance.SkipCutscene.name, SkipCutscene);
+			InputLog.Log("Try to bind UnpauseOn");
+			Keyboard.Bind("UnpauseOn", UnpauseBindOn);
+			InputLog.Log("Try to bind UnpauseOff");
+			Keyboard.Bind("UnpauseOff", UnpauseBindOff);
+			UI.EscManager.Initialize();
+			UI.UICamera = UICamera.Claim();
+			ClothDisabled = CommandLineArguments.Parse().Contains("clothdisabled");
+			Player.Initialize();
+			SceneEntitiesState.OnAdded += CrossSceneStateHandler;
+			SceneEntitiesState.OnRemoved += CrossSceneStateHandler;
+			GameHistoryLog.Initialize();
+			m_AlreadyInitialized = true;
+		}
+	}
+
+	public void MakeQuickSave()
+	{
+		SaveManager.UpdateSaveListIfNeeded();
+		SaveGame(SaveManager.GetNextQuickslot());
+	}
+
+	public void SkipBark()
+	{
+		if (CurrentMode == GameModeType.Rest)
+		{
+			RestController.SkipPhase();
+		}
+		else
+		{
+			CutsceneController.SkipBarkBanter();
+		}
+	}
+
+	private void SkipCutscene()
+	{
+		CutsceneController.SkipCutscene();
+	}
+
+	public void PauseAfterLoad()
+	{
+		if (PauseOnLoadPendingTicks == 0)
+		{
+			PauseOnLoadPendingTicks = 2;
+		}
+	}
+
+	public void PauseBind()
+	{
+		InputLog.Log("Start of PauseBind() method");
+		if (UIUtility.IsGlobalMap())
+		{
+			EventBus.RaiseEvent(delegate(IGlobalMapBreakHandler h)
+			{
+				h.OnBreak();
+			});
+			InputLog.Log("Stop PauseBind() because UIUtility.IsGlobalMap()");
+			return;
+		}
+		if (CombatController.IsInTurnBasedCombat())
+		{
+			InputLog.Log("CombatController.IsInTurnBasedCombat() == true");
+			if (TurnBasedCombatController.WaitingForUI.Value && UI.TurnBasedUI != null)
+			{
+				InputLog.Log("UI.TurnBasedUI.HideCombatStartWindow()");
+				UI.TurnBasedUI.HideCombatStartWindow();
+			}
+			else if (Instance.TurnBasedCombatController.CurrentTurn != null)
+			{
+				if (Instance.TurnBasedCombatController.CurrentTurn.CanEndTurnAndNoActing())
+				{
+					InputLog.Log("TurnBasedCombatController.CurrentTurn.ForceToEnd()");
+					UISoundController.Instance.Play(UISoundType.EndTurn);
+					TurnBasedCombatController.CurrentTurn.ForceToEnd();
+				}
+				else
+				{
+					InputLog.Log("Player.UISettings.DoSpeedUp()");
+					Player.UISettings.DoSpeedUp();
+				}
+			}
+			else
+			{
+				InputLog.Log("Player.UISettings.DoSpeedUp()");
+				Player.UISettings.DoSpeedUp();
+			}
+		}
+		else
+		{
+			InputLog.Log("CombatController.IsInTurnBasedCombat() == false; IsPaused = !IsPaused");
+			IsPaused = !IsPaused;
+		}
+		InputLog.Log("End of PauseBind() method");
+	}
+
+	public void UnpauseBindOff()
+	{
+		InvertPauseButtonPressed = false;
+		InputLog.Log($"UnpauseBindOff. InvertPauseButtonPressed = {InvertPauseButtonPressed}");
+	}
+
+	public void UnpauseBindOn()
+	{
+		InvertPauseButtonPressed = true;
+		InputLog.Log($"UnpauseBindOn. InvertPauseButtonPressed = {InvertPauseButtonPressed}");
+	}
+
+	public static void EnsureServices()
+	{
+		if (Services.GetInstance<EntityService>() == null)
+		{
+			Services.RegisterServiceInstance(new EntityService());
+		}
+		if (Services.GetInstance<TemporaryEntityService>() == null)
+		{
+			Services.RegisterServiceInstance(new TemporaryEntityService());
+		}
+		if (Services.GetInstance<SoundState>() == null)
+		{
+			PFLog.Audio.Log("Initialize SoundState");
+			Services.RegisterServiceInstance(new SoundState());
+		}
+		if (Services.GetInstance<DxtCompressorService>() == null)
+		{
+			Services.RegisterServiceInstance(new DxtCompressorService());
+		}
+		if (Services.GetInstance<CharacterAtlasService>() == null)
+		{
+			Services.RegisterServiceInstance(new CharacterAtlasService());
+		}
+		if (Services.GetInstance<LogThreadService>() == null)
+		{
+			Services.RegisterServiceInstance(new LogThreadService());
+		}
+		if (Services.GetInstance<GameStatistic>() == null)
+		{
+			GameStatistic.Register();
+		}
+		PFLog.Default.Log("EnsureServices finished");
+	}
+
+	private void ExecuteBeforeTickActions()
+	{
+		lock (m_BeforeTickActions)
+		{
+			for (int i = 0; i < m_BeforeTickActions.Count; i++)
+			{
+				GameTask gameTask = m_BeforeTickActions[i];
+				if (!(gameTask is GameTaskAction gameTaskAction))
+				{
+					if (!(gameTask is GameTaskStartMode gameTaskStartMode))
+					{
+						if (!(gameTask is GameTaskStopMode gameTaskStopMode))
+						{
+							throw new ArgumentOutOfRangeException();
+						}
+						DoStopMode(gameTaskStopMode.GameMode);
+					}
+					else
+					{
+						DoStartMode(gameTaskStartMode.GameMode);
+					}
+				}
+				else
+				{
+					gameTaskAction.Action();
+				}
+			}
+			m_BeforeTickActions.Clear();
+		}
+	}
+
+	public void Tick()
+	{
+		if (!LoadingProcess.Instance.IsLoadingInProcess)
+		{
+			ExecuteBeforeTickActions();
+		}
+		UnitAtlasService.Instance?.Tick();
+		if (LoadingProcess.Instance.IsLoadingInProcess)
+		{
+			Statistic.Tick(this);
+			SoundState.Instance.UpdateScheduledAreaMusic();
+			TimeController.Suspend();
+			return;
+		}
+		SoundState.Instance.Update();
+		if (LoadingProcess.Instance.IsLoadingScreenActive && m_GameModes.Count <= 0)
+		{
+			return;
+		}
+		try
+		{
+			m_GameModeTicking = true;
+			TimeController.TickRealTime();
+			m_GameModes.Peek().Tick();
+			Statistic.Tick(this);
+			TemporaryEntityService.Instance?.Tick();
+		}
+		finally
+		{
+			m_GameModeTicking = false;
+		}
+		if (PauseOnLoadPendingTicks > 0)
+		{
+			PauseOnLoadPendingTicks--;
+			if (PauseOnLoadPendingTicks == 0)
+			{
+				IsPaused = true;
+			}
+		}
+		Services.GetInstance<CharacterAtlasService>()?.Update();
+	}
+
+	public void HandleQuit()
+	{
+		PlayerPrefs.Save();
+		Statistic.Quit();
+		StaticInfoCollector.Quit();
+		SaveManager.WaitCommit();
+		AreaDataStash.CloseAndDelete();
+		Owlcat.Runtime.Core.Logging.Logger.Instance.DisposeLogSinks();
+	}
+
+	public void ScheduleAction(Action action)
+	{
+		lock (m_BeforeTickActions)
+		{
+			m_BeforeTickActions.Add(new GameTaskAction(action));
+		}
+	}
+
+	public void StartMode(GameModeType type)
+	{
+		if (type == CurrentMode)
+		{
+			lock (m_BeforeTickActions)
+			{
+				if (1 + m_BeforeTickActions.OfType<GameTaskStartMode>().Count((GameTaskStartMode t) => t.GameMode == type) - m_BeforeTickActions.OfType<GameTaskStopMode>().Count((GameTaskStopMode t) => t.GameMode == type) > 0)
+				{
+					PFLog.Default.Error("Game mode with type {0} already active", type);
+					return;
+				}
+			}
+		}
+		if (Player.GameOverReason.HasValue && type != GameModeType.GameOver)
+		{
+			PFLog.Default.Error("Cannot enter game mode {0}: game is over", type);
+			return;
+		}
+		PFLog.System.Log("Start mode request {0}", type);
+		lock (m_BeforeTickActions)
+		{
+			m_BeforeTickActions.Add(new GameTaskStartMode(type));
+		}
+	}
+
+	public void StopMode(GameModeType type)
+	{
+		PFLog.System.Log("Stop mode request {0}", type);
+		lock (m_BeforeTickActions)
+		{
+			m_BeforeTickActions.Add(new GameTaskStopMode(type));
+		}
+	}
+
+	private void DoStartMode(GameModeType type)
+	{
+		if (type == CurrentMode)
+		{
+			PFLog.Default.Log("Game mode with type {0} already active", type);
+			return;
+		}
+		_ = CurrentMode;
+		if (type == GameModeType.Rest)
+		{
+			List<UnitEntityData> party = Player.Party;
+			BlueprintBuffReference buffForRest = BlueprintRoot.Instance.BuffForRest;
+			foreach (UnitEntityData item in party)
+			{
+				GameHelper.ApplyBuff(item, buffForRest, null);
+			}
+		}
+		if (type == GameModeType.Pause && m_WillBePaused)
+		{
+			m_WillBePaused = false;
+		}
+		if (type == GameModeType.Pause)
+		{
+			if (CombatController.IsInTurnBasedCombat())
+			{
+				return;
+			}
+			GameModeType currentMode = CurrentMode;
+			if (currentMode != GameModeType.Default)
+			{
+				PFLog.System.Log("Preventing starting {0} over {1}", type, currentMode);
+				return;
+			}
+		}
+		if (type == GameModeType.Default || type == GameModeType.Dialog || type == GameModeType.Cutscene || type == GameModeType.Rest)
+		{
+			while (CurrentMode == GameModeType.Pause)
+			{
+				PFLog.System.Log("Stopping Pause before starting {0}", type);
+				DoStopMode(GameModeType.Pause);
+			}
+		}
+		using (ProfileScope.New($"Start Mode ({type})"))
+		{
+			ClearPublicControllers();
+			GameMode gameMode = (m_GameModes.Empty() ? null : m_GameModes.Peek());
+			GameMode gameMode2 = GameModesFactory.Create(type);
+			ModesCount[(int)type]++;
+			using (ContextData<GameModeChangeContext>.Request().Setup(gameMode, gameMode2))
+			{
+				gameMode?.OnDeactivate();
+				m_GameModes.Push(gameMode2);
+				gameMode2.OnStart(gameMode);
+				gameMode2.OnActivate();
+				SetupPublicControllers();
+				PFLog.System.Log("Started mode {0} (previous mode {1})", CurrentMode, gameMode?.Type);
+				HandleGameModeChanged(gameMode?.Type ?? GameModeType.None, gameMode2.Type);
+			}
+		}
+	}
+
+	private void DoStopMode(GameModeType type)
+	{
+		using (ProfileScope.New($"Stop Mode ({type})"))
+		{
+			if (type != CurrentMode)
+			{
+				PFLog.Default.Warning("Cannot stop game mode {0}, mode {1} is active", type, CurrentMode);
+				return;
+			}
+			if (CurrentMode == GameModeType.Rest)
+			{
+				List<UnitEntityData> party = Player.Party;
+				BlueprintBuffReference buffForRest = BlueprintRoot.Instance.BuffForRest;
+				foreach (UnitEntityData item in party)
+				{
+					GameHelper.RemoveBuff(item, buffForRest);
+				}
+			}
+			ClearPublicControllers();
+			GameMode gameMode = m_GameModes.Pop();
+			GameMode gameMode2 = (m_GameModes.Empty() ? null : m_GameModes.Peek());
+			ModesCount[(int)type]--;
+			using (ContextData<GameModeChangeContext>.Request().Setup(gameMode, gameMode2))
+			{
+				gameMode.OnDeactivate();
+				gameMode.OnStop(gameMode2);
+				gameMode2?.OnActivate();
+				SetupPublicControllers();
+				PFLog.System.Log("Stopped mode {0} (next mode on stack {1})", gameMode.Type, CurrentMode);
+				HandleGameModeChanged(gameMode.Type, gameMode2?.Type ?? GameModeType.None);
+			}
+		}
+	}
+
+	private void StopAllModes()
+	{
+		int num = 0;
+		while (!m_GameModes.Empty())
+		{
+			DoStopMode(CurrentMode);
+			if (num++ > 100)
+			{
+				PFLog.Default.Error("Could not stop all game modes propertly");
+				m_GameModes.Clear();
+				return;
+			}
+		}
+		CutsceneLock.Clear();
+		m_WillBePaused = false;
+		lock (m_BeforeTickActions)
+		{
+			m_BeforeTickActions.Clear();
+		}
+	}
+
+	[CanBeNull]
+	public T GetController<T>(bool includeInactive = false) where T : class, IController
+	{
+		if (m_GameModes.Count == 0)
+		{
+			return null;
+		}
+		T controller = m_GameModes.Peek().GetController<T>();
+		if (controller != null || !includeInactive)
+		{
+			return controller;
+		}
+		foreach (GameMode gameMode in m_GameModes)
+		{
+			if (gameMode != m_GameModes.Peek())
+			{
+				controller = gameMode.GetController<T>();
+				if (controller != null)
+				{
+					return controller;
+				}
+			}
+		}
+		return null;
+	}
+
+	private void HandleGameModeChanged(GameModeType oldMode, GameModeType newMode)
+	{
+		EventBus.RaiseEvent(delegate(IGameModeHandler h)
+		{
+			h.OnGameModeStop(oldMode);
+		});
+		if (oldMode == GameModeType.Pause || newMode == GameModeType.Pause)
+		{
+			EventBus.RaiseEvent(delegate(IPauseHandler h)
+			{
+				h.OnPauseToggled();
+			});
+		}
+		EventBus.RaiseEvent(delegate(IGameModeHandler h)
+		{
+			h.OnGameModeStart(newMode);
+		});
+	}
+
+	private void ClearPublicControllers()
+	{
+		DragNDropManager.Instance?.CancelDrag();
+		ClickEventsController = null;
+		SelectedAbilityHandler = null;
+		SelectedClicksObjectHandler = null;
+		PlaceRestMarkerHandler = null;
+		InteractionHighlightController = null;
+		CombatEngagementController = null;
+	}
+
+	private void SetupPublicControllers()
+	{
+		GameModeType currentMode = CurrentMode;
+		if (currentMode == GameModeType.Default || currentMode == GameModeType.Pause)
+		{
+			ClickEventsController = m_GameModes.Peek().GetController<PointerController>();
+			SelectedAbilityHandler = ClickEventsController.GetHandler<ClickWithSelectedAbilityHandler>();
+			PlaceRestMarkerHandler = ClickEventsController.GetHandler<PlaceRestMarkerHandler>();
+			CombatEngagementController = m_GameModes.Peek().GetController<UnitCombatEngagementController>();
+		}
+		else if (currentMode == GameModeType.Kingdom || currentMode == GameModeType.KingdomSettlement || currentMode == GameModeType.GlobalMap)
+		{
+			ClickEventsController = m_GameModes.Peek().GetController<PointerController>();
+			SelectedClicksObjectHandler = ClickEventsController.GetHandler<ClickOnDetectClicksObjectHandler>();
+		}
+		else if (currentMode == GameModeType.TacticalCombat)
+		{
+			ClickEventsController = m_GameModes.Peek().GetController<PointerController>();
+			SelectedAbilityHandler = ClickEventsController.GetHandler<ClickWithSelectedAbilityHandler>();
+		}
+		if (CurrentMode != GameModeType.None)
+		{
+			InteractionHighlightController = m_GameModes.Peek().GetController<InteractionHighlightController>();
+			HandsEquipmentController = m_GameModes.Peek().GetController<UnitHandEquipmentController>();
+			CameraController = m_GameModes.Peek().GetController<CameraController>();
+		}
+	}
+
+	public void AdvanceGameTime(TimeSpan delta, bool silent = false)
+	{
+		Player.GameTime += delta;
+		EventBus.RaiseEvent(delegate(IGameTimeAdvancedHandler h)
+		{
+			h.HandleGameTimeAdvanced(delta, silent);
+		});
+	}
+
+	public void HandleAreaBeginUnloading(bool forDispose, bool leaveAreaRelatedEffects)
+	{
+		if (Player.IsInCombat)
+		{
+			foreach (UnitEntityData allCrossSceneUnit in Player.AllCrossSceneUnits)
+			{
+				if (allCrossSceneUnit.IsInCombat)
+				{
+					allCrossSceneUnit.LeaveCombat();
+				}
+			}
+		}
+		EventBus.RaiseEvent(delegate(IAreaHandler h)
+		{
+			h.OnAreaBeginUnloading();
+		});
+		StopAllModes();
+		EntityCreator.Tick();
+		EntityDestroyer.Tick();
+		FxHelper.DestroyAll();
+		GameObjectsPool.ClearAllPools(forDispose, leaveAreaRelatedEffects);
+	}
+
+	public void LoadArea(BlueprintAreaEnterPoint areaEnterPoint, AutoSaveMode autoSaveMode, Action callback = null)
+	{
+		if (CurrentlyLoadedArea == areaEnterPoint.Area)
+		{
+			Teleport(areaEnterPoint, includeFollowers: true, callback);
+		}
+		else
+		{
+			LoadArea(areaEnterPoint.Area, areaEnterPoint, autoSaveMode, forceUnload: false, null, callback);
+		}
+	}
+
+	private IEnumerator TryOptimizeOnLoadAreaCoroutine(BlueprintAreaEnterPoint areaEnterPoint)
+	{
+		yield return new WaitForSecondsRealtime(0.1f);
+		TryOptimizeOnLoadArea(areaEnterPoint);
+	}
+
+	private void TryOptimizeOnLoadArea(BlueprintAreaEnterPoint areaEnterPoint)
+	{
+		if (PlatformManager.IsConsole && PlatformManager.HardwareLevel != HardwareLevel.High && areaEnterPoint != null && areaEnterPoint.IsClearGFXMemory && PlatformManager.HardwareLevel != HardwareLevel.High)
+		{
+			GameObjectsPool.ClearAllPools(forDispose: false, leaveAreaRelatedEffects: false);
+			Kingmaker.GradientSystem.GradientSystem.Clear();
+			GC.Collect();
+			Resources.UnloadUnusedAssets();
+		}
+	}
+
+	public void LoadAreaForce(BlueprintAreaEnterPoint areaEnterPoint, AutoSaveMode autoSaveMode, Action callback = null)
+	{
+		LoadArea(areaEnterPoint.Area, areaEnterPoint, autoSaveMode, forceUnload: true, null, callback);
+	}
+
+	public void Teleport(BlueprintAreaEnterPoint areaEnterPoint, bool includeFollowers = false, Action callback = null)
+	{
+		if (areaEnterPoint?.Area == null || areaEnterPoint.Area != CurrentlyLoadedArea)
+		{
+			PFLog.Default.ErrorWithReport($"{this}: Cannot teleport to {areaEnterPoint} as it's in a different area");
+			return;
+		}
+		LoadingProcess.Instance.StartLoadingProcess(TeleportPartyCoroutine(areaEnterPoint, includeFollowers), delegate
+		{
+			TryOptimizeOnLoadArea(areaEnterPoint);
+			ExecuteSafe(callback);
+			CoroutineRunner.Start(AwaitTextureCompressionShell());
+		}, LoadingProcessTag.TeleportParty);
+	}
+
+	private IEnumerator AwaitTextureCompressionShell()
+	{
+		Instance.UI.Fadeout(fade: true, null);
+		yield return null;
+		yield return AwaitTextureCompression();
+		Instance.UI.Fadeout(fade: false, null);
+	}
+
+	private IEnumerator<object> TeleportPartyCoroutine(BlueprintAreaEnterPoint areaEnterPoint, bool includeFollowers)
+	{
+		AreaEnterPoint areaEnterPoint2 = AreaEnterPoint.FindAreaEnterPointOnScene(areaEnterPoint);
+		BlueprintAreaPart targetAreaPart = AreaService.FindLocalMapBoundsContainsPoint(CurrentlyLoadedArea, areaEnterPoint2.transform.position);
+		if (targetAreaPart != (areaEnterPoint.AreaPart ?? CurrentlyLoadedArea))
+		{
+			PFLog.Default.Error($"Teleporting party to {areaEnterPoint.name} expected area part {areaEnterPoint.AreaPart ?? CurrentlyLoadedArea}, but got {targetAreaPart.NameSafe()}");
+		}
+		NavMeshManager.SetNavMesh(targetAreaPart);
+		IsleStateControllerView.ResetAllIslands();
+		yield return null;
+		AreaEnterPoint enterPoint = Player.MoveCharacters(areaEnterPoint, includeFollowers, moveCamera: true);
+		if (enterPoint != null)
+		{
+			while (enterPoint.IsMoveCharactersInProgress)
+			{
+				yield return null;
+			}
+		}
+		if (CurrentlyLoadedAreaPart != targetAreaPart)
+		{
+			IEnumerator switchPart = m_SceneLoader.SwitchToAreaPartCoroutine(targetAreaPart);
+			while (switchPart.MoveNext())
+			{
+				yield return null;
+			}
+		}
+	}
+
+	public void LoadArbiter(BlueprintArea area)
+	{
+		LoadArea(area, null, AutoSaveMode.None);
+	}
+
+	public void MatchTimeOfDay(Action callback = null)
+	{
+		if (!m_MatchTimeOfDayScheduled && !CurrentlyLoadedArea.IsGlobalMap)
+		{
+			m_MatchTimeOfDayScheduled = true;
+			LoadingProcess.Instance.StartLoadingProcess(MatchTimeOfDayCoroutine(preserveFoW: true), callback, LoadingProcessTag.ReloadLight);
+		}
+	}
+
+	public void MatchTimeOfDayForced()
+	{
+		TimeOfDay = Player.GameTime.TimeOfDay();
+	}
+
+	public void OverrideVisualTimeOfDay(TimeOfDay? timeOfDay)
+	{
+		m_TimeOfDayOverrideVisual = timeOfDay;
+	}
+
+	public IEnumerator MatchTimeOfDayCoroutine(bool preserveFoW)
+	{
+		if (!Application.isPlaying)
+		{
+			yield break;
+		}
+		m_MatchTimeOfDayScheduled = false;
+		TimeOfDay oldTime = TimeOfDay;
+		TimeOfDay = Player.GameTime.TimeOfDay();
+		if (preserveFoW)
+		{
+			IEnumerator op = SceneLoader.SaveActiveFogOfWar();
+			while (op.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		using (CodeTimerTraceScope.New("MatchLight"))
+		{
+			IEnumerator<object> p = m_SceneLoader.MatchLightAndAudioScenesCoroutine();
+			while (p.MoveNext())
+			{
+				yield return null;
+			}
+		}
+		if (TimeOfDay != oldTime)
+		{
+			EventBus.RaiseEvent(delegate(ITimeOfDayChangedHandler h)
+			{
+				h.OnTimeOfDayChanged();
+			});
+		}
+		EventBus.RaiseEvent(delegate(ITimeChangedHandler h)
+		{
+			h.OnTimeChanged();
+		});
+	}
+
+	public IEnumerator<object> UnloadMainMenuRoutine()
+	{
+		using (CodeTimerTraceScope.New("UnloadMainMenu"))
+		{
+			if (!Application.isPlaying)
+			{
+				yield break;
+			}
+			RootUiContext.DisposeUiScene();
+			if (SceneManager.GetSceneByName("MainMenuView").isLoaded)
+			{
+				AsyncOperation unload = SceneManager.UnloadSceneAsync("MainMenuView");
+				while (!unload.isDone)
+				{
+					yield return null;
+				}
+			}
+			if (SceneManager.GetSceneByName("UI_MainMenu_Scene").isLoaded)
+			{
+				AsyncOperation unload = SceneManager.UnloadSceneAsync("UI_MainMenu_Scene");
+				while (!unload.isDone)
+				{
+					yield return null;
+				}
+			}
+		}
+	}
+
+	public IEnumerator<object> UnloadUnusedAssetsCoroutine()
+	{
+		using (CodeTimerTraceScope.New("UnloadUnusedAssets"))
+		{
+			if (Application.isPlaying)
+			{
+				for (int i = 0; i < m_WaitOnStart; i++)
+				{
+					yield return null;
+				}
+				ResourcesLibrary.CleanupLoadedCache();
+				CustomPortraitsManager.Instance.Cleanup();
+				AkCallbackManager.CleanupEventCallbacks();
+				GC.Collect();
+				AsyncOperation unload = Resources.UnloadUnusedAssets();
+				while (!unload.isDone)
+				{
+					yield return null;
+				}
+			}
+		}
+	}
+
+	public void ReloadAreaMechanic(bool clearFx, [CanBeNull] Action callback = null)
+	{
+		PFLog.SceneLoader.Log("Reloading Area Mechanic");
+		EventBus.RaiseEvent(delegate(IReloadMechanicsHandler h)
+		{
+			h.OnBeforeMechanicsReload();
+		});
+		LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.ReloadAreaMechanicsCoroutine(), delegate
+		{
+			if (clearFx)
+			{
+				PFLog.System.Log("FxHelper.DestroyAll();");
+				FxHelper.DestroyAllBlood();
+			}
+			EventBus.RaiseEvent(delegate(IReloadMechanicsHandler h)
+			{
+				h.OnMechanicsReloaded();
+			});
+			Player.ApplyUpgrades();
+			ExecuteSafe(callback);
+		}, LoadingProcessTag.ReloadMechanics);
+	}
+
+	private void LoadArea(BlueprintArea area, BlueprintAreaEnterPoint enterPoint, AutoSaveMode autoSaveMode, bool forceUnload = false, [CanBeNull] SaveInfo saveInfo = null, [CanBeNull] Action callback = null)
+	{
+		ProfilingTrace trace = ProfilingTrace.Start("Load area", ProfilingTrace.CurrentTrace == null);
+		if (LoadingProcess.Instance.IsLoadingInProcess && LoadingProcess.Instance.ScheduledProcessesHaveTag(LoadingProcessTag.Load, checkCurrentLoadingProcess: true) && CurrentlyLoadedArea != null)
+		{
+			PFLog.System.Error($"Load area {enterPoint} failed: loading process is active.");
+			return;
+		}
+		try
+		{
+			LoadingSave = saveInfo;
+			BundlesLoadService.Instance.ResetLoadCounts();
+			PBD.BeginSceneInitialization();
+			ResetLoadingProgress();
+			if (saveInfo != null)
+			{
+				if (!saveInfo.IsActuallySaved)
+				{
+					PFLog.System.Error($"Load Area {area} [save name: {saveInfo.Name}] failed: save does not actually exist or saving failed previously");
+					EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+					{
+						h.HandleWarning("Save could not be loaded");
+					});
+					return;
+				}
+				PFLog.System.Log($"Load Area {area} [save name: {saveInfo.Name}]");
+			}
+			else
+			{
+				PFLog.System.Log($"Load Area {area} [enter point: {enterPoint}]");
+			}
+			DungeonArea component = area.GetComponent<DungeonArea>();
+			AudioFilePackagesSettings.AudioChunk audioChunk = (area.GetOverrideCampaign()?.GetBlueprint() as BlueprintCampaign)?.AudioChunk ?? saveInfo?.Campaign.AudioChunk ?? Player.Campaign.AudioChunk;
+			if (!m_LoadedCampaignAudioChunk.HasValue || audioChunk != m_LoadedCampaignAudioChunk)
+			{
+				AudioFilePackagesSettings.Instance.LoadPackagesChunk(audioChunk);
+				if (m_LoadedCampaignAudioChunk.HasValue)
+				{
+					AudioFilePackagesSettings.Instance.UnloadPackagesChunk(m_LoadedCampaignAudioChunk.Value);
+				}
+				m_LoadedCampaignAudioChunk = audioChunk;
+			}
+			BlueprintGlobalMap.Reference reference = BlueprintRoot.Instance.GlobalMap.All.FirstItem((BlueprintGlobalMap.Reference i) => SimpleBlueprintExtendAsObject.Or(i.Get(), null)?.GlobalMapEnterPoint == enterPoint);
+			if (reference != null)
+			{
+				Player.GetGlobalMap(reference.Get()).Activate();
+			}
+			RootUiContext.CommonVM?.SetLoadingArea(area);
+			LoadingProcess.Instance.StartLoadingProcess(SceneLoader.ConsolePreloadAreaCoroutine(area), LoadingProcessTag.Load);
+			BlueprintArea currentlyLoadedArea = m_SceneLoader.CurrentlyLoadedArea;
+			HashSet<string> hotSceneNames = area.GetHotSceneNames();
+			m_LoadingProgress = 0.1f;
+			if (currentlyLoadedArea != null)
+			{
+				if (autoSaveMode == AutoSaveMode.BeforeExit && (bool)SettingsRoot.Game.Save.AutosaveEnabled)
+				{
+					LoadingProcess.Instance.StartLoadingProcess(SaveManager.SaveRoutine(SaveManager.GetNextAutoslot()), delegate
+					{
+						m_LoadingProgress = 0.1f;
+					}, LoadingProcessTag.Load);
+				}
+				LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.UnloadAreaCoroutine(saveInfo != null, currentlyLoadedArea == area, unloadUi: true, hotSceneNames), delegate
+				{
+					m_LoadingProgress = 0.2f;
+				}, LoadingProcessTag.Load);
+				LoadingProcess.Instance.StartLoadingProcess(TryOptimizeOnLoadAreaCoroutine(enterPoint));
+			}
+			if (SceneManager.GetSceneByName("UI_MainMenu_Scene").isLoaded)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(UnloadMainMenuRoutine(), delegate
+				{
+					m_LoadingProgress = 0.3f;
+				}, LoadingProcessTag.Load);
+			}
+			LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.UnloadEntitiesCoroutine(saveInfo != null), delegate
+			{
+				m_LoadingProgress = 0.5f;
+			}, LoadingProcessTag.Load);
+			LoadingProcess.Instance.StartLoadingProcess(UnloadUnusedAssetsCoroutine(), delegate
+			{
+				m_LoadingProgress = 0.6f;
+			}, LoadingProcessTag.Load);
+			if (autoSaveMode == AutoSaveMode.WhenAreaIsUnloaded && (bool)SettingsRoot.Game.Save.AutosaveEnabled)
+			{
+				Player.NextEnterPoint = enterPoint;
+				LoadingProcess.Instance.StartLoadingProcess(SaveManager.SaveRoutine(SaveManager.GetNextAutoslot()), delegate
+				{
+					m_LoadingProgress = 0.1f;
+				}, LoadingProcessTag.Load);
+			}
+			if (saveInfo != null)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(SaveManager.LoadRoutine(saveInfo), delegate
+				{
+					m_LoadingProgress = 0.4f;
+				}, LoadingProcessTag.Load);
+			}
+			LoadingProcess.Instance.StartLoadingProcess(UnloadUnusedAssetsCoroutine(), delegate
+			{
+				m_LoadingProgress = 0.6f;
+			}, LoadingProcessTag.Load);
+			LoadingProcess.Instance.StartLoadingProcess(delegate
+			{
+				m_LoadingProgress = 0.4f;
+			});
+			if (component != null)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(DungeonController.AreaLoadRoutine(area), delegate
+				{
+					m_LoadingProgress = 0.8f;
+				}, LoadingProcessTag.Load);
+			}
+			LoadingProcess.Instance.StartLoadingProcess(delegate
+			{
+				m_LoadingProgress = 0.4f;
+			});
+			BlueprintAreaPart blueprintAreaPart = saveInfo?.AreaPart;
+			if (blueprintAreaPart == null)
+			{
+				blueprintAreaPart = SimpleBlueprintExtendAsObject.Or(enterPoint, null)?.AreaPart;
+			}
+			LoadingProcess.Instance.StartLoadingProcess(delegate
+			{
+				m_LoadingProgress = 0.5f;
+			});
+			LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.LoadAreaCoroutine(area, blueprintAreaPart, enterPoint, isSmokeTest: false, OnLoadingScenesProgress), LoadingProcessTag.Load);
+			LoadingProcess.Instance.StartLoadingProcess(delegate
+			{
+				m_LoadingProgress = 0.8f;
+			});
+			LoadingProcess.Instance.StartLoadingProcess(AfterSceneLoaderFinishedArea());
+			LoadingProcess.Instance.StartLoadingProcess(PreloadUnitResources(), delegate
+			{
+				m_LoadingProgress = 0.7f;
+			}, LoadingProcessTag.Load);
+			LoadingProcess.Instance.StartLoadingProcess(delegate
+			{
+				Player.ApplyUpgrades();
+			}, LoadingProcessTag.Load);
+			if (component == null)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(MatchTimeOfDayCoroutine(preserveFoW: false), delegate
+				{
+					m_LoadingProgress = 0.8f;
+				}, LoadingProcessTag.Load);
+			}
+			if (autoSaveMode == AutoSaveMode.AfterEntry && (bool)SettingsRoot.Game.Save.AutosaveEnabled)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(SaveManager.SaveRoutine(SaveManager.GetNextAutoslot()), delegate
+				{
+					m_LoadingProgress = 0.9f;
+				}, LoadingProcessTag.Load);
+			}
+			if (BuildModeUtility.Data?.Loading?.UnloadAllOnEnter == true)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(delegate
+				{
+					ResourcesLibrary.CleanupLoadedCache(ResourcesLibrary.CleanupMode.UnloadEverythingWithoutHold);
+				}, LoadingProcessTag.Load);
+				LoadingProcess.Instance.StartLoadingProcess(UnloadUnusedAssetsCoroutine(), delegate
+				{
+				}, LoadingProcessTag.Load);
+				LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.AdditionalPreload(), delegate
+				{
+				}, LoadingProcessTag.Load);
+			}
+			LoadingProcess.Instance.StartLoadingProcess(AwaitTextureCompression(), delegate
+			{
+				m_LoadingProgress = 0.95f;
+			}, LoadingProcessTag.Load);
+			LoadingProcess.Instance.StartLoadingProcess(AwaitTextureCompression());
+			LoadingProcess.Instance.StartLoadingProcess(AreaLoadingComplete(), delegate
+			{
+				m_LoadingProgress = 1f;
+				m_LoadingScenesProgress = 1f;
+				PBD.EndSceneInitialization();
+			}, LoadingProcessTag.Load);
+			if (BundlesLoadService.Instance.LastLoadedChunkId < (uint)area.PS4ChunkId)
+			{
+				BundlesLoadService.Instance.LastLoadedChunkId = (uint)area.PS4ChunkId;
+			}
+			if (callback != null)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(delegate
+				{
+					ExecuteSafe(callback);
+				}, LoadingProcessTag.Load);
+			}
+			if (trace != null)
+			{
+				LoadingProcess.Instance.StartLoadingProcess(delegate
+				{
+					trace?.Dispose();
+				}, LoadingProcessTag.Load);
+			}
+		}
+		finally
+		{
+			LoadingSave = null;
+		}
+	}
+
+	private void OnLoadingScenesProgress(float value)
+	{
+		m_LoadingScenesProgress = value;
+	}
+
+	public void ResetLoadingProgress()
+	{
+		m_LoadingProgress = 0f;
+		m_LoadingScenesProgress = 0f;
+	}
+
+	private static void ExecuteSafe([CanBeNull] Action action)
+	{
+		try
+		{
+			action?.Invoke();
+		}
+		catch (Exception ex)
+		{
+			PFLog.Default.Exception(ex, null);
+		}
+	}
+
+	public void ReloadUI(Action callback = null)
+	{
+		LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.ReloadUIScene(CurrentlyLoadedArea), callback);
+	}
+
+	public void ReloadArea()
+	{
+		if ((bool)CurrentlyLoadedArea)
+		{
+			LoadArea(CurrentlyLoadedArea, null, AutoSaveMode.None, forceUnload: true);
+		}
+	}
+
+	private IEnumerator AfterSceneLoaderFinishedArea()
+	{
+		using (CodeTimerTraceScope.New("AfterSceneLoaderFinishedArea"))
+		{
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: started");
+			EventBus.RaiseEvent(delegate(IAreaLoadingStagesHandler h)
+			{
+				h.OnAreaScenesLoaded();
+			});
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: OnAreaScenesLoaded() finished");
+			GameModeType gameModeType = (Player.GameOverReason.HasValue ? GameModeType.GameOver : CurrentlyLoadedArea.AreaStatGameMode);
+			PFLog.System.Log($"AfterSceneLoaderFinishedArea: start mode {gameModeType} for {CurrentlyLoadedArea} {CurrentlyLoadedArea.AreaStatGameMode}");
+			StartMode(gameModeType);
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: GameMode activated");
+			yield return null;
+			using (CodeTimerTraceScope.New("OnAreaDidLoad"))
+			{
+				EventBus.RaiseEvent(delegate(IAreaHandler h)
+				{
+					h.OnAreaDidLoad();
+				});
+			}
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: OnAreaDidLoad() finished");
+			yield return null;
+			using (CodeTimerTraceScope.New("AfterSceneLoaderFinishedArea.EntityCreation"))
+			{
+				EntityCreator.Tick();
+			}
+			yield return null;
+			RandomEncounterInitializer.HandleAreaLoaded();
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: RandomEncounterInitializer.HandleAreaLoaded() finished");
+			LoadedAreaState.Activate();
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: CurrentScene.Activate() finished");
+			DungeonController.OnAreaDidLoad();
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: DungeonController.OnAreaDidLoad() finished");
+			yield return null;
+			Player.EtudesSystem.UpdateEtudes();
+			yield return null;
+			using (CodeTimerTraceScope.New("AfterSceneLoaderFinishedArea.Activated"))
+			{
+				EventBus.RaiseEvent(delegate(IAreaActivationHandler h)
+				{
+					h.OnAreaActivated();
+				});
+			}
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: OnAreaActivated() finished");
+			using (CodeTimerTraceScope.New("AfterSceneLoaderFinishedArea.EntityCreation 2"))
+			{
+				EntityCreator.Tick();
+			}
+			EntityDestroyer.Tick();
+			yield return null;
+			State.SetNewAwakeUnits(State.Units.NotDead());
+			Player.OnAreaLoaded();
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: Player.OnAreaLoaded() finished");
+			foreach (UnitEntityData partyAndPet in Player.PartyAndPets)
+			{
+				partyAndPet.IsHiddenBecauseDead = partyAndPet.Descriptor.State.IsFinallyDead;
+			}
+			UnitsPlacer.MovePartyToNavmesh();
+			PFLog.System.Log("AfterSceneLoaderFinishedArea: finished");
+		}
+	}
+
+	private IEnumerator AwaitTextureCompression()
+	{
+		using (CodeTimerTraceScope.New("Texture compression"))
+		{
+			yield return null;
+			DxtCompressorService dxtService = Services.GetInstance<DxtCompressorService>();
+			CharacterAtlasService atlasService = Services.GetInstance<CharacterAtlasService>();
+			IEnumerable<Character> waitAvatars = from unit in Instance.State.Units
+				where unit?.View?.CharacterAvatar != null
+				select unit?.View?.CharacterAvatar;
+			Instance.State.Units.ForEach(delegate(UnitEntityData unit)
+			{
+				if (unit?.View?.CharacterAvatar != null)
+				{
+					unit.View.CharacterAvatar.TrySwitchToOptimizeAtlases(!unit.IsDirectlyControllable);
+				}
+			});
+			do
+			{
+				atlasService.Update();
+				Character.WaitCalculatedCount = 0;
+				waitAvatars.ForEach(delegate(Character avatar)
+				{
+					avatar.OnUpdateIniterAtlas();
+				});
+				yield return null;
+			}
+			while (atlasService.RequestsCount > 0 || dxtService.RequestsCount > 0 || Character.WaitCalculatedCount > 0);
+		}
+	}
+
+	private IEnumerator AreaLoadingComplete()
+	{
+		yield return null;
+		Player.VisitedAreas.Add(CurrentlyLoadedArea);
+		yield return null;
+		EventBus.RaiseEvent(delegate(IAreaLoadingStagesHandler h)
+		{
+			h.OnAreaLoadingComplete();
+		});
+	}
+
+	private static IEnumerator PreloadUnitResources()
+	{
+		using (CodeTimer.New("Preloading Unit Resources"))
+		{
+			using (CodeTimerTraceScope.New("PreloadUnitResources"))
+			{
+				try
+				{
+					ResourcesLibrary.StartPreloadingMode();
+					using (CodeTimer.New("Preloading Unit Resources: Schedule"))
+					{
+						ResourcesPreload.PreloadUnitResources();
+						BlueprintRoot.Instance.HitSystemRoot.PreloadCommonHits();
+					}
+					while (ResourcesLibrary.TickPreloading())
+					{
+						yield return null;
+					}
+				}
+				finally
+				{
+					ResourcesLibrary.StopPreloadingMode();
+				}
+			}
+		}
+		using (CodeTimer.New("Prewarm pooled FX"))
+		{
+			BlueprintRoot.Instance.HitSystemRoot.WarmupCommonHits();
+		}
+	}
+
+	public void LoadNewGame()
+	{
+		if (NewGamePreset == null)
+		{
+			throw new Exception("Cannot start new game. No preset specified");
+		}
+		try
+		{
+			LoadNewGame(NewGamePreset, ImportSave);
+		}
+		catch (Exception ex)
+		{
+			Runner.ReportException(ex);
+		}
+	}
+
+	public void LoadNewGame(BlueprintAreaPreset preset, SaveInfo importFrom = null)
+	{
+		ProfilingTrace.Start("LoadNewGame");
+		SaveImportSettings importSettings = null;
+		try
+		{
+			using (CodeTimerTraceScope.New("Import stuff"))
+			{
+				Player savePlayerState = null;
+				SceneEntitiesState sceneEntitiesState = null;
+				if (importFrom != null && importFrom.Campaign != null)
+				{
+					importSettings = preset.Campaign.GetImportSettings(importFrom.Campaign, newGame: true);
+				}
+				if (importSettings != null && importSettings.Condition.Check())
+				{
+					savePlayerState = SaveManager.LoadForImport(importFrom);
+					sceneEntitiesState = savePlayerState.CrossSceneState;
+				}
+				if (preset.Campaign != null && preset.Campaign.DlcReward != null)
+				{
+					Player.UsedDlcRewards.Add(preset.Campaign.DlcReward);
+				}
+				Player.CrossSceneState.TurnOff();
+				Player.TurnOff();
+				UnitEntityData unitEntityData = null;
+				if (NewGameUnit != null)
+				{
+					unitEntityData = NewGameUnit;
+					Player.CrossSceneState.AddEntityData(unitEntityData);
+				}
+				else if (importSettings != null && importSettings.MainCharacter && savePlayerState != null)
+				{
+					if (importSettings.MainCharacterAsExCompanion)
+					{
+						PFLog.Default.Error("Main character import as ex companion on the beginning of the game is not implemented");
+						BlueprintUnit unit = preset.PlayerCharacter ?? BlueprintRoot.Instance.DefaultPlayerCharacter;
+						unitEntityData = AddUnitToPersistentState(unit);
+						unitEntityData.Descriptor.Alignment.Initialize(preset.Alignment);
+					}
+					else
+					{
+						unitEntityData = sceneEntitiesState.AllEntityData.OfType<UnitEntityData>().Single((UnitEntityData u) => u.UniqueId == savePlayerState.MainCharacter.UniqueId);
+						unitEntityData.PostLoad();
+						Player.CrossSceneState.AddEntityData(unitEntityData);
+						if (importSettings.Pets)
+						{
+							foreach (EntityPartRef<UnitEntityData, UnitPartPet> petLink in unitEntityData.Pets)
+							{
+								EntityDataBase entityDataBase = sceneEntitiesState.AllEntityData.OfType<UnitEntityData>().FirstOrDefault((UnitEntityData _pet) => _pet.UniqueId == petLink.EntityRef.Id);
+								if (entityDataBase != null)
+								{
+									entityDataBase.PostLoad();
+									Player.CrossSceneState.AddEntityData(entityDataBase);
+								}
+							}
+						}
+					}
+					if (importSettings.FakeForMainCharacter && importSettings.FakeBlueprint != null)
+					{
+						unitEntityData.Descriptor.SetFakeBlueprint(importSettings.FakeBlueprint.Get());
+					}
+				}
+				else
+				{
+					BlueprintUnit unit2 = preset.PlayerCharacter ?? BlueprintRoot.Instance.DefaultPlayerCharacter;
+					unitEntityData = AddUnitToPersistentState(unit2);
+					unitEntityData.Descriptor.Alignment.Initialize(preset.Alignment);
+				}
+				SettingsController.StartInSaveSettings();
+				unitEntityData.Descriptor.AddEssentialMark();
+				Player.SetMainCharacter(unitEntityData);
+				Player.GameId = Guid.NewGuid().ToString("N");
+				int val = unitEntityData.Progression.MythicLevel;
+				if (importSettings != null && importSettings.Companions)
+				{
+					foreach (UnitEntityData item in from u in sceneEntitiesState.AllEntityData.OfType<UnitEntityData>()
+						where u.Blueprint.GetComponent<UnitIsStoryCompanion>() != null
+						select u)
+					{
+						item.PostLoad();
+						Player.CrossSceneState.AddEntityData(item);
+						foreach (BlueprintCompanionStory item2 in savePlayerState.CompanionStories.Get(item))
+						{
+							Player.CompanionStories.Unlock(item2);
+						}
+						if (!importSettings.Pets)
+						{
+							continue;
+						}
+						foreach (EntityPartRef<UnitEntityData, UnitPartPet> petLink2 in item.Pets)
+						{
+							EntityDataBase entityDataBase2 = sceneEntitiesState.AllEntityData.OfType<UnitEntityData>().FirstOrDefault((UnitEntityData _pet) => _pet.UniqueId == petLink2.EntityRef.Id);
+							if (entityDataBase2 != null)
+							{
+								entityDataBase2.PostLoad();
+								Player.CrossSceneState.AddEntityData(entityDataBase2);
+								entityDataBase2.IsInGame = item.IsInGame;
+							}
+						}
+					}
+					Player.UpdateCharacterLists();
+				}
+				else
+				{
+					foreach (BlueprintUnitReference companion in preset.Companions)
+					{
+						if ((bool)companion.Get())
+						{
+							UnitEntityData unitEntityData2 = AddUnitToPersistentState(companion.Get());
+							if (unitEntityData2.Faction != BlueprintRoot.Instance.PlayerFaction)
+							{
+								unitEntityData2.Descriptor.SwitchFactions(BlueprintRoot.Instance.PlayerFaction);
+							}
+							if (!unitEntityData2.IsPet)
+							{
+								Player.AddCompanion(unitEntityData2);
+							}
+							val = Math.Max(val, unitEntityData2.Progression.MythicLevel);
+						}
+					}
+					foreach (BlueprintUnitReference exCompanion in preset.ExCompanions)
+					{
+						if ((bool)exCompanion.Get() && !preset.Companions.Contains(exCompanion))
+						{
+							UnitEntityData unitEntityData3 = AddUnitToPersistentState(exCompanion.Get());
+							unitEntityData3.Ensure<UnitPartCompanion>().SetState(CompanionState.ExCompanion);
+							unitEntityData3.IsInGame = false;
+							val = Math.Max(val, unitEntityData3.Progression.MythicLevel);
+						}
+					}
+					foreach (BlueprintUnitReference item3 in preset.CompanionsRemote)
+					{
+						if ((bool)item3.Get() && !preset.ExCompanions.Contains(item3) && !preset.Companions.Contains(item3))
+						{
+							UnitEntityData unitEntityData4 = AddUnitToPersistentState(item3.Get());
+							unitEntityData4.Ensure<UnitPartCompanion>().SetState(CompanionState.Remote);
+							unitEntityData4.IsInGame = false;
+							val = Math.Max(val, unitEntityData4.Progression.MythicLevel);
+						}
+					}
+				}
+				if (importSettings != null && importSettings.CustomCompanions)
+				{
+					foreach (UnitEntityData item4 in from u in sceneEntitiesState.AllEntityData.OfType<UnitEntityData>()
+						where u.IsCustomCompanion(importSettings.Campaign)
+						select u)
+					{
+						item4.IsImportedCustomCompanion = true;
+						item4.PostLoad();
+						Player.CrossSceneState.AddEntityData(item4);
+						if (!importSettings.Pets)
+						{
+							continue;
+						}
+						foreach (EntityPartRef<UnitEntityData, UnitPartPet> petLink3 in item4.Pets)
+						{
+							EntityDataBase entityDataBase3 = sceneEntitiesState.AllEntityData.OfType<UnitEntityData>().FirstOrDefault((UnitEntityData _pet) => _pet.UniqueId == petLink3.EntityRef.Id);
+							if (entityDataBase3 != null)
+							{
+								entityDataBase3.PostLoad();
+								entityDataBase3.IsInGame = item4.IsInGame;
+								Player.CrossSceneState.AddEntityData(entityDataBase3);
+							}
+						}
+					}
+					Player.UpdateCharacterLists();
+				}
+				if (importSettings != null)
+				{
+					if (!importSettings.Inventory)
+					{
+						Player.Inventory.RemoveAll();
+					}
+					Player.Inventory.PostLoad();
+					foreach (ItemEntity item5 in Player.Inventory.Items)
+					{
+						item5.ApplyPostLoadFixes();
+					}
+					Player.SharedStash.PostLoad();
+					if (importSettings.Inventory)
+					{
+						foreach (ItemEntity item6 in savePlayerState.SharedStash.Items)
+						{
+							Player.SharedStash.Add(item6.Blueprint, item6.Count);
+						}
+					}
+				}
+				Player.SaveInventoryAsInitial();
+				if (importSettings != null)
+				{
+					UnlockableFlagsManager unlockableFlags = savePlayerState.UnlockableFlags;
+					if (importSettings.Flags != null)
+					{
+						foreach (BlueprintUnlockableFlag flag in importSettings.Flags)
+						{
+							if (unlockableFlags.IsUnlocked(flag))
+							{
+								Player.UnlockableFlags.SetFlagValue(flag, unlockableFlags.GetFlagValue(flag));
+							}
+							else
+							{
+								Player.UnlockableFlags.Lock(flag);
+							}
+						}
+					}
+					if (importSettings.AllEtudes)
+					{
+						EntityService.Instance?.Unregister(Player.EtudesSystem);
+						Player.EtudesSystem.Dispose();
+						Player.EtudesSystem = savePlayerState.EtudesSystem;
+						Player.EtudesSystem.PostLoad();
+						Player.EtudesSystem.ApplyPostLoadFixes();
+					}
+					else if (importSettings.Etudes != null && importSettings.Etudes.Count() > 0)
+					{
+						EntityService.Instance?.Unregister(Player.EtudesSystem);
+						savePlayerState.EtudesSystem.PostLoad();
+						savePlayerState.EtudesSystem.ApplyPostLoadFixes();
+						EntityService.Instance?.Unregister(savePlayerState.EtudesSystem);
+						EntityService.Instance?.Register(Player.EtudesSystem);
+						Player.EtudesSystem.SetState(savePlayerState.EtudesSystem, importSettings.Etudes, importSettings.SkipEtudes);
+					}
+					if (importSettings.Quests)
+					{
+						EntityService.Instance?.Unregister(Player.QuestBook);
+						Player.QuestBook.Dispose();
+						Player.QuestBook = savePlayerState.QuestBook;
+						Player.QuestBook.PostLoad();
+						Player.QuestBook.ApplyPostLoadFixes();
+						foreach (Quest quest in Player.QuestBook.Quests)
+						{
+							quest.IsReadOnly = true;
+						}
+					}
+					if (importSettings.ShownCues)
+					{
+						Player.Dialog.ShownCues.Clear();
+						foreach (BlueprintCueBase shownCue in savePlayerState.Dialog.ShownCues)
+						{
+							Player.Dialog.ShownCues.Add(shownCue);
+						}
+					}
+					if (importSettings.SelectedAnswers)
+					{
+						Player.Dialog.SelectedAnswers.Clear();
+						foreach (BlueprintAnswer selectedAnswer in savePlayerState.Dialog.SelectedAnswers)
+						{
+							Player.Dialog.SelectedAnswers.Add(selectedAnswer);
+						}
+					}
+					if (importSettings.Date)
+					{
+						Player.GameTime = savePlayerState.GameTime;
+						Player.RealTime = savePlayerState.RealTime;
+					}
+					if (importSettings.Gold)
+					{
+						Player.GainMoney(savePlayerState.Money);
+					}
+				}
+				Player.TurnOn();
+				Player.CrossSceneState.TurnOn();
+				preset.SetupState();
+				Player.MinDifficultyController.UpdateMinDifficulty(force: true);
+				Player.InvalidateCharacterLists();
+				foreach (UnitEntityData allCharacter in Player.AllCharacters)
+				{
+					if (allCharacter.Get<UnitPartDualCompanion>() != null)
+					{
+						continue;
+					}
+					DualCompanionComponent dualComponent = allCharacter.Blueprint.GetComponent<DualCompanionComponent>();
+					if (dualComponent == null)
+					{
+						continue;
+					}
+					UnitEntityData unitEntityData5 = Player.AllCharacters.FirstOrDefault((UnitEntityData u) => u.Blueprint == dualComponent.PairCompanion);
+					if (!(unitEntityData5 != null))
+					{
+						continue;
+					}
+					UnitPartCompanion unitPartCompanion = allCharacter.Get<UnitPartCompanion>();
+					if (unitPartCompanion != null && unitPartCompanion.State == CompanionState.InParty)
+					{
+						unitEntityData5.Ensure<UnitPartCompanion>().SetState(CompanionState.Remote);
+						unitEntityData5.IsInGame = false;
+						continue;
+					}
+					UnitPartCompanion unitPartCompanion2 = unitEntityData5.Get<UnitPartCompanion>();
+					if (unitPartCompanion2 != null && unitPartCompanion2.State == CompanionState.InParty)
+					{
+						allCharacter.Ensure<UnitPartCompanion>().SetState(CompanionState.Remote);
+						allCharacter.IsInGame = false;
+					}
+					else
+					{
+						unitEntityData5.IsInGame = false;
+					}
+				}
+				AreaDataStash.ClearDirectory();
+				PFLog.History.System.Log("Game started on version " + GameVersion.GetVersion());
+				if (importFrom != null && importFrom.Campaign != null)
+				{
+					Player.ImportedCampaigns.Add(importFrom.Campaign);
+				}
+			}
+		}
+		catch (Exception arg)
+		{
+			PFLog.Etudes.Error($"[PF-523639] LoadNewGame with import:\n{arg}");
+		}
+		LoadArea(preset.EnterPoint, preset.MakeAutosave ? AutoSaveMode.AfterEntry : AutoSaveMode.None);
+		LoadingProcess.Instance.StartLoadingProcess(Enumerable.Empty<object>().GetEnumerator(), delegate
+		{
+			PFLog.Default.Log("Running start-game actions");
+			BlueprintRoot.Instance.StartGameActions.Run();
+			preset.StartGameActions.Run();
+			if (importSettings != null && importSettings.OnImport != null)
+			{
+				importSettings.OnImport.Run();
+			}
+		});
+		LoadingProcess.Instance.StartLoadingProcess(ProfilingTrace.End);
+	}
+
+	public void ResetToMainMenu(string message = null, MenuMessageTypes messageType = MenuMessageTypes.Error)
+	{
+		LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.LoadMainMenuCoroutine(message, messageType), delegate
+		{
+			SettingsController.StopInSaveSettings();
+			if (m_LoadedCampaignAudioChunk.HasValue)
+			{
+				AudioFilePackagesSettings.Instance.UnloadPackagesChunk(m_LoadedCampaignAudioChunk.Value);
+			}
+			LoadingProcess.Instance.StopAll();
+		});
+	}
+
+	[NotNull]
+	public UnitEntityData CreateUnitVacuum(BlueprintUnit unit)
+	{
+		return new UnitEntityData(Guid.NewGuid().ToString(), isInGame: true, unit);
+	}
+
+	[NotNull]
+	public UnitEntityData AddUnitToPersistentState(BlueprintUnit unit)
+	{
+		UnitEntityData entity = CreateUnitVacuum(unit);
+		State.PlayerState.CrossSceneState.AddEntityData(entity);
+		using (ContextData<SpawnedUnitData>.Request().Setup(entity))
+		{
+			EventBus.RaiseEvent(delegate(IUnitHandler h)
+			{
+				h.HandleUnitSpawned(entity);
+			});
+			EventBus.RaiseEvent(delegate(IUnitSpawnHandler h)
+			{
+				h.HandleUnitSpawned(entity);
+			});
+		}
+		return entity;
+	}
+
+	public void QuickLoadGame()
+	{
+		SaveManager.UpdateSaveListIfNeeded();
+		SaveInfo newestQuickslot = SaveManager.GetNewestQuickslot();
+		if (newestQuickslot != null)
+		{
+			LoadGame(newestQuickslot);
+		}
+	}
+
+	public void LoadGame(SaveInfo saveInfo)
+	{
+		if (RootUIContext.Instance.InGameVM?.StaticPartVM?.CharGenContextVM?.CharGenVM?.Value != null || !saveInfo.CheckDlcAvailable())
+		{
+			return;
+		}
+		SoundState.Instance.ResetBeforeUnloading();
+		LoadArea(saveInfo.Area, null, AutoSaveMode.None, forceUnload: false, saveInfo);
+		LoadingProcess.Instance.StartLoadingProcess(Enumerable.Empty<object>().GetEnumerator(), delegate
+		{
+			LogThreadService.Instance.OnGameLoaded();
+			EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+			{
+				h.HandleWarning(WarningNotificationType.GameLoaded);
+			});
+		});
+	}
+
+	public void LoadGameForSmokeTest(SaveInfo save)
+	{
+		RootUiContext.CommonVM.SetLoadingArea(save.Area);
+		if (CurrentlyLoadedArea != null)
+		{
+			LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.UnloadAreaCoroutine(forDispose: true));
+			LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.UnloadEntitiesCoroutine(unloadCrossScene: true));
+		}
+		LoadingProcess.Instance.StartLoadingProcess(SaveManager.LoadRoutine(save, isSmokeTest: true));
+		LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.LoadAreaCoroutine(save.Area, save.AreaPart, null, isSmokeTest: true));
+		LoadingProcess.Instance.StartLoadingProcess(AfterSceneLoaderFinishedArea());
+	}
+
+	public void LoadGameFromMainMenu(SaveInfo saveInfo)
+	{
+		if ((bool)CurrentlyLoadedArea)
+		{
+			DisposeState();
+			State.PlayerState = new Player();
+			State.SavedAreaStates.Clear();
+		}
+		LoadGame(saveInfo);
+	}
+
+	public void DisposeState()
+	{
+		Statistic.HandleGameSessionEnded();
+		foreach (AreaPersistentState savedAreaState in State.SavedAreaStates)
+		{
+			savedAreaState.Dispose();
+		}
+		m_SceneLoader.ClearLoadedArea();
+		State.PlayerState?.Dispose();
+		EntityCreator.Dispose();
+		UnitGroupsController.Clear();
+		DialogController.Dispose();
+		State.ClearAwakeUnits();
+		ReadyForCombatUnitGroups.Clear();
+		Services.EndLifetime(ServiceLifetimeType.GameSession);
+		EntityService.Instance.Dispose();
+		TemporaryEntityService.Instance.Dispose();
+		State.PlayerState = null;
+		State.LoadedAreaState = null;
+	}
+
+	public void SaveGame(SaveInfo saveInfo, Action callback = null)
+	{
+		if (RootUIContext.Instance.AdditionalBlockEscMenu)
+		{
+			return;
+		}
+		if (saveInfo.Type != SaveInfo.SaveType.ForImport)
+		{
+			if (!SaveManager.IsSaveAllowed(saveInfo.Type))
+			{
+				WarningNotificationType msg = (Player.IsInCombat ? WarningNotificationType.SavingInCombatImpossible : WarningNotificationType.SavingImpossible);
+				EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+				{
+					h.HandleWarning(msg);
+				});
+				return;
+			}
+			if (saveInfo.Type != SaveInfo.SaveType.Bugreport && (bool)SettingsRoot.Difficulty.OnlyOneSave)
+			{
+				if (!SaveManager.IsIronmanSave(saveInfo))
+				{
+					EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+					{
+						h.HandleWarning(WarningNotificationType.SavingImpossibleIronman);
+					});
+					return;
+				}
+				if (saveInfo.Type != SaveInfo.SaveType.Auto && saveInfo.Type != SaveInfo.SaveType.IronMan)
+				{
+					EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+					{
+						h.HandleWarning(WarningNotificationType.SavingImpossibleIronman);
+					});
+					return;
+				}
+				saveInfo.Type = SaveInfo.SaveType.IronMan;
+			}
+			bool flag = SettingsRoot.Game.Save.AutosaveEnabled.GetValue() && !BuildModeUtility.Data.ForceDisableAutosave;
+			if (saveInfo.Type == SaveInfo.SaveType.Auto && !flag)
+			{
+				return;
+			}
+		}
+		if (saveInfo.Type != SaveInfo.SaveType.Bugreport)
+		{
+			EventBus.RaiseEvent(delegate(IWarningNotificationUIHandler h)
+			{
+				h.HandleWarning(WarningNotificationType.GameSavedInProgress);
+			});
+		}
+		Func<IDisposable> scopeFunc = null;
+		if (saveInfo.Type == SaveInfo.SaveType.Quick)
+		{
+			scopeFunc = () => new PBDDisabler();
+		}
+		LoadingProcess.Instance.StartLoadingProcess(SaveManager.SaveRoutine(saveInfo), callback, LoadingProcessTag.Save, scopeFunc);
+	}
+
+	private void CrossSceneStateHandler(SceneEntitiesState state, EntityDataBase data)
+	{
+		if (state == Player.CrossSceneState)
+		{
+			Player.InvalidateCharacterLists();
+		}
+	}
+
+	public static void Reset()
+	{
+		GameModesFactory.Reset();
+		SceneEntitiesState.ClearSubscriptions();
+		if (s_Instance != null)
+		{
+			try
+			{
+				s_Instance.UI.ReportingManager.Dispose();
+				s_Instance.RootUiContext.DisposeUiScene();
+				s_Instance.DisposeState();
+			}
+			catch (Exception ex)
+			{
+				PFLog.Default.Exception(ex, "Exception when resetting to main menu");
+			}
+			s_Instance.StopAllModes();
+			s_Instance.CursorController?.Deactivate();
+		}
+		s_Instance = new Game();
+		s_Instance.Initialize();
+	}
+
+	public static void ResetUI(bool isGameInputChange = false)
+	{
+		if (s_Instance != null)
+		{
+			WidgetFactory.DestroyAll();
+			if (isGameInputChange)
+			{
+				OnGamepadConnectDisconnectResetUI();
+			}
+			else
+			{
+				s_Instance.RootUiContext.InitializeUiScene(s_Instance.m_SceneLoader.LoadedUIScene);
+			}
+		}
+	}
+
+	private static void OnGamepadConnectDisconnectResetUI()
+	{
+		Cursor.visible = Instance.ControllerMode == ControllerModeType.Mouse;
+		if (Instance.UI.MainMenu != null)
+		{
+			s_Instance.RootUiContext.InitializeLoadingScreen("UI_LoadingScreen_Scene");
+			s_Instance.RootUiContext.InitializeUiScene("UI_MainMenu_Scene");
+			EventBus.RaiseEvent(delegate(IUIMainMenuHandler e)
+			{
+				e.EnableMainMenu();
+			});
+			MonoSingleton<CoroutineRunner>.Instance.StartCoroutine(BlueprintRoot.Instance.CharGen.PreparePregensCoroutine(clearPregensAfterUse: false));
+			return;
+		}
+		if (StaticCanvas.Instance != null)
+		{
+			StaticCanvas.Instance.OnAreaBeginUnloading();
+		}
+		s_Instance.RootUiContext.InitializeLoadingScreen("UI_LoadingScreen_Scene");
+		s_Instance.RootUiContext.InitializeUiScene(s_Instance.m_SceneLoader.LoadedUIScene);
+		if (Instance.CurrentMode == GameModeType.Default || Instance.CurrentMode == GameModeType.FullScreenUi)
+		{
+			s_Instance.RootUiContext.ForceRescanOvertipVMs();
+		}
+		if (StaticCanvas.Instance != null)
+		{
+			StaticCanvas.Instance.OnAreaDidLoad();
+		}
+		if (Instance.CurrentMode == GameModeType.TacticalCombat || Instance.TacticalCombat.Data != null)
+		{
+			EventBus.RaiseEvent(delegate(ITacticalCombatStartBattleHandler h)
+			{
+				h.HandleTacticalCombatStartBattle(fromLoad: false);
+			});
+			EventBus.RaiseEvent(delegate(ITacticalCombatForceUpdateHandler h)
+			{
+				h.HandleUIResetForceUpdateCurrentState();
+			});
+		}
+		if (Instance.CurrentMode == GameModeType.KingdomSettlement)
+		{
+			EventBus.RaiseEvent(delegate(ISettlementSceneHandler h)
+			{
+				h.OnSettlementSceneDidLoad();
+			});
+		}
+		if (!Instance.TurnBasedCombatController.Initialized)
+		{
+			Instance.UI.SelectionManager?.UpdateSelectedUnits();
+		}
+		if (Instance.TurnBasedCombatController.Initialized && Instance.Player.IsTurnBasedModeOn())
+		{
+			EventBus.RaiseEvent(delegate(IPartyCombatHandler h)
+			{
+				h.HandlePartyCombatStateChanged(Instance.Player.IsInCombat);
+			});
+		}
+		if (Instance.CurrentMode == GameModeType.KingdomSettlement)
+		{
+			EventBus.RaiseEvent(delegate(IResetKingdomUI h)
+			{
+				h.HandleUIReset();
+			});
+		}
+	}
+
+	public static Camera GetCamera()
+	{
+		if (!Application.isPlaying)
+		{
+			return Camera.main;
+		}
+		CameraRig cameraRig = Instance.UI.GetCameraRig();
+		if ((bool)cameraRig && cameraRig.Camera.enabled)
+		{
+			return cameraRig.Camera;
+		}
+		return Camera.main;
+	}
+
+	public void FixAreaPart(BlueprintAreaPart part)
+	{
+		LoadingProcess.Instance.StartLoadingProcess(m_SceneLoader.SwitchToAreaPartCoroutine(part));
+	}
+
+	public static void ChangeUIPlatform(bool nextPlatform)
+	{
+		GamePad instance = GamePad.Instance;
+		int length = Enum.GetValues(typeof(ConsoleType)).Length;
+		instance.ConsoleTypeProperty.Value = (ConsoleType)((int)(instance.ConsoleTypeProperty.Value + length + (nextPlatform ? 1 : (-1))) % length);
+		Instance.ControllerMode = ((instance.ConsoleTypeProperty.Value != 0) ? ControllerModeType.Gamepad : ControllerModeType.Mouse);
+	}
+}

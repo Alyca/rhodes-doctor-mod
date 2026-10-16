@@ -1,0 +1,83 @@
+{
+  "AssetId": "e6b35473a237a6045969253beb09777c",
+  "SourcePath": "Spells/Level4/InvisibilityGreaterBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$BuffInvisibility$d626d20a-09dc-4e48-9d45-17aa80954fa4"
+    ],
+    "Components": [
+      {
+        "$type": "90ad7cd428ee00b40834f378e9613708, BuffInvisibility",
+        "m_Flags": 0,
+        "name": "$BuffInvisibility$d626d20a-09dc-4e48-9d45-17aa80954fa4",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "NotDispellAfterOffensiveAction": true,
+        "m_StealthBonus": 20,
+        "DispelWithAChance": false,
+        "Chance": {
+          "ValueType": "Simple",
+          "Value": 0,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null,
+          "m_AbilityParameter": "Level",
+          "PropertyName": "Value1"
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "5dd5552e-5c7e-46a0-a761-a1a8a34bbcdc",
+      "m_OwnerString": "e6b35473a237a6045969253beb09777c",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Spells/Level4/InvisibilityGreaterBuff_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "ced32b70e63843c43ab42dae2ef26fb0",
+        "stringkey": "f65fe964-38d4-4f34-b125-8f8a1a2422a1"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "5ac2b4db004f798458e19515e9740c67",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": "IsFromSpell",
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": {
+      "AssetId": "f6968be15a69dac4982887ec01dc8c97"
+    },
+    "FxOnRemove": {
+      "AssetId": "c8a27802aeafc8747bf979f0c6c467f6"
+    },
+    "ResourceAssetIds": [
+      "f6968be15a69dac4982887ec01dc8c97",
+      "c8a27802aeafc8747bf979f0c6c467f6"
+    ],
+    "EmulateAbilityContext": false
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "AssetId": "d7cbd2004ce66a042aeab2e95a3c5c61",
+  "SourcePath": "Spells/Level5/DominatePerson.jbp",
+  "Data": {
+    "$type": "da11db195c86e0d4dae17a2c03a4ba9a, BlueprintAbility",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$AbilityEffectRunAction$3a7d977a-f2bf-4e5f-9801-c3ce29ec2721",
+      "$SpellComponent$d2e65ef5-897d-4163-b681-185ec4a613e4",
+      "$SpellListComponent$98e6e485-33c7-440c-a7ca-00ee859bd8f6",
+      "$SpellListComponent$59d7d61e-5010-4f2d-8b3f-b5b9efd18258",
+      "$SpellListComponent$b3210a8d-482f-45fb-994d-5030375bce06",
+      "$SpellListComponent$5cd2e372-0b87-48f3-bfb4-380366145d9e",
+      "$CraftInfoComponent$cb7c1211-146c-41a7-bc3b-9b3a65c0710a"
+    ],
+    "Components": [
+      {
+        "$type": "66e032e5cf38801428940a1a0d14b946, AbilityEffectRunAction",
+        "m_Flags": 0,
+        "name": "$AbilityEffectRunAction$3a7d977a-f2bf-4e5f-9801-c3ce29ec2721",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SavingThrowType": "Will",
+        "Actions": {
+          "Actions": [
+            {
+              "$type": "d61949c589ee885458c9439b2aa202b6, ContextActionConditionalSaved",
+              "name": "$ContextActionConditionalSaved$8f169015-b219-450b-a8f4-038540c28434",
+              "Succeed": {
+                "Actions": []
+              },
+              "Failed": {
+                "Actions": [
+                  {
+                    "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                    "name": "$ContextActionApplyBuff$b08aa30c-daf1-4b72-97d9-dd8761c976da",
+                    "m_Buff": "!bp_c0f4e1c24c9cd334ca988ed1bd9d201f",
+                    "Permanent": false,
+                    "UseDurationSeconds": false,
+                    "DurationValue": {
+                      "Rate": "Rounds",
+                      "DiceType": "Zero",
+                      "DiceCountValue": {
+                        "ValueType": "Simple",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level"
+                      },
+                      "BonusValue": {
+                        "ValueType": "Rank",
+                        "Value": 0,
+                        "ValueRank": "Default",
+                        "ValueShared": "Damage",
+                        "Property": "None",
+                        "m_CustomProperty": null,
+                        "m_AbilityParameter": "Level"
+                      },
+                      "m_IsExtendable": true
+                    },
+                    "DurationSeconds": 0.0,
+                    "IsFromSpell": true,
+                    "IsNotDispelable": false,
+                    "ToCaster": false,
+                    "AsChild": false,
+                    "SameDuration": false,
+                    "NotLinkToAreaEffect": false
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "$type": "bbf7e743804d40a47bde0b27174f33a9, SpellComponent",
+        "m_Flags": 0,
+        "name": "$SpellComponent$d2e65ef5-897d-4163-b681-185ec4a613e4",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "School": "Enchantment"
+      },
+      {
+        "$type": "c788cf748ec86bc45b986ac4de28cf45, AbilitySpawnFx",
+        "m_Flags": 0,
+        "name": "$AbilitySpawnFx$7f0ee985-1f80-4d1d-98fe-ed89916b0bbd",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "PrefabLink": {
+          "AssetId": "c14a2f46018cb0e41bfeed61463510ff"
+        },
+        "Time": "OnApplyEffect",
+        "Anchor": "SelectedTarget",
+        "WeaponTarget": "None",
+        "DestroyOnCast": false,
+        "Delay": 0.0,
+        "PositionAnchor": "None",
+        "OrientationAnchor": "None",
+        "OrientationMode": "Copy"
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$c0ddc3b1-329c-4b19-aadf-533bf5a4afd7",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 80
+        }
+      },
+      {
+        "$type": "c86d7ab572ddfea4ca09cb8c04facb87, AbilityTargetHasNoFactUnless",
+        "m_Flags": 0,
+        "name": "$AbilityTargetHasNoFactUnless$d073e583-6f03-46fc-a609-61563f9c4103",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_CheckedFacts": [
+          "!bp_734a29b693e9ec346ba2951b27987e33"
+        ],
+        "m_UnlessFact": "!bp_7853143d87baea1429bb409b023edb6b"
+      },
+      {
+        "$type": "471113ce4758b9b4d8a3162276d8d570, AbilityTargetHasFact",
+        "m_Flags": 0,
+        "name": "$AbilityTargetHasFact$58743171-8fe9-4d4d-9ff6-66c1ed4ee1f8",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_CheckedFacts": [
+          "!bp_3bec99efd9a363242a6c8d9957b75e91",
+          "!bp_fd389783027d63343b4a5634bd81645f",
+          "!bp_455ac88e22f55804ab87c2467deff1d6",
+          "!bp_018af8005220ac94a9a4f47b3e9c2b4e",
+          "!bp_9054d3988d491d944ac144e27b6bc318",
+          "!bp_706e61781d692a042b35941f14bc41c5",
+          "!bp_8728e884eeaa8b047be04197ecf1a0e4"
+        ],
+        "Inverted": true
+      },
+      {
+        "$type": "c86d7ab572ddfea4ca09cb8c04facb87, AbilityTargetHasNoFactUnless",
+        "m_Flags": 0,
+        "name": "$AbilityTargetHasNoFactUnless$3e4cc3e5-a38f-445b-8c82-4009f3293328",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_CheckedFacts": [
+          "!bp_a95311b3dc996964cbaa30ff9965aaf6",
+          "!bp_57614b50e8d86b24395931fffc5e409b",
+          "!bp_625827490ea69d84d8e599a33929fdc6",
+          "!bp_09478937695300944a179530664e42ec"
+        ],
+        "m_UnlessFact": "!bp_02707231be1d3a74ba7e38a426c8df37"
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$98e6e485-33c7-440c-a7ca-00ee859bd8f6",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_ba0401fdeb4062f40a7aa95b6f07fe89",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$31f4220d-3ce5-4a30-9c1d-ab0c767563c3",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_25a5013493bdcf74bb2424532214d0c8",
+        "SpellLevel": 4
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$9a41348f-401b-451f-a226-ac084f690d09",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_57b0bbdc1114ee846945f1808b13cff7",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$8f659a47-3420-403d-b1bd-4ce8135de1ce",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_31c742d02fc33204cad4e02dddf028dd",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$5f788dc5-d328-4fad-919f-f6a9f46c76c2",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_3de1e283971828f4896a4140acd3c84c",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$dd6c8509-9dd5-41f0-a5b9-ed51c14b563d",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_e17df9977b879b64e8a8cbb4b3569f19",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$59d7d61e-5010-4f2d-8b3f-b5b9efd18258",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_c0c40e42f07ff104fa85492da464ac69",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$b3210a8d-482f-45fb-994d-5030375bce06",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_40f8cfe98ca4ebd43894267dbd3fc3ae",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$f236bd86-7efd-4485-9ca5-f14fe59ebbd6",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_db216faa0ff2b984399e7495755c7111",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$5cd2e372-0b87-48f3-bfb4-380366145d9e",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_24b0c796f723a144e9891b6c4794c595",
+        "SpellLevel": 5
+      },
+      {
+        "$type": "faae7c00f379e66488a537d47a2919ad, CraftInfoComponent",
+        "m_Flags": 0,
+        "name": "$CraftInfoComponent$cb7c1211-146c-41a7-bc3b-9b3a65c0710a",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SpellType": "Other",
+        "SavingThrow": "Will",
+        "AOEType": "None"
+      },
+      {
+        "$type": "317417736594fa843918ddbcfeb74a76, SpellListComponent",
+        "m_Flags": 0,
+        "name": "$SpellListComponent$3074277b-f7fa-404c-81b8-4c8b2c35cbb7",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_SpellList": "!bp_78721d556676f264da947bfe263b1da0",
+        "SpellLevel": 5
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "e63faf11fb30fc44b915c3b271684fc5",
+        "stringkey": "e117c652-1032-4798-abec-31fa585c96e1"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "9232fd4c27694164f8d3f36409693f4f",
+        "stringkey": "9955e3b2-5df8-4f07-bd59-3445b94ffce0"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "3d46dd56327f5714eab5fae51a523c94",
+      "fileid": 21300000
+    },
+    "m_DefaultAiAction": null,
+    "Type": "Spell",
+    "Range": "Close",
+    "IgnoreMinimalRangeLimit": false,
+    "CustomRange": {
+      "m_Value": 0.0
+    },
+    "ShowNameForVariant": false,
+    "OnlyForAllyCaster": false,
+    "CanTargetPoint": false,
+    "CanTargetEnemies": true,
+    "CanTargetFriends": false,
+    "CanTargetSelf": false,
+    "ShouldTurnToTarget": true,
+    "SpellResistance": true,
+    "ActionBarAutoFillIgnored": false,
+    "Hidden": false,
+    "NeedEquipWeapons": false,
+    "NotOffensive": false,
+    "EffectOnAlly": "None",
+    "EffectOnEnemy": "Harmful",
+    "m_Parent": null,
+    "Animation": "Point",
+    "HasFastAnimation": false,
+    "AnimationStyle": "CastActionOmni",
+    "m_TargetMapObjects": false,
+    "ActionType": "Standard",
+    "AvailableMetamagic": "Quicken, Extend, Heighten, Reach, CompletelyNormal, Persistent",
+    "m_IsFullRoundAction": true,
+    "LocalizedDuration": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "ce23d48c23024d84b8d5f2f0fa9b6abb",
+        "stringkey": "6250ccf0-1ed0-460f-8ce7-094c2da7e198"
+      }
+    },
+    "LocalizedSavingThrow": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "7459589576c1d7c4c86ef054448d111e",
+        "stringkey": "50f1639f-a789-4939-bab6-557375828c4d"
+      }
+    },
+    "MaterialComponent": {
+      "m_Item": null,
+      "Count": 1
+    },
+    "DisableLog": false,
+    "ResourceAssetIds": [
+      "c14a2f46018cb0e41bfeed61463510ff",
+      "53975f48f933c534ea9c6bb97a3f64eb"
+    ]
+  }
+}

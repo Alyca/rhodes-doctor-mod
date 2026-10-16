@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="集火标记：赤红光点与钢制菱形瞄准环">
+<defs>
+  <radialGradient id="night"><stop stop-color="#384453"/><stop offset=".52" stop-color="#19242e"/><stop offset="1" stop-color="#090f19"/></radialGradient>
+  <linearGradient id="steel" x2=".9" y2="1"><stop stop-color="#d1dbdb"/><stop offset=".22" stop-color="#5d7782"/><stop offset=".51" stop-color="#202e3c"/><stop offset=".8" stop-color="#8298a0"/><stop offset="1" stop-color="#141d26"/></linearGradient>
+  <radialGradient id="ember"><stop stop-color="#fff4cd"/><stop offset=".18" stop-color="#ff9e67"/><stop offset=".55" stop-color="#da3544"/><stop offset="1" stop-color="#781c31"/></radialGradient>
+  <linearGradient id="flare" x2="1" y2="1"><stop stop-color="#fff3d9"/><stop offset=".35" stop-color="#ff6559"/><stop offset="1" stop-color="#740c31"/></linearGradient>
+  <filter id="glow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="15"/></filter>
+  <clipPath id="field"><rect x="22" y="22" width="468" height="468" rx="58"/></clipPath>
+</defs>
+<rect width="512" height="512" rx="68" fill="#070d16"/>
+<rect x="13" y="13" width="486" height="486" rx="63" fill="url(#steel)"/>
+<rect x="22" y="22" width="468" height="468" rx="58" fill="url(#night)"/>
+<g clip-path="url(#field)">
+  <path d="M-25 396 242 129M101 533 440 194M365-33 41 291" stroke="#b83840" stroke-width="8" opacity=".16"/>
+  <path d="M43 362 362 43M150 478 478 150" stroke="#e4ad8d" stroke-width="2" opacity=".21"/>
+  <circle cx="256" cy="256" r="110" fill="#e43a38" opacity=".27" filter="url(#glow)"/>
+  <path d="M256 58 454 256 256 454 58 256Z" fill="#090f19" stroke="#435460" stroke-width="4"/>
+  <path d="M256 73 439 256 256 439 73 256Z" fill="none" stroke="url(#steel)" stroke-width="18"/>
+  <path d="M256 104 408 256 256 408 104 256Z" fill="none" stroke="#9e5549" stroke-width="4" opacity=".8"/>
+  <circle cx="256" cy="256" r="116" fill="none" stroke="#c4c9bf" stroke-width="5" opacity=".72" stroke-dasharray="114 18 114 18 114 18 114 18" transform="rotate(45 256 256)"/>
+  <circle cx="256" cy="256" r="89" fill="#17202a" stroke="#a55854" stroke-width="5"/>
+  <path d="M256 93v91m0 144v91M93 256h91m144 0h91" stroke="#f2c8a5" stroke-width="17" stroke-linecap="round"/>
+  <path d="m256 165 20 56 56 35-56 35-20 56-20-56-56-35 56-35Z" fill="#1b222e" stroke="#f5d4ae" stroke-width="7"/>
+  <circle cx="256" cy="256" r="41" fill="#d9373b" opacity=".7" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="43" fill="url(#ember)" stroke="#ffcc9c" stroke-width="8"/>
+  <circle cx="256" cy="256" r="14" fill="#fff8dd"/>
+  <path d="m101 101 44 10-34 34Zm310 0-44 10 34 34ZM101 411l10-44 34 34Zm310 0-44-10 34-34Z" fill="url(#flare)"/>
+</g>
+<rect x="13" y="13" width="486" height="486" rx="63" fill="none" stroke="#d7b78a" stroke-opacity=".65" stroke-width="5"/>
+</svg>

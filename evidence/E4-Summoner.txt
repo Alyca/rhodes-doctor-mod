@@ -1,0 +1,27 @@
+# E4 证据：墨灵召唤走召唤规则，召唤者在 UnitPartSummonedMonster（N4）
+来源：游戏本体 Assembly-CSharp.dll（ilspycmd 9.0）；blueprints.zip
+
+## Kingmaker.RuleSystem.Rules.RuleSummonUnit.OnTrigger（本体原文）
+# unitEntityData.Ensure<UnitPartSummonedMonster>().Init(DoNotLinkToCaster ? unitEntityData : Initiator);
+# 结论：召唤者 = Initiator（施法者），与 DoNotLinkToCaster 无关（本 mod 两处均为 false/默认）。
+
+## Kingmaker.UnitLogic.Parts.UnitPartSummonedMonster（本体原文）
+# public class UnitPartSummonedMonster : OldStyleUnitPart {
+#   [JsonProperty] private UnitReference m_Summoner;
+#   public UnitEntityData Summoner => m_Summoner;
+#   public void Init(UnitEntityData summoner) { ... m_Summoner = summoner; }
+# }
+
+## Kingmaker.UnitLogic.Mechanics.Actions.ContextActionSpawnMonster.RunAction（本体原文）
+# RuleSummonUnit rule = new RuleSummonUnit(maybeCaster, Blueprint, pos, duration, level) {
+#   Context = base.Context, DoNotLinkToCaster = DoNotLinkToCaster };
+# UnitEntityData summonedUnit = base.Context.TriggerRule(rule).SummonedUnit;
+# 结论：墨染山河（SpawnMonster）走 RuleSummonUnit，召唤者 = 施法者。
+
+## 镜中流形（本 mod Actions.cs ContextActionSpawnMirrorCopy）
+# Context.TriggerRule(new RuleSummonUnit(caster, mirror, new Rounds(3)));
+# 同样走 RuleSummonUnit，召唤者 = 施法者。
+
+## 对照：UnitEntityData.Master 只看 UnitPartPet（见 E1-Master.txt），召唤物没有 Master。
+改法（N4）：InklingFightsWithMasterBAB 改读 Get<UnitPartSummonedMonster>()?.Summoner，取不到回退 Context.MaybeCaster。
+改后 X3 关闭（N4 证实并改好）。

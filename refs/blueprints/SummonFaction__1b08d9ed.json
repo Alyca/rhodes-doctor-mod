@@ -1,0 +1,20 @@
+{
+  "AssetId": "1b08d9ed04518ec46a9b3e4e23cb5105",
+  "SourcePath": "Factions/Summoned.jbp",
+  "Data": {
+    "$type": "9c187edec85a6b845a4998e7cf445685, BlueprintFaction",
+    "PrototypeLink": null,
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "m_AttackFactions": [],
+    "m_AllyFactions": [],
+    "m_AllyFactionsBehaviour": "AllExcludePlayer",
+    "Peaceful": false,
+    "AlwaysEnemy": false,
+    "EnemyForEveryone": false,
+    "Neutral": false,
+    "IsDirectlyControllable": false,
+    "NeverJoinCombat": false
+  }
+}

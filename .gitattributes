@@ -1,0 +1,22 @@
+# 文本文件：仓库内统一存 LF，检出时按平台转换
+* text=auto
+
+# 源码 / 文档
+*.cs      text diff=csharp
+*.csproj  text
+*.json    text
+*.md      text
+*.txt     text
+*.py      text
+*.sh      text eol=lf
+*.ps1     text eol=crlf
+
+# 二进制资源：禁止任何换行转换
+*.png     binary
+*.jpg     binary
+*.webp    binary
+*.svg     text
+*.dll     binary
+*.pdb     binary
+*.gz      binary
+*.zip     binary

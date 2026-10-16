@@ -1,0 +1,37 @@
+# E3 证据：区域 Round 动作对圈内每个单位各执行一次（N1）
+来源：D:\steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Assembly-CSharp.dll（ilspycmd 9.0）
+
+## Kingmaker.UnitLogic.Abilities.Components.AreaEffects.AbilityAreaEffectRunAction.OnRound（本体原文）
+# protected override void OnRound(MechanicsContext context, AreaEffectEntityData areaEffect)
+# {
+#   if (!Round.HasActions) return;
+#   using (ContextData<AreaEffectContextData>.Request().Setup(areaEffect))
+#   {
+#     foreach (UnitEntityData item in areaEffect.InGameUnitsInside)
+#     {
+#       using (context.GetDataScope(item))
+#       {
+#         Round.Run();
+#       }
+#     }
+#   }
+# }
+
+## Kingmaker.EntitySystem.Entities.AreaEffectEntityData.InGameUnitsInside（本体原文）
+# public IEnumerable<UnitEntityData> InGameUnitsInside {
+#   get {
+#     foreach (UnitInfo item in m_UnitsInside) {
+#       UnitReference reference = item.Reference;
+#       if (reference.Value != null && reference.Value.IsInGame && reference.Value.IsInState)
+#         yield return reference;
+#     }
+#   }
+# }
+
+## Kingmaker.UnitLogic.Mechanics.Actions.ContextAction（本体原文）
+# protected MechanicsContext Context => ContextData<MechanicsContext.Data>.Current?.Context;
+# protected TargetWrapper Target => ContextData<MechanicsContext.Data>.Current?.CurrentTarget;
+# 即 Round 内 Target.Unit == 本次 GetDataScope(item) 的单位。
+
+结论：Round 动作按圈内单位数重复执行；逐单位扫描全场的动作会成倍伤害。
+改法（N1）：每次执行只打 Target.Unit，且只打敌人。

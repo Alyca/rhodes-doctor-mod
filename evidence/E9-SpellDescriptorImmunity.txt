@@ -1,0 +1,137 @@
+# E9 证据：睡眠描述符整法术免疫在投递门拦下整个法术（E9）
+
+来源：D:\steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Assembly-CSharp.dll（ilspycmd 9.0）
+反编译缓存：C:\Users\DELL\AppData\Local\Temp\opencode\wrath-dec\Assembly-CSharp.decompiled.cs
+查过类：见下每节类名+方法名。蓝图：Traits/Races/Elf/ElvenImmunities.jbp（见 evidence/E7-Sleep.txt §1，两种免疫并存）。
+
+## 1. Kingmaker.UnitLogic.FactLogic.SpellImmunityToSpellDescriptor.OnTurnOn/OnTurnOff
+```csharp
+protected override void OnTurnOn()
+{
+    base.Data.AppliedId = base.Owner.Ensure<UnitPartSpellResistance>().AddImmunity(
+        SpellImmunityType.SpellDescriptor, AlignmentComponent.None, null, Descriptor, CasterIgnoreImmunityFact);
+}
+protected override void OnTurnOff()
+{
+    if (base.Data.AppliedId.HasValue)
+    {
+        base.Owner.Get<UnitPartSpellResistance>()?.Remove(base.Data.AppliedId.Value);
+        base.Data.AppliedId = null;
+    }
+}
+```
+说明：向 UnitPartSpellResistance 登记整法术描述符免疫（E7-Sleep.txt §3 同源）。
+
+## 2. Kingmaker.UnitLogic.Parts.UnitPartSpellResistance.IsImmune + CanApply（SpellDescriptor 分支）
+```csharp
+public bool IsImmune([CanBeNull] MechanicsContext context, bool spellDescriptorOnly = false)
+{
+    if (context != null && context.MaybeCaster == context.MainTarget)
+    {
+        return false;
+    }
+    foreach (SpellImmunity spellImmunity in m_SpellImmunites)
+    {
+        if ((!spellDescriptorOnly || spellImmunity.Type == SpellImmunityType.SpellDescriptor) && CanApply(spellImmunity, context))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+```
+```csharp
+case SpellImmunityType.SpellDescriptor:
+{
+    SpellDescriptor? spellDescriptor = contextDescriptors ?? (((object)abilityData != null) ? new SpellDescriptor?(abilityData.SpellDescriptor) : blueprintAbility?.SpellDescriptor);
+    if (!contextDescriptors.HasValue)
+    {
+        return false;
+    }
+    SpellDescriptor flags = immunity.SpellDescriptor & ~IgnoreSpellDescriptorImmunities;
+    if (spellDescriptor.Value.HasAnyFlag(flags))
+    {
+        if (blueprintAbility != null)
+        {
+            return !immunity.Exceptions.HasItem(blueprintAbility);
+        }
+        return true;
+    }
+    return false;
+}
+```
+枚举：SpellImmunityType = Simple, Specific, SingleTarget, SpellDescriptor, AllSpells。
+本 mod 醉梦上下文必含 Sleep：src/SpellsSetup.cs:163 `Descriptor = SpellDescriptor.Sleep | SpellDescriptor.MindAffecting`，
+经 CreateSpell :521-522 写入 SpellDescriptorComponent；MechanicsContext 构造 `SpellDescriptor = Parent + AssociatedBlueprint.SpellDescriptor`。
+故精灵 Sleep 描述符免疫在此命中，IsImmune == true。
+
+## 3. Kingmaker.RuleSystem.Rules.RuleSpellResistanceCheck.OnTrigger + IsSpellResisted
+```csharp
+public override void OnTrigger(RulebookEventContext context)
+{
+    UnitPartSpellResistance unitPartSpellResistance = Target.Get<UnitPartSpellResistance>();
+    TargetIsImmune = unitPartSpellResistance?.IsImmune(Context) ?? false;
+    if (TargetIsImmune || IgnoreSpellResistance)
+    {
+        return;
+    }
+    SpellResistance = unitPartSpellResistance?.GetValue(Context) ?? 0;
+    ...
+}
+public bool IsSpellResisted
+{
+    get
+    {
+        if (Context?.SourceAbilityContext?.ForceIgnoreSpellResist != true
+            && !Initiator.Descriptor.State.Features.PrimalMagicEssence && !IgnoreSpellResistance)
+        {
+            if (!TargetIsImmune)
+            { ...SR 投骰逻辑... }
+            return true;   // TargetIsImmune == true 直接落到这里
+        }
+        return false;
+    }
+}
+```
+正常施法无 ForceIgnoreSpellResist / PrimalMagicEssence，故免疫 => IsSpellResisted == true。
+
+## 4. Kingmaker.Controllers.AbilityExecutionProcess.DoApplyEffect（拦的是整个法术）
+```csharp
+private static void DoApplyEffect(AbilityExecutionContext context, TargetWrapper target, AbilityApplyEffect applyEffect)
+{
+    ...
+    bool flag = false;
+    if (target.Unit != null && target.Unit != context.MaybeCaster && !context.AbilityBlueprint.StickyTouch)
+    {
+        flag = Rulebook.Trigger(new RuleSpellResistanceCheck(context, target.Unit)).IsSpellResisted;
+    }
+    if (!flag)
+    {
+        applyEffect.Apply(context, target);   // 豁免+沉眠+恍惚都在这里面
+        ...
+        Rulebook.Trigger(new RuleApplySpell(RuleApplySpell.PlaceType.After, context, context.Ability, target));
+    }
+    ...
+}
+```
+AbilityExecutionContext : MechanicsContext（类声明已核对），传入的正是带 Sleep 的法术上下文。
+结论：该目标的豁免动作、沉眠 ApplyBuff、恍惚 ApplyBuff（一同在 applyEffect.Apply 内）一行都不执行。
+ignoreParentContext 生效点在更下游 BuffCollection -> RuleCanApplyBuff，根本到不了，对这条免疫无效（它只克制 BuffDescriptorImmunity 那条线）。
+
+## 5. Kingmaker.UnitLogic.Mechanics.Actions.ContextActionApplyBuff.RunAction（对照）
+```csharp
+MechanicsContext parentContext = (IgnoreParentContext ? null : mechanicsContext);
+Buff buff = buffTarget.Descriptor.AddBuff(Buff, parentContext, duration);
+```
+E7 已用 ignoreParentContext=true 绕过 BuffDescriptorImmunity（睡眠上下文判定），但绕不过上面的投递门。
+
+## 6. 阴性证据（查过、无免疫分支）
+- Kingmaker.RuleSystem.Rules.Abilities.RuleCastSpell.OnTrigger：只做 UMD/失败率/奥术失败检定后直接 Spell.Cast(Context)，无任何免疫检查。
+- Kingmaker.RuleSystem.Rules.RuleSavingThrow 全类：无 IsImmune/Immunity 引用（全文 grep 零命中）。
+- 全程序集 grep `new RuleSpellResistanceCheck` 仅 3 处：DoApplyEffect（本链路）、DamageTriggerAdapter（伤害触发器，非增益路径）、UnitUseAbility（施法者自身 NegatedSpellblight 专注，无关）。
+- 全程序集 grep `RuleCanApplyBuff` 的 `Immunity = true` 仅 2 处：BuffDescriptorImmunity 与 SpecificBuffImmunity。描述符法术免疫从不参与逐增益判定，只走投递门。
+
+## 7. 结论
+整个法术都被挡掉，恍惚挂不上去。同一法术内的任何动作（含隐藏跟进若共享上下文）同样被投递门拦掉，
+拆分必须拆到上下文之外（即另一个不带 Sleep 描述符的独立能力）。按规则“做不到就停下，不要自己找替代做法”，
+本轮不改代码，列入“做不到”，建议转实测（找精灵目标实测一次，战斗日志应显示法术被抵抗且无豁免、无恍惚）。

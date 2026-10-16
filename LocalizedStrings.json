@@ -1,0 +1,1377 @@
+[
+  {
+    "Key": "rhodesdoctor.archetype.name",
+    "zhCN": "罗德岛博士",
+    "enGB": "Rhodes Island Doctor"
+  },
+  {
+    "Key": "rhodesdoctor.archetype.desc",
+    "zhCN": "罗德岛的博士从石棺中醒来时，几乎失去了全部记忆，却依然保留着洞悉战局的头脑。博士很少亲自挥剑，而是以简短的战术指令调度同伴；当战局逼入绝境时，博士会放任体内“巴别塔的恶灵”短暂苏醒，将全部{g|Encyclopedia:Intelligence}智力{/g}化为最锋利的战斗本能。",
+    "enGB": "Awakening from the sarcophagus with nearly all memories lost, the Doctor of Rhodes Island nevertheless retains a mind that reads the battlefield like an open book. Rarely raising a blade in person, the Doctor directs allies with brief tactical orders—and when the battle demands it, lets the Specter of Babel awaken within, turning {g|Encyclopedia:Intelligence}Intelligence{/g} into the sharpest fighting instinct."
+  },
+  {
+    "Key": "rhodesdoctor.spellbook.name",
+    "zhCN": "战术指令",
+    "enGB": "Tactical Orders"
+  },
+  {
+    "Key": "rhodesdoctor.spellcasting.desc",
+    "zhCN": "在1级时，博士获得战术指令法术书，可施展至多9环的奥术指令。博士以{g|Encyclopedia:Intelligence}智力{/g}作为施法关键属性，无需提前准备即可自发施展已知指令；其每日法术位与已知法术数量与同等级的术士相同，且施展战术指令不受护甲或盾牌的奥术施法失败率影响。0环指令为戏法，可无限次施展。",
+    "enGB": "At 1st level, the Doctor gains the Tactical Orders spellbook and can cast arcane orders of up to 9th level. The Doctor casts known orders spontaneously using {g|Encyclopedia:Intelligence}Intelligence{/g} as their casting ability score, following the sorcerer's spells-per-day and spells-known progression, and ignores arcane spell failure chance from armor and shields. 0-level orders are cantrips and can be cast at will."
+  },
+  {
+    "Key": "rhodesdoctor.duration.instant",
+    "zhCN": "立即",
+    "enGB": "Instantaneous"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round1",
+    "zhCN": "1 轮",
+    "enGB": "1 round"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round2",
+    "zhCN": "2 轮",
+    "enGB": "2 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round3",
+    "zhCN": "3 轮",
+    "enGB": "3 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round4",
+    "zhCN": "4 轮",
+    "enGB": "4 rounds"
+  },
+  {
+    "Key": "rhodesdoctor.duration.round1level",
+    "zhCN": "1 轮/级",
+    "enGB": "1 round/level"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute1",
+    "zhCN": "1 分钟",
+    "enGB": "1 minute"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute1level",
+    "zhCN": "1 分钟/级",
+    "enGB": "1 minute/level"
+  },
+  {
+    "Key": "rhodesdoctor.duration.minute10level",
+    "zhCN": "10 分钟/级",
+    "enGB": "10 minutes/level"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.name",
+    "zhCN": "集火",
+    "enGB": "Focus Fire"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.desc",
+    "zhCN": "你以{g|Encyclopedia:Swift_Action}迅捷动作{/g}标记视野内的一名敌人。在标记持续期间，所有友军对该目标进行的{g|Encyclopedia:Attack}攻击检定{/g}与伤害掷骰获得 +1 洞察{g|Encyclopedia:Bonus}加值{/g}；圣武士等级每达到 4 级，该{g|Encyclopedia:Bonus}加值{/g}再提高 +1（最高在 20 级时达到 +6）。\n标记持续的{g|Encyclopedia:Combat_Round}轮{/g}数等于你的{g|Encyclopedia:Intelligence}智力{/g}调整值（至少 1 {g|Encyclopedia:Combat_Round}轮{/g}）。同一时间只能维持一个集火标记；对新目标下达集火会立即移除先前的标记。每日可使用次数等于 3 + 你的{g|Encyclopedia:Intelligence}智力{/g}调整值。",
+    "enGB": "As a {g|Encyclopedia:Swift_Action}swift action{/g}, you mark one enemy within sight. While the mark lasts, all allies gain a +1 insight {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack{/g} and {g|Encyclopedia:Damage}damage{/g} rolls against that target, plus an additional +1 for every 4 paladin levels you possess (to a maximum of +6 at 20th level).\nThe mark lasts for a number of {g|Encyclopedia:Combat_Round}rounds{/g} equal to your {g|Encyclopedia:Intelligence}Intelligence{/g} modifier (minimum 1 {g|Encyclopedia:Combat_Round}round{/g}). You can maintain only one mark at a time; marking a new target removes any previous mark. You can use this ability a number of times per day equal to 3 + your {g|Encyclopedia:Intelligence}Intelligence{/g} modifier."
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.mark.name",
+    "zhCN": "集火标记",
+    "enGB": "Focus Fire Mark"
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.mark.desc",
+    "zhCN": "所有友军对该目标进行的{g|Encyclopedia:Attack}攻击检定{/g}与伤害掷骰获得洞察{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "All allies gain an insight {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack{/g} and {g|Encyclopedia:Damage}damage{/g} rolls against this target."
+  },
+  {
+    "Key": "rhodesdoctor.focusfire.feature.desc",
+    "zhCN": "在1级时，博士每日可使用集火的次数等于 3 + {g|Encyclopedia:Intelligence}智力{/g}调整值。此能力与战术指令法术书一同替换辟邪斩。",
+    "enGB": "At 1st level, the Doctor can use Focus Fire a number of times per day equal to 3 + their {g|Encyclopedia:Intelligence}Intelligence{/g} modifier. Together with the Tactical Orders spellbook, this ability replaces smite evil."
+  },
+  {
+    "Key": "rhodesdoctor.mastery1.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery1.desc",
+    "zhCN": "在2级时，博士在克服{g|Encyclopedia:Spell_Resistance}法术抗力{/g}的{g|Encyclopedia:Caster_Level}施法者等级{/g}{g|Encyclopedia:Check}检定{/g}以及战术指令的豁免{g|Encyclopedia:DC}DC{/g}上获得 +1 不具类型{g|Encyclopedia:Bonus}加值{/g}（可叠加）。当巴别塔的恶灵生效期间，上述{g|Encyclopedia:Bonus}加值{/g}暂时失效，且博士的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}改为承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}。此能力替换神恩。",
+    "enGB": "At 2nd level, the Doctor gains a stacking +1 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Caster_Level}caster level{/g} {g|Encyclopedia:Check}checks{/g} made to overcome {g|Encyclopedia:Spell_Resistance}spell resistance{/g} and to the saving throw {g|Encyclopedia:DC}DCs{/g} of their tactical orders. While the Specter of Babel is active, these {g|Encyclopedia:Bonus}bonuses{/g} are suppressed, and the Doctor's spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} instead take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value. This ability replaces divine grace."
+  },
+  {
+    "Key": "rhodesdoctor.mastery2.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery2.desc",
+    "zhCN": "在6级时，源石技艺精通提供的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}{g|Encyclopedia:Bonus}加值{/g}提高至 +2。当巴别塔的恶灵生效期间，上述{g|Encyclopedia:Bonus}加值{/g}暂时失效，且博士的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}改为承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "At 6th level, the untyped {g|Encyclopedia:Bonus}bonus{/g} on spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} from Originium Arts Mastery increases to +2. While the Specter of Babel is active, these {g|Encyclopedia:Bonus}bonuses{/g} are suppressed, and the Doctor's spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} instead take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value."
+  },
+  {
+    "Key": "rhodesdoctor.mastery3.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery3.desc",
+    "zhCN": "在10级时，源石技艺精通提供的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}{g|Encyclopedia:Bonus}加值{/g}提高至 +3。当巴别塔的恶灵生效期间，上述{g|Encyclopedia:Bonus}加值{/g}暂时失效，且博士的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}改为承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "At 10th level, the untyped {g|Encyclopedia:Bonus}bonus{/g} on spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} from Originium Arts Mastery increases to +3. While the Specter of Babel is active, these {g|Encyclopedia:Bonus}bonuses{/g} are suppressed, and the Doctor's spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} instead take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value."
+  },
+  {
+    "Key": "rhodesdoctor.mastery4.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery4.desc",
+    "zhCN": "在14级时，源石技艺精通提供的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}{g|Encyclopedia:Bonus}加值{/g}提高至 +4。当巴别塔的恶灵生效期间，上述{g|Encyclopedia:Bonus}加值{/g}暂时失效，且博士的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}改为承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "At 14th level, the untyped {g|Encyclopedia:Bonus}bonus{/g} on spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} from Originium Arts Mastery increases to +4. While the Specter of Babel is active, these {g|Encyclopedia:Bonus}bonuses{/g} are suppressed, and the Doctor's spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} instead take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value."
+  },
+  {
+    "Key": "rhodesdoctor.mastery5.name",
+    "zhCN": "源石技艺精通",
+    "enGB": "Originium Arts Mastery"
+  },
+  {
+    "Key": "rhodesdoctor.mastery5.desc",
+    "zhCN": "在18级时，源石技艺精通提供的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}{g|Encyclopedia:Bonus}加值{/g}提高至 +5。当巴别塔的恶灵生效期间，上述{g|Encyclopedia:Bonus}加值{/g}暂时失效，且博士的法术穿透{g|Encyclopedia:Check}检定{/g}与指令豁免{g|Encyclopedia:DC}DC{/g}改为承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "At 18th level, the untyped {g|Encyclopedia:Bonus}bonus{/g} on spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} from Originium Arts Mastery increases to +5. While the Specter of Babel is active, these {g|Encyclopedia:Bonus}bonuses{/g} are suppressed, and the Doctor's spell penetration {g|Encyclopedia:Check}checks{/g} and spell save {g|Encyclopedia:DC}DCs{/g} instead take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value."
+  },
+  {
+    "Key": "rhodesdoctor.coolhead.name",
+    "zhCN": "冷静头脑",
+    "enGB": "Cool Head"
+  },
+  {
+    "Key": "rhodesdoctor.coolhead.desc",
+    "zhCN": "达到2级后，博士将自身的{g|Encyclopedia:Intelligence}智力{/g}调整值（若为正数）作为不具类型{g|Encyclopedia:Bonus}加值{/g}加到所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}上。在巴别塔的恶灵生效期间，该{g|Encyclopedia:Bonus}加值{/g}减半；达到20级后，恶灵生效期间不再减半。",
+    "enGB": "At 2nd level, the Doctor adds their {g|Encyclopedia:Intelligence}Intelligence{/g} modifier (if positive) as a stacking untyped {g|Encyclopedia:Bonus}bonus{/g} on all {g|Encyclopedia:Saving_Throw}saving throws{/g}. This {g|Encyclopedia:Bonus}bonus{/g} is halved while the Specter of Babel is active; at 20th level, it is no longer halved."
+  },
+  {
+    "Key": "rhodesdoctor.aura.name",
+    "zhCN": "指挥灵光",
+    "enGB": "Aura of Command"
+  },
+  {
+    "Key": "rhodesdoctor.aura.ally.desc",
+    "zhCN": "在{g|Encyclopedia:Attack}攻击检定{/g}与{g|Encyclopedia:Initiative}先攻检定{/g}上获得 +1 表现{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You gain a +1 competence {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and {g|Encyclopedia:Initiative}initiative{/g} {g|Encyclopedia:Check}checks{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.aura.self.desc",
+    "zhCN": "10 尺内的友军获得指挥灵光。",
+    "enGB": "Allies within 10 feet gain the effects of Aura of Command."
+  },
+  {
+    "Key": "rhodesdoctor.aura.desc",
+    "zhCN": "达到4级时，博士散发出半径 10 尺的指挥灵光。博士本人以及灵光范围内的所有友军在{g|Encyclopedia:Attack}攻击检定{/g}与{g|Encyclopedia:Initiative}先攻检定{/g}上获得 +1 表现{g|Encyclopedia:Bonus}加值{/g}。当博士失去意识或巴别塔的恶灵生效期间，此灵光暂时失效。此能力替换圣武士的施法能力。",
+    "enGB": "At 4th level, the Doctor radiates a 10-foot Aura of Command. The Doctor and all allies within the aura gain a +1 competence {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and {g|Encyclopedia:Initiative}initiative{/g} {g|Encyclopedia:Check}checks{/g}. This aura does not function while the Doctor is unconscious or while the Specter of Babel is active. This ability replaces the paladin's spellcasting."
+  },
+  {
+    "Key": "rhodesdoctor.total.name",
+    "zhCN": "全军指令",
+    "enGB": "Total Command"
+  },
+  {
+    "Key": "rhodesdoctor.total.ally.desc",
+    "zhCN": "在{g|Encyclopedia:Attack}攻击检定{/g}与{g|Encyclopedia:Initiative}先攻检定{/g}上获得 +2 表现{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You gain a +2 competence {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and {g|Encyclopedia:Initiative}initiative{/g} {g|Encyclopedia:Check}checks{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.total.self.desc",
+    "zhCN": "30 尺内的友军获得全军指令。",
+    "enGB": "Allies within 30 feet gain the effects of Total Command."
+  },
+  {
+    "Key": "rhodesdoctor.total.desc",
+    "zhCN": "达到11级时，博士的指挥灵光范围扩大至 30 尺，且在{g|Encyclopedia:Attack}攻击检定{/g}与{g|Encyclopedia:Initiative}先攻检定{/g}上提供的表现{g|Encyclopedia:Bonus}加值{/g}提高至 +2。此能力替换正义灵光。",
+    "enGB": "At 11th level, the radius of the Doctor's Aura of Command increases to 30 feet, and the competence {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and {g|Encyclopedia:Initiative}initiative{/g} {g|Encyclopedia:Check}checks{/g} increases to +2. This ability replaces aura of justice."
+  },
+  {
+    "Key": "rhodesdoctor.loh.resource.name",
+    "zhCN": "圣疗次数",
+    "enGB": "Lay on Hands Charges"
+  },
+  {
+    "Key": "rhodesdoctor.loh.name",
+    "zhCN": "圣疗",
+    "enGB": "Lay on Hands"
+  },
+  {
+    "Key": "rhodesdoctor.loh.desc",
+    "zhCN": "博士的圣疗每日使用次数以及对不死生物造成伤害时的豁免{g|Encyclopedia:DC}DC{/g}改由{g|Encyclopedia:Intelligence}智力{/g}调整值决定，其余效果与圣武士的圣疗相同。",
+    "enGB": "The Doctor's daily uses of lay on hands and its saving throw {g|Encyclopedia:DC}DC{/g} against undead are based on their {g|Encyclopedia:Intelligence}Intelligence{/g} modifier instead of {g|Encyclopedia:Charisma}Charisma{/g}; otherwise, this ability functions as the standard paladin lay on hands."
+  },
+  {
+    "Key": "rhodesdoctor.channel.name",
+    "zhCN": "引导正能量",
+    "enGB": "Channel Positive Energy"
+  },
+  {
+    "Key": "rhodesdoctor.channel.desc",
+    "zhCN": "博士引导正向能量的豁免{g|Encyclopedia:DC}DC{/g}改由{g|Encyclopedia:Intelligence}智力{/g}调整值决定，每次使用消耗 2 次圣疗次数；其余效果与圣武士的引导正向能量相同。",
+    "enGB": "The saving throw {g|Encyclopedia:DC}DC{/g} of the Doctor's channel positive energy is based on their {g|Encyclopedia:Intelligence}Intelligence{/g} modifier instead of {g|Encyclopedia:Charisma}Charisma{/g}, and each use expends 2 uses of lay on hands; otherwise, this ability functions as the standard paladin channel positive energy."
+  },
+  {
+    "Key": "rhodesdoctor.specter.resource.name",
+    "zhCN": "恶灵轮数",
+    "enGB": "Specter Rounds"
+  },
+  {
+    "Key": "rhodesdoctor.specter.lock.name",
+    "zhCN": "巴别塔的恶灵（锁定）",
+    "enGB": "Specter of Babel (Lock)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.lock.desc",
+    "zhCN": "巴别塔的恶灵生效期间，博士只能施展带有【恶灵】标记的战术指令；源石技艺精通暂时失效且法术穿透与指令豁免{g|Encyclopedia:DC}DC{/g}承受等于转移量的{g|Encyclopedia:Penalty}减值{/g}；指挥灵光与全军指令暂时失效。",
+    "enGB": "While the Specter of Babel is active, the Doctor can only cast tactical orders with the [Specter] descriptor; Originium Arts Mastery is suppressed and spell penetration and spell save {g|Encyclopedia:DC}DCs{/g} take a {g|Encyclopedia:Penalty}penalty{/g} equal to the Transfer Value; Aura of Command and Total Command are suppressed."
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.name",
+    "zhCN": "恶灵余波",
+    "enGB": "Specter's Aftermath"
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.restrict.desc",
+    "zhCN": "在恶灵余波期间，博士每{g|Encyclopedia:Combat_Round}轮{/g}只能执行一个{g|Encyclopedia:Move_Action}移动动作{/g}，无法进行任何攻击（包括{g|Encyclopedia:Attack_Of_Opportunity}借机攻击{/g}）、施展{g|Encyclopedia:Spell}法术{/g}，也无法主动使用职业能力或物品。",
+    "enGB": "During the Specter's Aftermath, the Doctor can take only a single {g|Encyclopedia:Move_Action}move action{/g} each {g|Encyclopedia:Combat_Round}round{/g} and cannot make {g|Encyclopedia:Attack}attacks{/g} (including {g|Encyclopedia:Attack_Of_Opportunity}attacks of opportunity{/g}), cast {g|Encyclopedia:Spell}spells{/g}, or actively use abilities or items."
+  },
+  {
+    "Key": "rhodesdoctor.specter.aftermath.speed.desc",
+    "zhCN": "在恶灵余波期间，博士的移动{g|Encyclopedia:Speed}速度{/g}获得 +50 尺不具类型{g|Encyclopedia:Bonus}加值{/g}（可叠加）。",
+    "enGB": "During the Specter's Aftermath, the Doctor gains a stacking +50-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to movement {g|Encyclopedia:Speed}speed{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.agile.name",
+    "zhCN": "巴别塔的恶灵：敏捷形态",
+    "enGB": "Specter of Babel: Agile Form"
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.agile.desc",
+    "zhCN": "博士的{g|Encyclopedia:Dexterity}敏捷{/g}获得等于转移量两倍的不具类型{g|Encyclopedia:Bonus}加值{/g}，所穿盔甲的最大{g|Encyclopedia:Dexterity}敏捷{/g}{g|Encyclopedia:Bonus}加值{/g}上限提高等于转移量的数值，且近战武器{g|Encyclopedia:Attack}攻击检定{/g}与伤害掷骰改用{g|Encyclopedia:Dexterity}敏捷{/g}调整值代替{g|Encyclopedia:Strength}力量{/g}调整值（取较高者）。",
+    "enGB": "The Doctor gains an untyped {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Dexterity}Dexterity{/g} equal to twice the Transfer Value, increases the maximum {g|Encyclopedia:Dexterity}Dexterity{/g} {g|Encyclopedia:Bonus}bonus{/g} of worn armor by the Transfer Value, and uses their {g|Encyclopedia:Dexterity}Dexterity{/g} modifier instead of {g|Encyclopedia:Strength}Strength{/g} on melee {g|Encyclopedia:Attack}attack{/g} and {g|Encyclopedia:Damage}damage{/g} rolls (whichever is higher)."
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.enduring.name",
+    "zhCN": "巴别塔的恶灵：体质形态",
+    "enGB": "Specter of Babel: Enduring Form"
+  },
+  {
+    "Key": "rhodesdoctor.specter.form.enduring.desc",
+    "zhCN": "博士的{g|Encyclopedia:Constitution}体质{/g}获得等于转移量两倍的不具类型{g|Encyclopedia:Bonus}加值{/g}，其最大{g|Encyclopedia:HP}生命值{/g}与{g|Encyclopedia:Saving_Throw}强韧豁免{/g}随之提高。",
+    "enGB": "The Doctor gains an untyped {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Constitution}Constitution{/g} equal to twice the Transfer Value, increasing maximum {g|Encyclopedia:HP}hit points{/g} and {g|Encyclopedia:Saving_Throw}Fortitude saves{/g} accordingly."
+  },
+  {
+    "Key": "rhodesdoctor.specter.toggle.agile.desc",
+    "zhCN": "唤醒巴别塔的恶灵并进入敏捷形态。恶灵状态结束时，博士将陷入持续 2 {g|Encyclopedia:Combat_Round}轮{/g}的恶灵余波；你可以使用“结束恶灵”能力提前终止该状态。",
+    "enGB": "Awaken the Specter of Babel in Agile Form. When the Specter ends, you enter the Specter's Aftermath for 2 {g|Encyclopedia:Combat_Round}rounds{/g}; you can end the effect early using End the Specter."
+  },
+  {
+    "Key": "rhodesdoctor.specter.toggle.enduring.desc",
+    "zhCN": "唤醒巴别塔的恶灵并进入体质形态。恶灵状态结束时，博士将陷入持续 2 {g|Encyclopedia:Combat_Round}轮{/g}的恶灵余波；你可以使用“结束恶灵”能力提前终止该状态。",
+    "enGB": "Awaken the Specter of Babel in Enduring Form. When the Specter ends, you enter the Specter's Aftermath for 2 {g|Encyclopedia:Combat_Round}rounds{/g}; you can end the effect early using End the Specter."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder1.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder1.desc",
+    "zhCN": "选择敏捷形态或体质形态以唤醒巴别塔的恶灵。",
+    "enGB": "Choose Agile Form or Enduring Form to awaken the Specter of Babel."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder2.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder2.desc",
+    "zhCN": "选择敏捷形态或体质形态以唤醒巴别塔的恶灵。",
+    "enGB": "Choose Agile Form or Enduring Form to awaken the Specter of Babel."
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder3.name",
+    "zhCN": "巴别塔的恶灵（开关）",
+    "enGB": "Specter of Babel (Toggles)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.holder3.desc",
+    "zhCN": "选择敏捷形态或体质形态以唤醒巴别塔的恶灵。",
+    "enGB": "Choose Agile Form or Enduring Form to awaken the Specter of Babel."
+  },
+  {
+    "Key": "rhodesdoctor.specter.name",
+    "zhCN": "巴别塔的恶灵",
+    "enGB": "Specter of Babel"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage1.desc",
+    "zhCN": "达到8级时，博士可以唤醒体内沉睡的另一个自己——巴别塔的恶灵。开启时需选择敏捷形态或体质形态（结束前不可切换），将一半的{g|Encyclopedia:Intelligence}智力{/g}调整值作为“转移量”转化为纯粹的战斗本能。博士每日可维持恶灵状态的{g|Encyclopedia:Combat_Round}轮{/g}数等于 4 + 圣武士等级 + {g|Encyclopedia:Intelligence}智力{/g}调整值。恶灵状态结束时，博士会陷入持续 2 {g|Encyclopedia:Combat_Round}轮{/g}的恶灵余波。此能力替换坚定灵光。",
+    "enGB": "At 8th level, the Doctor can awaken the other self slumbering within—the Specter of Babel. Upon activating this ability, choose either Agile Form or Enduring Form (this choice cannot be changed until the effect ends), converting half of your {g|Encyclopedia:Intelligence}Intelligence{/g} modifier into pure fighting instinct as the Transfer Value. You can maintain the Specter for a number of {g|Encyclopedia:Combat_Round}rounds{/g} per day equal to 4 + your paladin level + your {g|Encyclopedia:Intelligence}Intelligence{/g} modifier. When the Specter ends, you suffer the Specter's Aftermath for 2 {g|Encyclopedia:Combat_Round}rounds{/g}. This ability replaces aura of resolve."
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage2.name",
+    "zhCN": "巴别塔的恶灵（二段）",
+    "enGB": "Specter of Babel (Stage II)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage2.desc",
+    "zhCN": "达到14级时，巴别塔的恶灵的转移量提高为博士的全部{g|Encyclopedia:Intelligence}智力{/g}调整值。此外，敏捷形态额外获得反射闪避，体质形态额外获得{g|Encyclopedia:Damage_Reduction}伤害减免{/g} 3/—（可与其他来源的伤害减免叠加）。此能力替换信仰灵光。",
+    "enGB": "At 14th level, the Transfer Value of the Specter of Babel increases to the Doctor's full {g|Encyclopedia:Intelligence}Intelligence{/g} modifier. In addition, Agile Form grants evasion, and Enduring Form grants {g|Encyclopedia:Damage_Reduction}DR{/g} 3/— (which stacks with other sources of damage reduction). This ability replaces aura of faith."
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage3.name",
+    "zhCN": "巴别塔的恶灵（三段）",
+    "enGB": "Specter of Babel (Stage III)"
+  },
+  {
+    "Key": "rhodesdoctor.specter.stage3.desc",
+    "zhCN": "达到17级时，博士可以{g|Encyclopedia:Swift_Action}迅捷动作{/g}开启巴别塔的恶灵，且在恶灵生效期间仍可使用集火。此能力替换正气灵光。",
+    "enGB": "At 17th level, the Doctor can activate the Specter of Babel as a {g|Encyclopedia:Swift_Action}swift action{/g} and can use Focus Fire while the Specter is active. This ability replaces aura of righteousness."
+  },
+  {
+    "Key": "rhodesdoctor.specter.end.name",
+    "zhCN": "结束恶灵",
+    "enGB": "End the Specter"
+  },
+  {
+    "Key": "rhodesdoctor.specter.end.desc",
+    "zhCN": "以{g|Encyclopedia:Free_Action}自由动作{/g}立即结束巴别塔的恶灵，并进入持续 2 {g|Encyclopedia:Combat_Round}轮{/g}的恶灵余波。",
+    "enGB": "As a {g|Encyclopedia:Free_Action}free action{/g}, end the Specter of Babel immediately and enter the Specter's Aftermath for 2 {g|Encyclopedia:Combat_Round}rounds{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.capstone.buff.name",
+    "zhCN": "罗德岛的博士",
+    "enGB": "Doctor of Rhodes Island"
+  },
+  {
+    "Key": "rhodesdoctor.capstone.buff.desc",
+    "zhCN": "博士与巴别塔的恶灵合二为一：恶灵生效期间可自由施展所有战术指令，冷静头脑与指挥灵光保持完整效果，且恶灵余波不再限制行动。",
+    "enGB": "The Doctor and the Specter of Babel are one: all tactical orders remain available while the Specter is active, Cool Head and command auras function at full strength, and the Specter's Aftermath no longer restricts actions."
+  },
+  {
+    "Key": "rhodesdoctor.capstone.name",
+    "zhCN": "罗德岛的博士",
+    "enGB": "Doctor of Rhodes Island"
+  },
+  {
+    "Key": "rhodesdoctor.capstone.desc",
+    "zhCN": "达到20级时，博士不再需要在指挥官与恶灵之间做出抉择：巴别塔的恶灵生效期间，博士可正常施展所有战术指令，源石技艺精通、冷静头脑、指挥灵光与全军指令均保持完整效果；恶灵状态结束时，博士不再受到恶灵余波的行动限制且可立即再次开启恶灵，但仍会获得恶灵余波提供的 +50 尺移动{g|Encyclopedia:Speed}速度{/g}{g|Encyclopedia:Bonus}加值{/g}。此能力替换神圣护卫。",
+    "enGB": "At 20th level, the Doctor no longer has to choose between commander and Specter: while the Specter of Babel is active, all tactical orders remain available, and Originium Arts Mastery, Cool Head, Aura of Command, and Total Command function at full strength. When the Specter ends, its Aftermath imposes no action restrictions and the Specter can be reactivated immediately, though the Doctor still gains the Aftermath's +50-foot {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Speed}speed{/g}. This ability replaces holy champion."
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticalMark.name",
+    "zhCN": "战术标记",
+    "enGB": "Tactical Mark"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticalMark.desc",
+    "zhCN": "你洞悉一名敌人的行动步调。在本{g|Encyclopedia:Combat_Round}轮{/g}内，你或友军对该目标进行的下一次{g|Encyclopedia:Attack}攻击检定{/g}获得 +1 洞察{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You read an enemy's movements. You and your allies gain a +1 insight {g|Encyclopedia:Bonus}bonus{/g} on the next {g|Encyclopedia:Attack}attack roll{/g} made against the target this {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.name",
+    "zhCN": "医疗敷料",
+    "enGB": "Field Dressing"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.desc",
+    "zhCN": "你为触及的目标进行应急包扎，使其立即恢复 1 点{g|Encyclopedia:HP}生命值{/g}。任何生物在 24 小时内只能从本指令中受益一次。",
+    "enGB": "You apply emergency bandaging to a touched creature, restoring 1 {g|Encyclopedia:HP}hit point{/g}. A creature cannot benefit from this order more than once every 24 hours."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.treated.name",
+    "zhCN": "医疗敷料（包扎中）",
+    "enGB": "Field Dressing (bandaged)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FieldDressing.treated.desc",
+    "zhCN": "该生物在过去 24 小时内已接受过医疗敷料{g|Encyclopedia:Healing}治疗{/g}，暂时无法再次从中受益。",
+    "enGB": "This creature has already been healed by Field Dressing within the last 24 hours and cannot benefit from it again yet."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BattlefieldSurvey.name",
+    "zhCN": "战场测绘",
+    "enGB": "Battlefield Survey"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BattlefieldSurvey.desc",
+    "zhCN": "你迅速测绘周围地形与敌情，在{g|Encyclopedia:Perception}察觉{/g}{g|Encyclopedia:Skills}技能{/g}{g|Encyclopedia:Check}检定{/g}上获得 +2 洞察{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You survey the surrounding terrain and enemy positions, gaining a +2 insight {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Perception}Perception{/g} {g|Encyclopedia:Check}checks{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.name",
+    "zhCN": "信标投射",
+    "enGB": "Beacon Projection"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.desc",
+    "zhCN": "你在目标位置投射一枚悬浮的源石信标，照亮周围半径 20 尺的区域并为范围内的敌方单位附着醒目的标记光辉。",
+    "enGB": "You project a floating Originium beacon at the target point, illuminating a 20-foot radius and limning enemies within the area in a faint golden glow."
+  },
+  {
+    "Key": "rhodesdoctor.spell.SuppressingShot.name",
+    "zhCN": "牵制射击",
+    "enGB": "Suppressing Shot"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SuppressingShot.desc",
+    "zhCN": "你以精准的火力牵制目标。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，其下一次{g|Encyclopedia:Attack}攻击检定{/g}承受 -1 {g|Encyclopedia:Penalty}减值{/g}；若该次攻击的目标是除你以外的其他生物，则该{g|Encyclopedia:Penalty}减值{/g}变为 -2。",
+    "enGB": "You harry the target with suppressing fire. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target takes a -1 {g|Encyclopedia:Penalty}penalty{/g} on its next {g|Encyclopedia:Attack}attack roll{/g}, or a -2 {g|Encyclopedia:Penalty}penalty{/g} if it attacks any creature other than you."
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyExtraction.name",
+    "zhCN": "紧急撤离",
+    "enGB": "Emergency Extraction"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyExtraction.desc",
+    "zhCN": "你将触及的一名友军立即传送至你身后最近的无障碍空格中。此次传送不会引发{g|Encyclopedia:Attack_Of_Opportunity}借机攻击{/g}。",
+    "enGB": "You instantly teleport a touched ally to the nearest unoccupied space directly behind you. This movement does not provoke {g|Encyclopedia:Attack_Of_Opportunity}attacks of opportunity{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.HoldTheLine.name",
+    "zhCN": "坚守阵地",
+    "enGB": "Hold the Line"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HoldTheLine.desc",
+    "zhCN": "你在自身周围展开半径 30 尺的防守阵线。处于区域内的所有友军在{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}上获得 +2 洞察{g|Encyclopedia:Bonus}加值{/g}，并在所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}上获得 +1 洞察{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You establish a 30-foot-radius defensive perimeter around yourself. All allies within the area gain a +2 insight {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} and a +1 insight {g|Encyclopedia:Bonus}bonus{/g} on all {g|Encyclopedia:Saving_Throw}saving throws{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.CavalryCharge.name",
+    "zhCN": "骑兵突进",
+    "enGB": "Cavalry Charge"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CavalryCharge.desc",
+    "zhCN": "你向周围 30 尺内的所有友军下达突进号令。受影响友军的移动{g|Encyclopedia:Speed}速度{/g}获得 +10 尺不具类型{g|Encyclopedia:Bonus}加值{/g}（{g|Encyclopedia:Caster_Level}施法者等级{/g}达到 10 级时提高至 +20 尺，可与{g|SpellsHaste}加速术{/g}叠加），且在对抗{g|Encyclopedia:Attack_Of_Opportunity}借机攻击{/g}时{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}获得 +4 闪避{g|Encyclopedia:Bonus}加值{/g}。",
+    "enGB": "You order all allies within 30 feet to charge forward. Affected allies gain a +10-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to movement {g|Encyclopedia:Speed}speed{/g} (+20 feet at 10th {g|Encyclopedia:Caster_Level}caster level{/g}, stacking with {g|SpellsHaste}haste{/g}) and a +4 dodge {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} against {g|Encyclopedia:Attack_Of_Opportunity}attacks of opportunity{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrostPrayer.name",
+    "zhCN": "寒霜祷言",
+    "enGB": "Frost Prayer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrostPrayer.desc",
+    "zhCN": "刺骨的寒霜祷言笼罩目标敌人。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，其在{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}与所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}上承受 -2 {g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "A chilling prayer settles over the target enemy. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target takes a -2 {g|Encyclopedia:Penalty}penalty{/g} to {g|Encyclopedia:Armor_Class}AC{/g} and on all {g|Encyclopedia:Saving_Throw}saving throws{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyTreatment.name",
+    "zhCN": "紧急救治",
+    "enGB": "Emergency Treatment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EmergencyTreatment.desc",
+    "zhCN": "你向近距内的一名友军投送源石医疗支援，使其立即恢复相当于你一次圣疗的{g|Encyclopedia:HP}生命值{/g}（每 2 个{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点，最高 {g|Encyclopedia:Dice}10d6{/g}），并同时触发你已掌握的所有慈悲效果。该指令无法用于伤害不死生物。",
+    "enGB": "You deliver remote medical support to an ally within close range, healing them for an amount equal to your lay on hands ({g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:HP}hit points{/g} per 2 {g|Encyclopedia:Caster_Level}caster levels{/g}, maximum {g|Encyclopedia:Dice}10d6{/g}) and applying all mercies you possess. This order cannot be used to harm undead."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FireRecon.name",
+    "zhCN": "火力侦察",
+    "enGB": "Fire Recon"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FireRecon.desc",
+    "zhCN": "你锁定一名敌人的全部破绽。在持续时间内，所有友军对该目标进行攻击时，忽略由{g|ConditionInvisible}隐形{/g}、{g|SpellsMirrorImage}镜影术{/g}或任何{g|Encyclopedia:Concealment}隐蔽{/g}效果带来的失手几率。",
+    "enGB": "You pinpoint an enemy's position for your squad. For the duration of the order, all allies ignore miss chances granted by {g|ConditionInvisible}invisibility{/g}, {g|SpellsMirrorImage}mirror image{/g}, or any form of {g|Encyclopedia:Concealment}concealment{/g} when attacking the target."
+  },
+  {
+    "Key": "rhodesdoctor.spell.MedicalDrone.name",
+    "zhCN": "医疗无人机",
+    "enGB": "Medical Drone"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MedicalDrone.desc",
+    "zhCN": "你派遣一架医疗无人机跟随目标友军。在持续时间内，该友军在每{g|Encyclopedia:Combat_Round}轮{/g}开始时恢复 {g|Encyclopedia:Dice}1d6{/g} + 每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 点（最高 +5）{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You deploy a medical drone to follow the target ally. At the start of each {g|Encyclopedia:Combat_Round}round{/g}, the drone restores {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:HP}hit points{/g} + 1 point per {g|Encyclopedia:Caster_Level}caster level{/g} (maximum +5) to that ally."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ura.name",
+    "zhCN": "乌拉！",
+    "enGB": "Ura!"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ura.desc",
+    "zhCN": "震耳欲聋的战吼鼓舞着周围 30 尺内的所有友军，立即移除其身上的{g|ConditionShaken}战栗{/g}、{g|ConditionFrightened}惊恐{/g}与{g|ConditionFrightened}恐慌{/g}状态。此外，受影响友军在{g|Encyclopedia:Attack}攻击检定{/g}与武器伤害掷骰上获得 +1 不具类型{g|Encyclopedia:Bonus}加值{/g}（{g|Encyclopedia:Caster_Level}施法者等级{/g}达到 10 级时提高至 +2）。",
+    "enGB": "A thunderous battle cry rallies all allies within 30 feet, immediately removing the {g|ConditionShaken}shaken{/g}, {g|ConditionFrightened}frightened{/g}, and {g|ConditionFrightened}panicked{/g} conditions. In addition, affected allies gain a +1 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack{/g} and weapon {g|Encyclopedia:Damage}damage{/g} rolls (+2 at 10th {g|Encyclopedia:Caster_Level}caster level{/g})."
+  },
+  {
+    "Key": "rhodesdoctor.spell.UnstablePlasma.name",
+    "zhCN": "不稳定血浆",
+    "enGB": "Unstable Plasma"
+  },
+  {
+    "Key": "rhodesdoctor.spell.UnstablePlasma.desc",
+    "zhCN": "你为目标友军注入高活性血浆。目标在{g|Encyclopedia:Attack}攻击检定{/g}上获得 +2 不具类型{g|Encyclopedia:Bonus}加值{/g}，并在武器伤害掷骰上获得 +2 不具类型{g|Encyclopedia:Bonus}加值{/g}（每 4 个{g|Encyclopedia:Caster_Level}施法者等级{/g}再额外 +1）。作为代价，目标在每{g|Encyclopedia:Combat_Round}轮{/g}开始时会流失 2 点{g|Encyclopedia:HP}生命值{/g}，但不会因此降至 1 点{g|Encyclopedia:HP}生命值{/g}以下。",
+    "enGB": "You infuse the target ally with volatile plasma. The target gains a +2 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and a +2 untyped {g|Encyclopedia:Bonus}bonus{/g} on weapon {g|Encyclopedia:Damage}damage{/g} rolls (+1 additional damage per 4 {g|Encyclopedia:Caster_Level}caster levels{/g}). At the start of each {g|Encyclopedia:Combat_Round}round{/g}, the target loses 2 {g|Encyclopedia:HP}hit points{/g}, though this loss cannot reduce the target below 1 {g|Encyclopedia:HP}hit point{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.AntiGravity.name",
+    "zhCN": "反重力",
+    "enGB": "Anti-Gravity"
+  },
+  {
+    "Key": "rhodesdoctor.spell.AntiGravity.desc",
+    "zhCN": "你扭曲目标周围的重力场。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，将陷入{g|ConditionSlowed}缓慢{/g}状态，效果如同{g|SpellsSlow}缓慢术{/g}。",
+    "enGB": "You warp gravity around the target enemy. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target is {g|ConditionSlowed}slowed{/g}, as the {g|SpellsSlow}slow{/g} spell."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.name",
+    "zhCN": "烟幕掩护",
+    "enGB": "Smokescreen"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.desc",
+    "zhCN": "你在目标区域降下半径 20 尺的浓密烟幕。处于烟幕中的友军获得{g|Encyclopedia:Concealment}隐蔽{/g}（20% 失手几率），同时友军可以穿透烟幕正常视物。",
+    "enGB": "You blanket a 20-foot-radius area in dense smoke. Allies within the area gain {g|Encyclopedia:Concealment}concealment{/g} (20% miss chance) while seeing through the smoke normally."
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.name",
+    "zhCN": "延时爆破",
+    "enGB": "Delayed Blast"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.desc",
+    "zhCN": "你在目标地面布设一枚源石炸弹。每{g|Encyclopedia:Combat_Round}轮{/g}开始时，若炸弹周围 10 尺内存在敌人，炸弹会自动引爆，对 10 尺爆发区域内的所有敌人造成 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}与 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Damage_Type}钝击伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使伤害减半）。你也可以随时以{g|Encyclopedia:Free_Action}自由动作{/g}手动引爆所有已布设的炸弹。",
+    "enGB": "You plant an Originium bomb on the ground at the target point. At the start of each {g|Encyclopedia:Combat_Round}round{/g}, if any enemy is within 10 feet of the bomb, it detonates in a 10-foot burst, dealing {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} and {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:Damage_Type}bludgeoning damage{/g} to all enemies in the area (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the damage). You may also detonate all planted bombs manually as a {g|Encyclopedia:Free_Action}free action{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.name",
+    "zhCN": "缄默",
+    "enGB": "Silencer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.desc",
+    "zhCN": "你封锁目标敌人的源石技艺回路。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，在持续时间内无法施展任何{g|Encyclopedia:Spell}法术{/g}，也无法主动使用类法术能力、超自然能力或非凡能力；此效果不影响被动特性。",
+    "enGB": "You disrupt the target enemy's Originium circuits. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target cannot cast {g|Encyclopedia:Spell}spells{/g} or actively use spell-like, supernatural, or extraordinary abilities for the duration; passive abilities are unaffected."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Overloading.name",
+    "zhCN": "过载模式",
+    "enGB": "Overloading Mode"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Overloading.desc",
+    "zhCN": "你令 20 尺爆发区域内的所有友军进入过载射击状态。受影响友军在进行{g|Encyclopedia:Full_Round_Action}整轮攻击{/g}时，可以最高{g|Encyclopedia:BAB}基本攻击加值{/g}额外进行一次攻击；此外，其{g|Encyclopedia:Attack}攻击检定{/g}获得 +1 不具类型{g|Encyclopedia:Bonus}加值{/g}，{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}与{g|Encyclopedia:Saving_Throw}反射豁免{/g}获得 +1 闪避{g|Encyclopedia:Bonus}加值{/g}，且所有移动{g|Encyclopedia:Speed}速度{/g}获得 +30 尺不具类型{g|Encyclopedia:Bonus}加值{/g}。上述所有效果均可与{g|SpellsHaste}加速术{/g}叠加。",
+    "enGB": "You send all allies within a 20-foot burst into an overloading state. When making a {g|Encyclopedia:Full_Round_Action}full attack{/g}, affected allies make one additional {g|Encyclopedia:Attack}attack{/g} at their full {g|Encyclopedia:BAB}base attack bonus{/g}; they also gain a +1 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g}, a +1 dodge {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} and on {g|Encyclopedia:Saving_Throw}Reflex saves{/g}, and a +30-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to all movement {g|Encyclopedia:Speed}speeds{/g}. All of these effects stack with {g|SpellsHaste}haste{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwordRain.name",
+    "zhCN": "剑雨",
+    "enGB": "Sword Rain"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwordRain.desc",
+    "zhCN": "无数光剑从天而降，对 10 尺爆发区域内的所有敌人造成每 2 个{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:Damage_Type}挥砍伤害{/g}（最高 {g|Encyclopedia:Dice}10d6{/g}）。{g|Encyclopedia:Saving_Throw}反射豁免{/g}失败的敌人还会陷入{g|ConditionDaze}眩晕{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}；豁免成功则伤害减半且不会{g|ConditionDaze}眩晕{/g}。",
+    "enGB": "A rain of radiant blades falls from above, dealing {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Damage_Type}slashing damage{/g} per 2 {g|Encyclopedia:Caster_Level}caster levels{/g} (maximum {g|Encyclopedia:Dice}10d6{/g}) to all enemies in a 10-foot burst. Enemies that fail their {g|Encyclopedia:Saving_Throw}Reflex saves{/g} are also {g|ConditionDaze}dazed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}; a successful save halves the damage and negates the {g|ConditionDaze}dazed{/g} condition."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.name",
+    "zhCN": "钙质化",
+    "enGB": "Calcification"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.desc",
+    "zhCN": "你在目标区域展开半径 20 尺的钙质化力场。区域内的敌人移动{g|Encyclopedia:Speed}速度{/g}减半，且所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}承受 -2 {g|Encyclopedia:Penalty}减值{/g}（离开区域后立即结束）；区域内的友军在每{g|Encyclopedia:Combat_Round}轮{/g}开始时恢复 {g|Encyclopedia:Dice}1d8{/g} 点{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You create a 20-foot-radius calcification field at the target point. Enemies within the area have their movement {g|Encyclopedia:Speed}speed{/g} halved and take a -2 {g|Encyclopedia:Penalty}penalty{/g} on all {g|Encyclopedia:Saving_Throw}saving throws{/g} (ending immediately upon leaving the area), while allies within the area regain {g|Encyclopedia:Dice}1d8{/g} {g|Encyclopedia:HP}hit points{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.LockOfTime.name",
+    "zhCN": "时之锁",
+    "enGB": "Lock of Time"
+  },
+  {
+    "Key": "rhodesdoctor.spell.LockOfTime.desc",
+    "zhCN": "你迟滞 20 尺爆发区域内的时间流动。{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败的敌人在{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}、{g|Encyclopedia:Saving_Throw}反射豁免{/g}与{g|Encyclopedia:Attack}攻击检定{/g}上承受 -1 {g|Encyclopedia:Penalty}减值{/g}，且每{g|Encyclopedia:Combat_Round}轮{/g}只能执行一个{g|Encyclopedia:Move_Action}移动动作{/g}或{g|Encyclopedia:Standard_Actions}标准动作{/g}（无法执行{g|Encyclopedia:Full_Round_Action}整轮动作{/g}）。受影响的目标在每{g|Encyclopedia:Combat_Round}轮{/g}开始时可再次进行{g|Encyclopedia:Saving_Throw}意志豁免{/g}，成功则解除此效果。",
+    "enGB": "You bog down the flow of time within a 20-foot burst. Enemies that fail a {g|Encyclopedia:Saving_Throw}Will save{/g} take a -1 {g|Encyclopedia:Penalty}penalty{/g} to {g|Encyclopedia:Armor_Class}AC{/g}, on {g|Encyclopedia:Saving_Throw}Reflex saves{/g}, and on {g|Encyclopedia:Attack}attack rolls{/g}, and can take only a single {g|Encyclopedia:Move_Action}move{/g} or {g|Encyclopedia:Standard_Actions}standard action{/g} each {g|Encyclopedia:Combat_Round}round{/g} (they cannot take {g|Encyclopedia:Full_Round_Action}full-round actions{/g}). Affected creatures may attempt a new {g|Encyclopedia:Saving_Throw}Will save{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g} to end the effect."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.name",
+    "zhCN": "灼烧",
+    "enGB": "Scorching Breath"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.desc",
+    "zhCN": "你释放一道 60 尺长的灼热火流，对直线路径上的所有敌人造成每{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}（最高 {g|Encyclopedia:Dice}10d6{/g}）。{g|Encyclopedia:Saving_Throw}反射豁免{/g}成功可使伤害减半；豁免失败的敌人其火焰{g|Encyclopedia:Energy_Resistance}能量抗性{/g}还会降低 10 点，持续时间等于每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You unleash a 60-foot line of searing flame, dealing {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} per {g|Encyclopedia:Caster_Level}caster level{/g} (maximum {g|Encyclopedia:Dice}10d6{/g}) to all enemies in the line. A successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the damage; creatures that fail their save also have their fire {g|Encyclopedia:Energy_Resistance}resistance{/g} reduced by 10 for 1 {g|Encyclopedia:Combat_Round}round{/g} per {g|Encyclopedia:Caster_Level}caster level{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.name",
+    "zhCN": "处决",
+    "enGB": "Execution"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.desc",
+    "zhCN": "你在暗中蓄势待发。在持续时间内，你的下一次近战攻击若命中当前{g|Encyclopedia:HP}生命值{/g}不高于其最大{g|Encyclopedia:HP}生命值{/g}一半的目标，该次攻击的武器伤害骰数量翻倍（额外精准伤害不翻倍）。一旦触发，该效果立即结束。",
+    "enGB": "You poise yourself for a finishing blow. During the spell's duration, if your next melee {g|Encyclopedia:Attack}attack{/g} hits a target whose current {g|Encyclopedia:HP}hit points{/g} are at or below half its maximum, the weapon {g|Encyclopedia:Damage}damage{/g} {g|Encyclopedia:Dice}dice{/g} for that attack are doubled (precision damage is not doubled). The spell ends once triggered."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Sanctuary.name",
+    "zhCN": "圣域",
+    "enGB": "Sanctuary"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Sanctuary.desc",
+    "zhCN": "你在自身周围展开半径 30 尺的圣域。所有受影响的友军在对抗{g|Encyclopedia:Spell}法术{/g}与类法术能力的{g|Encyclopedia:Saving_Throw}豁免检定{/g}上获得 +4 神圣{g|Encyclopedia:Bonus}加值{/g}，并获得火焰、寒冷、电击、酸蚀与音波{g|Encyclopedia:Energy_Resistance}能量抗性{/g}各 10 点（可与其他来源的能量抗性叠加）。",
+    "enGB": "You unfold a 30-foot-radius sanctuary around yourself. All affected allies gain a +4 sacred {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Saving_Throw}saving throws{/g} against {g|Encyclopedia:Spell}spells{/g} and spell-like abilities, as well as {g|Encyclopedia:Energy_Resistance}resistance{/g} 10 to fire, cold, electricity, acid, and sonic (stacking with other sources of energy resistance)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.name",
+    "zhCN": "火山",
+    "enGB": "Volcano"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.desc",
+    "zhCN": "你引爆目标区域的地下熔岩，立即对 20 尺爆发区域内的所有敌人造成每 2 个{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}（最高 {g|Encyclopedia:Dice}10d6{/g}，{g|Encyclopedia:Saving_Throw}反射豁免{/g}减半）。初次豁免失败的敌人还会被余焰笼罩，在随后的 2 {g|Encyclopedia:Combat_Round}轮{/g}中每{g|Encyclopedia:Combat_Round}轮{/g}开始时受到每 4 个{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}（最高 {g|Encyclopedia:Dice}5d6{/g}）；每次余焰伤害均可单独进行{g|Encyclopedia:Saving_Throw}反射豁免{/g}以减半。",
+    "enGB": "You trigger a volcanic eruption in a 20-foot burst, immediately dealing {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} per 2 {g|Encyclopedia:Caster_Level}caster levels{/g} (maximum {g|Encyclopedia:Dice}10d6{/g}; {g|Encyclopedia:Saving_Throw}Reflex{/g} half) to all enemies in the area. Enemies that fail the initial save are caught in lingering embers and take {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} per 4 {g|Encyclopedia:Caster_Level}caster levels{/g} (maximum {g|Encyclopedia:Dice}5d6{/g}) at the start of each of the next 2 {g|Encyclopedia:Combat_Round}rounds{/g}; each round allows a separate {g|Encyclopedia:Saving_Throw}Reflex save{/g} for half damage."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Dragnet.name",
+    "zhCN": "牵引",
+    "enGB": "Dragnet"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Dragnet.desc",
+    "zhCN": "你向目标区域投出强力漩涡牵引。20 尺爆发区域内的所有敌人均需进行一次{g|Encyclopedia:Saving_Throw}强韧豁免{/g}；豁免失败的敌人会被立即拉拽至目标点附近的空地并陷入{g|ConditionProne}倒地{/g}状态。",
+    "enGB": "You hurl a gravitic dragnet into a 20-foot burst. Every enemy in the area must attempt a {g|Encyclopedia:Saving_Throw}Fortitude save{/g}; those that fail are yanked to an open space near the center of the burst and knocked {g|ConditionProne}prone{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Nightterror.name",
+    "zhCN": "梦魇",
+    "enGB": "Nightterror"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Nightterror.desc",
+    "zhCN": "你将可怖的梦魇植入一名敌人的脑海。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，将陷入{g|ConditionFrightened}恐慌{/g}状态 2 {g|Encyclopedia:Combat_Round}轮{/g}，随后转为{g|ConditionShaken}战栗{/g}状态直至每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}的持续时间结束；若豁免成功，目标仅陷入{g|ConditionShaken}战栗{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You plunge a target enemy into a waking nightmare. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target is {g|ConditionFrightened}panicked{/g} for 2 {g|Encyclopedia:Combat_Round}rounds{/g} and then {g|ConditionShaken}shaken{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} per {g|Encyclopedia:Caster_Level}caster level{/g}; on a successful save, it is {g|ConditionShaken}shaken{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.name",
+    "zhCN": "迅捷突破",
+    "enGB": "Swift Breach"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.desc",
+    "zhCN": "你激发爆发性的突击速度，获得持续 3 {g|Encyclopedia:Combat_Round}轮{/g}的迅捷加速效果：你的移动{g|Encyclopedia:Speed}速度{/g}获得 +30 尺不具类型{g|Encyclopedia:Bonus}加值{/g}，且进行{g|Encyclopedia:Full_Round_Action}整轮攻击{/g}时可额外进行一次攻击（可与{g|SpellsHaste}加速术{/g}叠加）。此外，在本{g|Encyclopedia:Combat_Round}轮{/g}内直到你下一次近战攻击命中前，你的行动与移动不会引发{g|Encyclopedia:Attack_Of_Opportunity}借机攻击{/g}，且本{g|Encyclopedia:Combat_Round}轮{/g}内的下一次近战命中额外造成 {g|Encyclopedia:Dice}3d6{/g} 点伤害。",
+    "enGB": "You surge forward with explosive speed, gaining acceleration for 3 {g|Encyclopedia:Combat_Round}rounds{/g}: you gain a +30-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to movement {g|Encyclopedia:Speed}speed{/g} and one additional {g|Encyclopedia:Attack}attack{/g} when making a {g|Encyclopedia:Full_Round_Action}full attack{/g} (stacking with {g|SpellsHaste}haste{/g}). In addition, until your next melee hit this {g|Encyclopedia:Combat_Round}round{/g}, your actions and movement do not provoke {g|Encyclopedia:Attack_Of_Opportunity}attacks of opportunity{/g}, and your next melee hit this {g|Encyclopedia:Combat_Round}round{/g} deals an additional {g|Encyclopedia:Dice}3d6{/g} {g|Encyclopedia:Damage}damage{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.name",
+    "zhCN": "闪光弹",
+    "enGB": "Flashbang"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.desc",
+    "zhCN": "你在目标点引爆一枚强光震撼弹。15 尺爆发区域内的敌人若{g|Encyclopedia:Saving_Throw}反射豁免{/g}失败，将陷入{g|ConditionBlind}目盲{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}，随后转为{g|ConditionDazzled}目眩{/g}状态直至法术持续时间结束，且处于{g|ConditionInvisible}隐形{/g}状态的目标会显形；若豁免成功，则仅陷入{g|ConditionDazzled}目眩{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You detonate a blinding flashbang in a 15-foot burst. Enemies in the area that fail a {g|Encyclopedia:Saving_Throw}Reflex save{/g} are {g|ConditionBlind}blinded{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} and then {g|ConditionDazzled}dazzled{/g} for the remainder of the duration, and any {g|ConditionInvisible}invisibility{/g} effects on them are removed; on a successful save, they are {g|ConditionDazzled}dazzled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chimera.name",
+    "zhCN": "奇美拉",
+    "enGB": "Chimera"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chimera.desc",
+    "zhCN": "你唤醒目标友军体内的奇美拉之力。在持续时间内，目标在{g|Encyclopedia:Attack}攻击检定{/g}上获得 +4 不具类型{g|Encyclopedia:Bonus}加值{/g}（可与集火叠加），在武器伤害掷骰上获得等于你{g|Encyclopedia:Caster_Level}施法者等级{/g}一半的不具类型{g|Encyclopedia:Bonus}加值{/g}，且其所有攻击无视目标的{g|Encyclopedia:Damage_Reduction}伤害减免{/g}。",
+    "enGB": "You awaken the Chimera power within a target ally. For the duration, the target gains a +4 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} (stacking with Focus Fire) and an untyped {g|Encyclopedia:Bonus}bonus{/g} on weapon {g|Encyclopedia:Damage}damage{/g} rolls equal to half your {g|Encyclopedia:Caster_Level}caster level{/g}, and all of its attacks ignore {g|Encyclopedia:Damage_Reduction}damage reduction{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Mon3tr.name",
+    "zhCN": "Mon3tr",
+    "enGB": "Mon3tr"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Mon3tr.desc",
+    "zhCN": "你召唤 Mon3tr 为一名友军进行重构救治，使其立即恢复每{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:HP}生命值{/g}（最高 {g|Encyclopedia:Dice}20d6{/g}），并解除其身上的{g|ConditionStunned}震慑{/g}、{g|ConditionDaze}眩晕{/g}、{g|ConditionParalyzed}麻痹{/g}与{g|ConditionNauseated}反胃{/g}状态。",
+    "enGB": "You call upon Mon3tr to mend an ally, restoring {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:HP}hit points{/g} per {g|Encyclopedia:Caster_Level}caster level{/g} (maximum {g|Encyclopedia:Dice}20d6{/g}) and removing the {g|ConditionStunned}stunned{/g}, {g|ConditionDaze}dazed{/g}, {g|ConditionParalyzed}paralyzed{/g}, and {g|ConditionNauseated}nauseated{/g} conditions."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ironcast.name",
+    "zhCN": "铸铁",
+    "enGB": "Ironcast"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Ironcast.desc",
+    "zhCN": "你以千锤百炼的铸铁护佑目标友军。在持续时间内，目标获得{g|Encyclopedia:Damage_Reduction}伤害减免{/g} 10/—（常规伤害减免，不与同类效果叠加），并免疫{g|Encyclopedia:Critical}重击{/g}与偷袭伤害。",
+    "enGB": "You sheathe the target ally in unyielding iron. For the duration, the target gains {g|Encyclopedia:Damage_Reduction}DR{/g} 10/— (standard damage reduction that does not stack with similar effects) and immunity to {g|Encyclopedia:Critical}critical hits{/g} and sneak attack {g|Encyclopedia:Damage}damage{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.InkedMountains.name",
+    "zhCN": "墨染山河",
+    "enGB": "Inked Mountains"
+  },
+  {
+    "Key": "rhodesdoctor.spell.InkedMountains.desc",
+    "zhCN": "你挥毫泼墨，在目标位置召唤两只墨灵为你作战。每只墨灵使用你的{g|Encyclopedia:BAB}基本攻击加值{/g}进行近战攻击，命中时造成 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Energy_Damage}力场伤害{/g}。当墨灵被摧毁时，其躯体会化作墨雾爆发，对所有正与其交战的敌人造成 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Energy_Damage}力场伤害{/g}并使其{g|ConditionDazzled}目眩{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}（成功的{g|Encyclopedia:Saving_Throw}意志豁免{/g}可避免{g|ConditionDazzled}目眩{/g}）。",
+    "enGB": "With a sweep of ink, you summon two ink spirits at the target point. Each ink spirit attacks using your {g|Encyclopedia:BAB}base attack bonus{/g}, dealing {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:Energy_Damage}force damage{/g} on a hit. When an ink spirit is destroyed, it bursts in a spray of ink, dealing {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:Energy_Damage}force damage{/g} to all enemies engaged with it and leaving them {g|ConditionDazzled}dazzled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} ({g|Encyclopedia:Saving_Throw}Will{/g} negates the dazzled condition)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.name",
+    "zhCN": "冰封领域",
+    "enGB": "Frozen Domain"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.desc",
+    "zhCN": "你在目标位置展开半径 20 尺的极寒领域。任何进入该区域或在该区域内开始其回合的敌人均会受到 {g|Encyclopedia:Dice}4d6{/g} 点{g|Encyclopedia:Energy_Damage}寒冷伤害{/g}（{g|Encyclopedia:Saving_Throw}反射豁免{/g}减半）；豁免失败者还会陷入{g|ConditionEntangled}纠缠{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}，豁免成功者则移动{g|Encyclopedia:Speed}速度{/g}减半 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You blanket a 20-foot-radius area in bitter frost. Any enemy that enters the area or starts its turn inside takes {g|Encyclopedia:Dice}4d6{/g} {g|Encyclopedia:Energy_Damage}cold damage{/g} ({g|Encyclopedia:Saving_Throw}Reflex{/g} half); on a failed save, the creature is also {g|ConditionEntangled}entangled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}, while on a successful save its movement {g|Encyclopedia:Speed}speed{/g} is halved for 1 {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.RoyalCharge.name",
+    "zhCN": "王者冲锋",
+    "enGB": "Royal Charge"
+  },
+  {
+    "Key": "rhodesdoctor.spell.RoyalCharge.desc",
+    "zhCN": "你向至多 40 尺外的目标点发起直线猛冲，强行撞开沿途的所有敌人。冲锋路径上的每个敌人都会受到 {g|Encyclopedia:Dice}4d6{/g} 点{g|Encyclopedia:Damage_Type}钝击伤害{/g}并需进行一次{g|Encyclopedia:Saving_Throw}反射豁免{/g}；豁免失败者会被撞至{g|ConditionProne}倒地{/g}（豁免成功仅避免{g|ConditionProne}倒地{/g}，仍受全额伤害）。",
+    "enGB": "You charge in a straight line up to 40 feet to the target point, crashing through every enemy in your path. Each enemy along the line takes {g|Encyclopedia:Dice}4d6{/g} {g|Encyclopedia:Damage_Type}bludgeoning damage{/g} and must attempt a {g|Encyclopedia:Saving_Throw}Reflex save{/g}; on a failed save, the creature is knocked {g|ConditionProne}prone{/g} (a successful save negates being knocked {g|ConditionProne}prone{/g} but does not reduce the damage)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalElegy.name",
+    "zhCN": "涌潮悲歌",
+    "enGB": "Tidal Elegy"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalElegy.desc",
+    "zhCN": "你奏响深海猎人的涌潮悲歌。在持续时间内，你在{g|Encyclopedia:Attack}攻击检定{/g}上获得 +6 不具类型{g|Encyclopedia:Bonus}加值{/g}，在武器伤害掷骰上获得等于你{g|Encyclopedia:Caster_Level}施法者等级{/g}的不具类型{g|Encyclopedia:Bonus}加值{/g}，移动{g|Encyclopedia:Speed}速度{/g}获得 +20 尺不具类型{g|Encyclopedia:Bonus}加值{/g}，并立即获得 60 点{g|Encyclopedia:Temporary_HP}临时生命值{/g}。",
+    "enGB": "You intone the abyssal hunter's elegy. For the duration, you gain a +6 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g}, an untyped {g|Encyclopedia:Bonus}bonus{/g} on weapon {g|Encyclopedia:Damage}damage{/g} rolls equal to your {g|Encyclopedia:Caster_Level}caster level{/g}, a +20-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to movement {g|Encyclopedia:Speed}speed{/g}, and 60 {g|Encyclopedia:Temporary_HP}temporary hit points{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.name",
+    "zhCN": "儿时的舞乐",
+    "enGB": "Dance of Childhood"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.desc",
+    "zhCN": "你在目标区域唤起半径 20 尺的狐火舞乐。进入区域或在区域内开始回合的敌人若{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，将陷入{g|ConditionSlowed}缓慢{/g}状态，且受到的所有伤害提高 30%（离开区域后效果结束）；处于区域内的友军则在每{g|Encyclopedia:Combat_Round}轮{/g}开始时恢复 {g|Encyclopedia:Dice}2d8{/g} + 你{g|Encyclopedia:Caster_Level}施法者等级{/g}一半点{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You weave a 20-foot-radius field of foxfire at the target point. Enemies that enter the area or start their turn inside must succeed at a {g|Encyclopedia:Saving_Throw}Will save{/g} or become {g|ConditionSlowed}slowed{/g} and take 30% additional {g|Encyclopedia:Damage}damage{/g} from all sources (ending when they leave the area). Allies within the area regain {g|Encyclopedia:Dice}2d8{/g} {g|Encyclopedia:HP}hit points{/g} + 1 point per 2 {g|Encyclopedia:Caster_Level}caster levels{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.name",
+    "zhCN": "醉梦",
+    "enGB": "Drunken Dream"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.desc",
+    "zhCN": "你令 20 尺爆发区域内的所有敌人坠入大梦（不受{g|Encyclopedia:Hit_Dice}生命骰{/g}上限限制）。{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败的敌人会陷入魔法{g|SpellsSleep}睡眠{/g}，且在因受到伤害而惊醒时会陷入{g|ConditionDaze}眩晕{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。对于免疫睡眠的目标：若其免疫能力可抵御整个睡眠法术（如精灵种族特性），则完全不受影响；若仅免疫睡眠状态本身，则不会入睡，但仍会陷入{g|ConditionDaze}眩晕{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You lull all enemies in a 20-foot burst into magical slumber, with no {g|Encyclopedia:Hit_Dice}Hit Dice{/g} limit. Enemies that fail a {g|Encyclopedia:Saving_Throw}Will save{/g} fall asleep and are {g|ConditionDaze}dazed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} when woken by damage. Against sleep-immune targets: if their immunity blocks sleep spells entirely (such as elven immunities), they are unaffected; if it blocks only the sleep condition, they do not fall asleep but are still {g|ConditionDaze}dazed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.name",
+    "zhCN": "黑蛇之焰",
+    "enGB": "Black Snake's Flame"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.desc",
+    "zhCN": "你以不灭的黑蛇之焰焚烧一名敌人，立即造成每{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点伤害（最高 {g|Encyclopedia:Dice}20d6{/g}，{g|Encyclopedia:Saving_Throw}反射豁免{/g}减半），其中一半为{g|Encyclopedia:Energy_Damage}火焰伤害{/g}，另一半为纯粹的{g|Encyclopedia:Energy_Damage}神圣伤害{/g}（因此火焰抗性或免疫至多只能抵消前一半伤害）。无论初次豁免成败，目标在随后的持续时间内每{g|Encyclopedia:Combat_Round}轮{/g}开始时还会受到 {g|Encyclopedia:Dice}3d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}。",
+    "enGB": "You engulf an enemy in the undying flame of the Black Snake, immediately dealing {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Damage}damage{/g} per {g|Encyclopedia:Caster_Level}caster level{/g} (maximum {g|Encyclopedia:Dice}20d6{/g}; {g|Encyclopedia:Saving_Throw}Reflex{/g} half), half of which is {g|Encyclopedia:Energy_Damage}fire damage{/g} and half of which is pure {g|Encyclopedia:Energy_Damage}divine damage{/g} unaffected by fire {g|Encyclopedia:Energy_Resistance}resistance{/g} or immunity. Regardless of the initial save, the target also takes {g|Encyclopedia:Dice}3d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g} for the duration."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.name",
+    "zhCN": "炮火延伸",
+    "enGB": "Artillery Barrage"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.desc",
+    "zhCN": "你呼叫重炮对目标地点进行连续三{g|Encyclopedia:Combat_Round}轮{/g}的定点轰炸。施法瞬间以及随后两{g|Encyclopedia:Combat_Round}轮{/g}中你的每{g|Encyclopedia:Combat_Round}轮{/g}开始时，目标点都会发生半径 15 尺的猛烈爆炸，对范围内的所有敌人造成 {g|Encyclopedia:Dice}8d6{/g} 点{g|Encyclopedia:Damage_Type}钝击伤害{/g}与 {g|Encyclopedia:Dice}8d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使当次伤害减半）。",
+    "enGB": "You call down a three-{g|Encyclopedia:Combat_Round}round{/g} artillery barrage on the target point. Immediately upon casting and at the start of each of your next 2 {g|Encyclopedia:Combat_Round}rounds{/g}, shells detonate in a 15-foot-radius burst at that location, dealing {g|Encyclopedia:Dice}8d6{/g} {g|Encyclopedia:Damage_Type}bludgeoning damage{/g} and {g|Encyclopedia:Dice}8d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} to all enemies in the area (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves that burst's damage)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.name",
+    "zhCN": "罪罚",
+    "enGB": "Sin and Punishment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.desc",
+    "zhCN": "你对一名敌人降下因果裁决。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，在持续时间内，每{g|Encyclopedia:Combat_Round}轮{/g}当该目标首次对其他生物造成{g|Encyclopedia:HP}生命值{/g}伤害时，其自身也会承受等于该次伤害一半的同类型反噬伤害。反噬伤害不会再次触发本效果。",
+    "enGB": "You pronounce judgment upon an enemy. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the first time each {g|Encyclopedia:Combat_Round}round{/g} the target deals {g|Encyclopedia:HP}hit point{/g} {g|Encyclopedia:Damage}damage{/g} to another creature, it takes half that amount of {g|Encyclopedia:Damage}damage{/g} of the same type itself. This backlash damage does not retrigger the effect."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.name",
+    "zhCN": "黄昏",
+    "enGB": "Twilight"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.desc",
+    "zhCN": "你唤来劫火般的黄昏，对 20 尺爆发区域内的所有敌人造成每{g|Encyclopedia:Caster_Level}施法者等级{/g} {g|Encyclopedia:Dice}1d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}（最高 {g|Encyclopedia:Dice}20d6{/g}，{g|Encyclopedia:Saving_Throw}反射豁免{/g}减半）。初次豁免失败的敌人还会附着熔火，在随后的两{g|Encyclopedia:Combat_Round}轮{/g}中每{g|Encyclopedia:Combat_Round}轮{/g}开始时受到 {g|Encyclopedia:Dice}4d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}；每次熔火伤害均可单独进行{g|Encyclopedia:Saving_Throw}反射豁免{/g}以减半。",
+    "enGB": "You call down apocalyptic twilight in a 20-foot burst, dealing {g|Encyclopedia:Dice}1d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} per {g|Encyclopedia:Caster_Level}caster level{/g} (maximum {g|Encyclopedia:Dice}20d6{/g}; {g|Encyclopedia:Saving_Throw}Reflex{/g} half) to all enemies in the area. Creatures that fail the initial save are coated in molten fire, taking {g|Encyclopedia:Dice}4d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g} at the start of each of the next 2 {g|Encyclopedia:Combat_Round}rounds{/g}; each round allows a new {g|Encyclopedia:Saving_Throw}Reflex save{/g} for half damage."
+  },
+  {
+    "Key": "rhodesdoctor.spell.MirrorFlow.name",
+    "zhCN": "镜中流形",
+    "enGB": "Mirror Flow"
+  },
+  {
+    "Key": "rhodesdoctor.spell.MirrorFlow.desc",
+    "zhCN": "你以流形之水凝聚出目标友军的镜像复制体。复制体拥有与目标相同的属性、{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}、{g|Encyclopedia:Attack}攻击{/g}{g|Encyclopedia:Bonus}加值{/g}与武器装备，其初始{g|Encyclopedia:HP}生命值{/g}等于目标当前的{g|Encyclopedia:HP}生命值{/g}，且自带满额的法术位与能力资源。复制体由人工智能控制，可正常攻击与施展{g|Encyclopedia:Spell}法术{/g}，持续每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}或直至其{g|Encyclopedia:HP}生命值{/g}归零时消散。",
+    "enGB": "You shape flowing water into a mirror duplicate of the target ally. The duplicate possesses the target's statistics, {g|Encyclopedia:Armor_Class}AC{/g}, {g|Encyclopedia:Attack}attack{/g} {g|Encyclopedia:Bonus}bonuses{/g}, and weapons, enters play at the target's current {g|Encyclopedia:HP}hit points{/g} with full spell slots and ability resources, and fights and casts {g|Encyclopedia:Spell}spells{/g} autonomously. It remains for 1 {g|Encyclopedia:Combat_Round}round{/g} per {g|Encyclopedia:Caster_Level}caster level{/g} or until reduced to 0 {g|Encyclopedia:HP}hit points{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.name",
+    "zhCN": "终末狙击",
+    "enGB": "Final Snipe"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.desc",
+    "zhCN": "你锁定极距内的一名敌人。在下一{g|Encyclopedia:Combat_Round}轮{/g}开始时，只要该目标未处于{g|ConditionInvisible}隐形{/g}状态，便会被一发必中的终末狙击贯穿，受到 {g|Encyclopedia:Dice}15d6{/g} 点{g|Encyclopedia:Damage_Type}穿刺伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使穿刺伤害减半）以及 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Constitution}体质{/g}{g|Encyclopedia:AbilityDamage}属性伤害{/g}。",
+    "enGB": "You lock onto an enemy within long range. At the start of the next {g|Encyclopedia:Combat_Round}round{/g}, unless the target is {g|ConditionInvisible}invisible{/g}, an unerring shot strikes it for {g|Encyclopedia:Dice}15d6{/g} {g|Encyclopedia:Damage_Type}piercing damage{/g} (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the piercing damage) and {g|Encyclopedia:Dice}2d6{/g} points of {g|Encyclopedia:Constitution}Constitution{/g} {g|Encyclopedia:AbilityDamage}damage{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.name",
+    "zhCN": "连锁殉爆",
+    "enGB": "Chain Detonation"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.desc",
+    "zhCN": "你对目标点周围 20 尺内的所有敌人施加爆裂印记。在持续时间内，任何带有该印记的敌人死亡时，其遗体都会发生猛烈殉爆，对周围 20 尺内的所有敌人造成 {g|Encyclopedia:Dice}10d6{/g} 点{g|Encyclopedia:Energy_Damage}力场伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使伤害减半；爆炸不会伤害友军）。",
+    "enGB": "You brand all enemies within a 20-foot-radius burst with volatile marks. Whenever a marked creature dies while the effect lasts, its body detonates, dealing {g|Encyclopedia:Dice}10d6{/g} {g|Encyclopedia:Energy_Damage}force damage{/g} to all enemies within 20 feet (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the damage; allies are unaffected)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ThunderousJudgment.name",
+    "zhCN": "雷霆审判",
+    "enGB": "Thunderous Judgment"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ThunderousJudgment.desc",
+    "zhCN": "你召来狂暴的雷霆轰击 30 尺爆发区域内的所有敌人，造成 {g|Encyclopedia:Dice}12d6{/g} 点{g|Encyclopedia:Energy_Damage}电击伤害{/g}。{g|Encyclopedia:Saving_Throw}反射豁免{/g}失败的敌人还会被轰至{g|ConditionProne}倒地{/g}并陷入{g|ConditionDaze}眩晕{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}；豁免成功则仅受一半伤害，且不会{g|ConditionProne}倒地{/g}或{g|ConditionDaze}眩晕{/g}。",
+    "enGB": "You call down a thunderous bolt upon a 30-foot burst, dealing {g|Encyclopedia:Dice}12d6{/g} {g|Encyclopedia:Energy_Damage}electricity damage{/g} to all enemies in the area. Enemies that fail their {g|Encyclopedia:Saving_Throw}Reflex saves{/g} are knocked {g|ConditionProne}prone{/g} and {g|ConditionDaze}dazed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}; a successful save halves the damage and negates the {g|ConditionProne}prone{/g} and {g|ConditionDaze}dazed{/g} conditions."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.name",
+    "zhCN": "潮",
+    "enGB": "Tide"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.desc",
+    "zhCN": "你呼唤深海的捕食本能。在持续时间内，你的近战武器攻击每次命中可为你恢复 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:HP}生命值{/g}（每{g|Encyclopedia:Combat_Round}轮{/g}最多触发三次）；此外，每{g|Encyclopedia:Combat_Round}轮{/g}当你首次以近战攻击造成{g|Encyclopedia:Critical}重击{/g}或击杀敌人时，可返还 1 {g|Encyclopedia:Combat_Round}轮{/g}巴别塔的恶灵每日可用持续时间（每次施法最多返还 3 {g|Encyclopedia:Combat_Round}轮{/g}）。",
+    "enGB": "You channel the predatory hunger of the deep sea. For the duration, each of your melee weapon hits restores {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:HP}hit points{/g} to you (up to three times per {g|Encyclopedia:Combat_Round}round{/g}); in addition, the first time each {g|Encyclopedia:Combat_Round}round{/g} you confirm a {g|Encyclopedia:Critical}critical hit{/g} or kill an enemy, you regain 1 {g|Encyclopedia:Combat_Round}round{/g} of daily Specter of Babel duration (up to 3 {g|Encyclopedia:Combat_Round}rounds{/g} per casting)."
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.name",
+    "zhCN": "画中世界",
+    "enGB": "Painted World"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.desc",
+    "zhCN": "你挥毫将一名敌人放逐入画中世界。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，将被收进画境 2 {g|Encyclopedia:Combat_Round}轮{/g}：在此期间目标移出战场，无法行动，也无法被攻击或选为目标；2 {g|Encyclopedia:Combat_Round}轮{/g}期满返回原位后，目标还会陷入{g|ConditionParalyzed}麻痹{/g}状态，持续每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}。",
+    "enGB": "You banish an enemy into a painted realm. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target is drawn into the painting for 2 {g|Encyclopedia:Combat_Round}rounds{/g}, during which it is removed from the battlefield and cannot act, be attacked, or be targeted. When it returns after 2 {g|Encyclopedia:Combat_Round}rounds{/g}, it is {g|ConditionParalyzed}paralyzed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} per {g|Encyclopedia:Caster_Level}caster level{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.banish.name",
+    "zhCN": "画中世界（画境）",
+    "enGB": "Painted World (imprisoned)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.PaintedWorld.paralysis.name",
+    "zhCN": "画中世界（麻痹）",
+    "enGB": "Painted World (paralyzed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.name",
+    "zhCN": "耀阳颔首",
+    "enGB": "Blazing Sun's Bow"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.desc",
+    "zhCN": "你释放一道 120 尺长的耀眼光辉。直线路径上的敌人受到 {g|Encyclopedia:Dice}15d6{/g} 点{g|Encyclopedia:Energy_Damage}神圣伤害{/g}，{g|Encyclopedia:Saving_Throw}反射豁免{/g}失败者还会陷入{g|ConditionBlind}目盲{/g}状态，持续每{g|Encyclopedia:Caster_Level}施法者等级{/g} 1 {g|Encyclopedia:Combat_Round}轮{/g}；豁免成功者伤害减半，且仅陷入{g|ConditionDazzled}目眩{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。直线路径上的所有友军则恢复 {g|Encyclopedia:Dice}10d6{/g} 点{g|Encyclopedia:HP}生命值{/g}，并立即解除身上的{g|ConditionBlind}目盲{/g}状态。",
+    "enGB": "You unleash a 120-foot line of radiant sunlight. Enemies in the line take {g|Encyclopedia:Dice}15d6{/g} {g|Encyclopedia:Energy_Damage}holy damage{/g}; those that fail a {g|Encyclopedia:Saving_Throw}Reflex save{/g} are {g|ConditionBlind}blinded{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} per {g|Encyclopedia:Caster_Level}caster level{/g}, while those that succeed take half damage and are {g|ConditionDazzled}dazzled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g}. Allies in the line instead regain {g|Encyclopedia:Dice}10d6{/g} {g|Encyclopedia:HP}hit points{/g} and are cured of {g|ConditionBlind}blindness{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalVigil.name",
+    "zhCN": "潮汐守望",
+    "enGB": "Tidal Vigil"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TidalVigil.desc",
+    "zhCN": "你以温和的海潮守望周围 30 尺内的所有友军。在持续时间内，受影响友军在每{g|Encyclopedia:Combat_Round}轮{/g}开始时获得 15 点{g|Encyclopedia:Temporary_HP}临时生命值{/g}（每次刷新，不叠加），并免疫魅惑与强迫效果。",
+    "enGB": "You watch over all allies within 30 feet with the solace of the tide. For the duration, each affected ally gains 15 {g|Encyclopedia:Temporary_HP}temporary hit points{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g} (refreshing rather than stacking) and immunity to charm and compulsion effects."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.name",
+    "zhCN": "影之疆域",
+    "enGB": "Shadow Realm"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.desc",
+    "zhCN": "你以目标友军为中心展开半径 15 尺的移动暗影疆域。处于疆域内的友军获得{g|ConditionInvisible}隐形{/g}状态；任何进入疆域或在疆域内开始回合的敌人均需进行{g|Encyclopedia:Saving_Throw}意志豁免{/g}，失败者陷入{g|ConditionBlind}目盲{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}，成功者陷入{g|ConditionDazzled}目眩{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}。离开疆域的生物立即失去上述效果。",
+    "enGB": "You project a mobile 15-foot-radius realm of shadow centered on the target ally. Allies within the realm are {g|ConditionInvisible}invisible{/g}, while enemies that enter the realm or start their turn inside must attempt a {g|Encyclopedia:Saving_Throw}Will save{/g}, becoming {g|ConditionBlind}blinded{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} on a failure or {g|ConditionDazzled}dazzled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} on a success. Leaving the realm ends these effects immediately."
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.name",
+    "zhCN": "岁稔",
+    "enGB": "Harvest of Years"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.desc",
+    "zhCN": "丰饶的生机笼罩周围 30 尺内的所有友军。在持续 3 {g|Encyclopedia:Combat_Round}轮{/g}内，受影响友军在每{g|Encyclopedia:Combat_Round}轮{/g}开始时恢复 {g|Encyclopedia:Dice}4d8{/g} + 你{g|Encyclopedia:Caster_Level}施法者等级{/g}点{g|Encyclopedia:HP}生命值{/g}。溢出的{g|Encyclopedia:Healing}治疗{/g}量会被积攒起来，并在法术结束时转化为{g|Encyclopedia:Temporary_HP}临时生命值{/g}（最多 60 点），持续 1 分钟。",
+    "enGB": "Bountiful vitality washes over all allies within 30 feet. For 3 {g|Encyclopedia:Combat_Round}rounds{/g}, each affected ally regains {g|Encyclopedia:Dice}4d8{/g} {g|Encyclopedia:HP}hit points{/g} + 1 point per {g|Encyclopedia:Caster_Level}caster level{/g} at the start of each {g|Encyclopedia:Combat_Round}round{/g}. Any excess {g|Encyclopedia:Healing}healing{/g} is stored and converted into {g|Encyclopedia:Temporary_HP}temporary hit points{/g} (to a maximum of 60) when the spell ends, lasting for 1 minute."
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.name",
+    "zhCN": "旗帜不倒",
+    "enGB": "The Banner Stands"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.desc",
+    "zhCN": "你在周围 30 尺内竖起不倒的战旗。在持续时间内，受影响友军即使{g|Encyclopedia:HP}生命值{/g}降至 0 或以下也不会昏迷或死亡，仍可正常行动；当法术结束时，若其{g|Encyclopedia:HP}生命值{/g}仍处于 0 或以下，则按常规规则结算生死。此效果无法抵御即死效果。",
+    "enGB": "You raise an unyielding banner for all allies within 30 feet. For the duration, affected allies do not fall unconscious or die when reduced to 0 or fewer {g|Encyclopedia:HP}hit points{/g} and can continue to act normally; when the spell ends, normal rules apply if their {g|Encyclopedia:HP}hit points{/g} remain at 0 or below. This effect does not prevent death effects."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowBladeDraw.name",
+    "zhCN": "影霄·拔刀",
+    "enGB": "Shadow Blade: Draw"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowBladeDraw.desc",
+    "zhCN": "你向目标斩出居合绝杀的一刀。若目标{g|Encyclopedia:Saving_Throw}强韧豁免{/g}失败，将立即死亡；若豁免成功，目标仍会受到 {g|Encyclopedia:Dice}10d6{/g} + 你{g|Encyclopedia:Caster_Level}施法者等级{/g}点魔法伤害。免疫即死效果的目标自动视为豁免成功。",
+    "enGB": "You draw a crimson blade in a single lethal slash. On a failed {g|Encyclopedia:Saving_Throw}Fortitude save{/g}, the target dies instantly; on a successful save, it instead takes {g|Encyclopedia:Dice}10d6{/g} + your {g|Encyclopedia:Caster_Level}caster level{/g} points of magic {g|Encyclopedia:Damage}damage{/g}. Creatures immune to death effects automatically succeed at their saving throws."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chronostasis.name",
+    "zhCN": "时空静止",
+    "enGB": "Chronostasis"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Chronostasis.desc",
+    "zhCN": "你将周围的时空冻结，如同施展了时间停止，立即获得 {g|Encyclopedia:Dice}1d4{/g}+1 {g|Encyclopedia:Combat_Round}轮{/g}的表观行动时间。在此期间，你无法直接伤害或影响其他生物，但可以自由移动、施展区域指令或为自身施加增益。",
+    "enGB": "You freeze the flow of time around you, functioning as time stop and granting you {g|Encyclopedia:Dice}1d4{/g}+1 apparent {g|Encyclopedia:Combat_Round}rounds{/g} of actions. While time is stopped, you cannot directly harm or target other creatures, though you may move, place area effects, and cast beneficial spells on yourself."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Cloudpiercer.name",
+    "zhCN": "穿云",
+    "enGB": "Cloudpiercer"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Cloudpiercer.desc",
+    "zhCN": "你射出一道贯穿云霄的破甲洪流，对 120 尺直线路径上的所有敌人造成 {g|Encyclopedia:Dice}20d6{/g} 点{g|Encyclopedia:Damage_Type}穿刺伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使伤害减半）。该伤害无视所有{g|Encyclopedia:Damage_Reduction}伤害减免{/g}。",
+    "enGB": "You loose a sky-piercing lance of force along a 120-foot line, dealing {g|Encyclopedia:Dice}20d6{/g} {g|Encyclopedia:Damage_Type}piercing damage{/g} to all enemies in the line (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the damage). This damage ignores all {g|Encyclopedia:Damage_Reduction}damage reduction{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.EarthFury.name",
+    "zhCN": "大地之怒",
+    "enGB": "Earth's Fury"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EarthFury.desc",
+    "zhCN": "你引动大地之怒，震碎自身周围 30 尺内的地面。范围内的所有敌人均会受到 {g|Encyclopedia:Dice}10d6{/g} 点{g|Encyclopedia:Damage_Type}钝击伤害{/g}并被震至{g|ConditionProne}倒地{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使伤害减半并避免{g|ConditionProne}倒地{/g}）。召唤生物在此效果中受到双倍伤害。",
+    "enGB": "You unleash the fury of the earth in a 30-foot radius around yourself. All enemies in the area take {g|Encyclopedia:Dice}10d6{/g} {g|Encyclopedia:Damage_Type}bludgeoning damage{/g} and are knocked {g|ConditionProne}prone{/g} (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves the damage and negates being knocked {g|ConditionProne}prone{/g}). Summoned creatures take double damage from this spell."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Reconstruction.name",
+    "zhCN": "重构",
+    "enGB": "Reconstruction"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Reconstruction.desc",
+    "zhCN": "你重构自身周围 30 尺内所有友军的生命形态：所有存活友军完全恢复全部{g|Encyclopedia:HP}生命值{/g}与非致命伤害，并解除除诅咒、疾病与毒素以外的所有负面状态；此外，范围内至多三名阵亡友军（不含召唤生物）会立即复活并恢复一半最大{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You reconstruct the vital forms of all allies within 30 feet: living allies are restored to full {g|Encyclopedia:HP}hit points{/g}, healed of all nonlethal damage, and cured of all harmful conditions except curses, diseases, and poisons. In addition, up to three fallen allies within range (excluding summoned creatures) are restored to life at half their maximum {g|Encyclopedia:HP}hit points{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.name",
+    "zhCN": "旧日的战术家",
+    "enGB": "Tactician of Old"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.desc",
+    "zhCN": "你在巴别塔的恶灵状态中唤醒昔日战术家的完整本能。此指令只能在已开启敏捷形态或体质形态时施展：你在持续时间内同时获得敏捷形态与体质形态的全部收益，且转移量额外提高 +2（使{g|Encyclopedia:Dexterity}敏捷{/g}与{g|Encyclopedia:Constitution}体质{/g}各额外再提高 +4）。此指令不会解除恶灵对非【恶灵】指令的施法限制。",
+    "enGB": "You awaken the full tactical instinct of your past self while the Specter of Babel is active. This order can only be cast while you are in Agile Form or Enduring Form: for the duration, you gain the full benefits of both Agile Form and Enduring Form simultaneously, and your Transfer Value increases by an additional +2 (granting an extra +4 to both {g|Encyclopedia:Dexterity}Dexterity{/g} and {g|Encyclopedia:Constitution}Constitution{/g}). This order does not lift the Specter's restriction on non-[Specter] orders."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.name",
+    "zhCN": "文明的存续",
+    "enGB": "The Survival of Civilization"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.desc",
+    "zhCN": "你点燃文明存续的火种：自身周围 30 尺内的所有存活友军完全恢复全部{g|Encyclopedia:HP}生命值{/g}与非致命伤害，并解除除诅咒、疾病与毒素以外的所有负面状态；同时，范围内至多五名阵亡友军（不含召唤生物）立即复活并恢复全部{g|Encyclopedia:HP}生命值{/g}。\n在随后的 1 分钟内，所有受影响友军在{g|Encyclopedia:Attack}攻击检定{/g}、伤害掷骰、{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}与所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}上获得 +4 不具类型{g|Encyclopedia:Bonus}加值{/g}，且期间首次受到足以致死的伤害时改为保留 1 点{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You kindle the undying spark of civilization: all living allies within 30 feet are restored to full {g|Encyclopedia:HP}hit points{/g}, healed of all nonlethal damage, and cured of all harmful conditions except curses, diseases, and poisons, while up to five fallen allies within range (excluding summoned creatures) are resurrected at full {g|Encyclopedia:HP}hit points{/g}.\nFor 1 minute thereafter, all affected allies gain a +4 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack{/g} and {g|Encyclopedia:Damage}damage{/g} rolls, to {g|Encyclopedia:Armor_Class}AC{/g}, and on all {g|Encyclopedia:Saving_Throw}saving throws{/g}, and the first time each would be reduced to 0 or fewer {g|Encyclopedia:HP}hit points{/g}, they are instead left at 1 {g|Encyclopedia:HP}hit point{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.name",
+    "zhCN": "永恒的注视",
+    "enGB": "Eternal Gaze"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.desc",
+    "zhCN": "你将永恒的注视投向周围 30 尺内的所有友军。在持续时间内，每名受影响友军首次受到足以致死的伤害时不会死亡，而是立即恢复全部{g|Encyclopedia:HP}生命值{/g}，传送至你身旁的无障碍空地，并获得持续 1 分钟的迅捷加速效果（移动{g|Encyclopedia:Speed}速度{/g} +30 尺，{g|Encyclopedia:Full_Round_Action}整轮攻击{/g}额外攻击一次，可与{g|SpellsHaste}加速术{/g}叠加）。每名友军仅可触发一次该守护。",
+    "enGB": "You cast an eternal gaze over all allies within 30 feet. During the spell's duration, the first time each affected ally would take lethal damage, they do not die; instead, they are immediately restored to full {g|Encyclopedia:HP}hit points{/g}, teleported to an open space beside you, and granted acceleration for 1 minute (+30-foot movement {g|Encyclopedia:Speed}speed{/g} and one extra {g|Encyclopedia:Attack}attack{/g} on a {g|Encyclopedia:Full_Round_Action}full attack{/g}, stacking with {g|SpellsHaste}haste{/g}). This protection triggers at most once per ally."
+  },
+  {
+    "Key": "rhodesdoctor.spell.CrownEcho.name",
+    "zhCN": "王冠的回响",
+    "enGB": "Echo of the Crown"
+  },
+  {
+    "Key": "rhodesdoctor.spell.CrownEcho.desc",
+    "zhCN": "文明存续的回响自你体内震荡而出，席卷周围 60 尺内的所有敌人。{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败的敌人会陷入{g|ConditionDaze}眩晕{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}，并直接失去身上所有由敌方施展的可驱散法术增益（无需进行驱散{g|Encyclopedia:Check}检定{/g}），其中每名敌人身上至多有两个增益会被夺取并随机转嫁给场上的友军；豁免成功的敌人也会随机失去一个可驱散的法术增益（直接消散，不会转嫁给友军）。",
+    "enGB": "An echo of the Crown ripples outward in a 60-foot-radius burst around you. Enemies that fail a {g|Encyclopedia:Saving_Throw}Will save{/g} are {g|ConditionDaze}dazed{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} and stripped of all dispellable spell buffs cast by enemies (without requiring a dispel {g|Encyclopedia:Check}check{/g}), with up to two buffs per enemy stolen and redistributed among your allies. Enemies that succeed at their save instead lose one random dispellable spell buff, which simply vanishes."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Catastrophe.name",
+    "zhCN": "天灾降临",
+    "enGB": "Catastrophe Descends"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Catastrophe.desc",
+    "zhCN": "你在目标区域召来半径 40 尺的源石天灾。在持续 1 分钟内，每{g|Encyclopedia:Combat_Round}轮{/g}开始时，区域内的每名敌人都会受到 {g|Encyclopedia:Dice}12d6{/g} 点{g|Encyclopedia:Energy_Damage}火焰伤害{/g}、{g|Encyclopedia:Dice}12d6{/g} 点{g|Encyclopedia:Damage_Type}钝击伤害{/g}与 {g|Encyclopedia:Dice}12d6{/g} 点{g|Encyclopedia:Energy_Damage}电击伤害{/g}（成功的{g|Encyclopedia:Saving_Throw}反射豁免{/g}可使当轮伤害减半；同一生物每{g|Encyclopedia:Combat_Round}轮{/g}至多受此伤害一次）。",
+    "enGB": "You call down an Originium catastrophe in a 40-foot-radius area for 1 minute. At the start of each {g|Encyclopedia:Combat_Round}round{/g}, every enemy within the area takes {g|Encyclopedia:Dice}12d6{/g} {g|Encyclopedia:Energy_Damage}fire damage{/g}, {g|Encyclopedia:Dice}12d6{/g} {g|Encyclopedia:Damage_Type}bludgeoning damage{/g}, and {g|Encyclopedia:Dice}12d6{/g} {g|Encyclopedia:Energy_Damage}electricity damage{/g} (a successful {g|Encyclopedia:Saving_Throw}Reflex save{/g} halves that round's damage; a creature can take this damage at most once per {g|Encyclopedia:Combat_Round}round{/g})."
+  },
+  {
+    "Key": "rhodesdoctor.inkling.name",
+    "zhCN": "墨灵",
+    "enGB": "Ink Spirit"
+  },
+  {
+    "Key": "rhodesdoctor.inkling.deathburst.name",
+    "zhCN": "墨灵爆发",
+    "enGB": "Ink Burst"
+  },
+  {
+    "Key": "rhodesdoctor.inkling.deathburst.desc",
+    "zhCN": "墨灵被摧毁时在相邻敌人处爆发，造成 {g|Encyclopedia:Dice}2d6{/g} 点{g|Encyclopedia:Energy_Damage}力场伤害{/g}并使其陷入{g|ConditionDazzled}目眩{/g}状态 1 {g|Encyclopedia:Combat_Round}轮{/g}（成功的{g|Encyclopedia:Saving_Throw}意志豁免{/g}可避免{g|ConditionDazzled}目眩{/g}）。",
+    "enGB": "When destroyed, the ink spirit bursts in a spray of ink, dealing {g|Encyclopedia:Dice}2d6{/g} {g|Encyclopedia:Energy_Damage}force damage{/g} to all engaged enemies and leaving them {g|ConditionDazzled}dazzled{/g} for 1 {g|Encyclopedia:Combat_Round}round{/g} ({g|Encyclopedia:Saving_Throw}Will{/g} negates the dazzled condition)."
+  },
+  {
+    "Key": "rhodesdoctor.mirrorlock.name",
+    "zhCN": "镜像限制",
+    "enGB": "Mirror Restriction"
+  },
+  {
+    "Key": "rhodesdoctor.mirrorlock.desc",
+    "zhCN": "镜像复制体可正常行动与施展{g|Encyclopedia:Spell}法术{/g}，并使用其自身独立的法术位与能力资源。",
+    "enGB": "The mirror duplicate can act and cast {g|Encyclopedia:Spell}spells{/g} normally, using its own independent spell slots and ability resources."
+  },
+  {
+    "Key": "rhodesdoctor.spell.Silencer.debuff.name",
+    "zhCN": "缄默",
+    "enGB": "Silenced"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Execution.buff.name",
+    "zhCN": "处决（蓄势）",
+    "enGB": "Execution (readied)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.enemy.name",
+    "zhCN": "钙质化（凝滞）",
+    "enGB": "Calcification (hindered)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Calcification.ally.name",
+    "zhCN": "钙质化（治疗）",
+    "enGB": "Calcification (healing)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.after.name",
+    "zhCN": "文明的存续（众志）",
+    "enGB": "Survival of Civilization (as one)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Civilization.after.desc",
+    "zhCN": "在{g|Encyclopedia:Attack}攻击检定{/g}、伤害掷骰、{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}与所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}上获得 +4 不具类型{g|Encyclopedia:Bonus}加值{/g}；期间首次将要降至 0 点{g|Encyclopedia:HP}生命值{/g}或以下时改为保留 1 点{g|Encyclopedia:HP}生命值{/g}。",
+    "enGB": "You gain a +4 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack{/g} and {g|Encyclopedia:Damage}damage{/g} rolls, to {g|Encyclopedia:Armor_Class}AC{/g}, and on all {g|Encyclopedia:Saving_Throw}saving throws{/g}; the first time you would be reduced to 0 or fewer {g|Encyclopedia:HP}hit points{/g}, you are instead left at 1 {g|Encyclopedia:HP}hit point{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ArtilleryBarrage.buff.name",
+    "zhCN": "炮火延伸（炮击中）",
+    "enGB": "Artillery Barrage (incoming)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BannerStands.buff.name",
+    "zhCN": "旗帜不倒",
+    "enGB": "The Banner Stands"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.blind.name",
+    "zhCN": "影之疆域（致盲）",
+    "enGB": "Shadow Realm (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.hide.name",
+    "zhCN": "影之疆域（隐形）",
+    "enGB": "Shadow Realm (invisible)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.touch.name",
+    "zhCN": "影之疆域（影触）",
+    "enGB": "Shadow Realm (touch)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.dazzle.name",
+    "zhCN": "影之疆域（目眩）",
+    "enGB": "Shadow Realm (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.slow.name",
+    "zhCN": "儿时的舞乐（迟缓）",
+    "enGB": "Dance of Childhood (slowed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FoxfireDance.regen.name",
+    "zhCN": "儿时的舞乐（回生）",
+    "enGB": "Dance of Childhood (mending)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SinPunishment.buff.name",
+    "zhCN": "罪罚",
+    "enGB": "Sin and Punishment"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.name",
+    "zhCN": "测试木桩",
+    "enGB": "Test Dummy"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.lowhp.name",
+    "zhCN": "脆皮木桩（10 血）",
+    "enGB": "Frail Dummy (10 HP)"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.armor.name",
+    "zhCN": "测试增益·护甲",
+    "enGB": "Test Buff: Armor"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.armor.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}获得 +4 天生护甲{g|Encyclopedia:Bonus}加值{/g}。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +4 natural armor {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g}. Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.resist.name",
+    "zhCN": "测试增益·抗性",
+    "enGB": "Test Buff: Resistance"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.resist.desc",
+    "zhCN": "测试木桩增益：获得火焰、寒冷、电击、酸蚀与音波{g|Encyclopedia:Energy_Resistance}能量抗性{/g}各 10 点（可与其他来源叠加）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: {g|Encyclopedia:Energy_Resistance}resistance{/g} 10 to fire, cold, electricity, acid, and sonic (stacking). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.buff.hasteaccel.name",
+    "zhCN": "加速",
+    "enGB": "Hastened"
+  },
+  {
+    "Key": "rhodesdoctor.buff.hasteaccel.desc",
+    "zhCN": "移动{g|Encyclopedia:Speed}速度{/g}获得 +30 尺不具类型{g|Encyclopedia:Bonus}加值{/g}，且进行{g|Encyclopedia:Full_Round_Action}整轮攻击{/g}时可额外进行一次攻击（不含{g|SpellsHaste}加速术{/g}的其他{g|Encyclopedia:Bonus}加值{/g}，但可与{g|SpellsHaste}加速术{/g}叠加）。",
+    "enGB": "You gain a +30-foot untyped {g|Encyclopedia:Bonus}bonus{/g} to movement {g|Encyclopedia:Speed}speed{/g} and one additional {g|Encyclopedia:Attack}attack{/g} when making a {g|Encyclopedia:Full_Round_Action}full attack{/g} (grants no other {g|SpellsHaste}haste{/g} {g|Encyclopedia:Bonus}bonuses{/g}, and stacks with {g|SpellsHaste}haste{/g})."
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.residual.name",
+    "zhCN": "岁稔（余温）",
+    "enGB": "Harvest of Years (lingering)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.residual.desc",
+    "zhCN": "将岁稔溢出的{g|Encyclopedia:Healing}治疗{/g}量转化为{g|Encyclopedia:Temporary_HP}临时生命值{/g}，持续 1 分钟。",
+    "enGB": "Excess {g|Encyclopedia:Healing}healing{/g} from Harvest of Years is converted into {g|Encyclopedia:Temporary_HP}temporary hit points{/g} for 1 minute."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buffed.name",
+    "zhCN": "增益木桩（6 个常见增益）",
+    "enGB": "Buffed Dummy (6 buffs)"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.haste.name",
+    "zhCN": "测试增益·加速",
+    "enGB": "Test Buff: Haste"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.haste.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}与{g|Encyclopedia:Saving_Throw}反射豁免{/g}获得 +1 闪避{g|Encyclopedia:Bonus}加值{/g}，{g|Encyclopedia:Attack}攻击检定{/g}获得 +1 不具类型{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsHaste}加速术{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +1 dodge {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} and on {g|Encyclopedia:Saving_Throw}Reflex saves{/g}, and +1 untyped {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} (simulating {g|SpellsHaste}haste{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bless.name",
+    "zhCN": "测试增益·祝福",
+    "enGB": "Test Buff: Bless"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bless.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Attack}攻击检定{/g}获得 +1 士气{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsBless}祝福术{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +1 morale {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} (simulating {g|SpellsBless}bless{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.magearmor.name",
+    "zhCN": "测试增益·法师护甲",
+    "enGB": "Test Buff: Mage Armor"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.magearmor.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}获得 +4 护甲{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsMageArmor}法师护甲{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +4 armor {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} (simulating {g|SpellsMageArmor}mage armor{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.shield.name",
+    "zhCN": "测试增益·护盾",
+    "enGB": "Test Buff: Shield"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.shield.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Armor_Class}防御等级（AC）{/g}获得 +4 盾牌{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsShield}护盾术{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +4 shield {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Armor_Class}AC{/g} (simulating {g|SpellsShield}shield{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.heroism.name",
+    "zhCN": "测试增益·英雄气概",
+    "enGB": "Test Buff: Heroism"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.heroism.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Attack}攻击检定{/g}与所有{g|Encyclopedia:Saving_Throw}豁免检定{/g}获得 +2 士气{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsHeroism}英雄气概{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +2 morale {g|Encyclopedia:Bonus}bonus{/g} on {g|Encyclopedia:Attack}attack rolls{/g} and all {g|Encyclopedia:Saving_Throw}saving throws{/g} (simulating {g|SpellsHeroism}heroism{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bearendurance.name",
+    "zhCN": "测试增益·熊之坚韧",
+    "enGB": "Test Buff: Bear's Endurance"
+  },
+  {
+    "Key": "rhodesdoctor.testdummy.buff.bearendurance.desc",
+    "zhCN": "测试木桩增益：{g|Encyclopedia:Constitution}体质{/g}获得 +4 增强{g|Encyclopedia:Bonus}加值{/g}（模拟{g|SpellsBearsEndurance}熊之坚韧{/g}）。可被驱散与夺取。",
+    "enGB": "Test dummy buff: +4 enhancement {g|Encyclopedia:Bonus}bonus{/g} to {g|Encyclopedia:Constitution}Constitution{/g} (simulating {g|SpellsBearsEndurance}bear's endurance{/g}). Can be dispelled and stolen."
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.panic.name",
+    "zhCN": "恐慌",
+    "enGB": "Panicked"
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.panic.desc",
+    "zhCN": "处于{g|ConditionFrightened}恐慌{/g}状态：必须全力逃离恐惧源，且在所有{g|Encyclopedia:Attack}攻击检定{/g}、{g|Encyclopedia:Saving_Throw}豁免检定{/g}、{g|Encyclopedia:Skills}技能{/g}{g|Encyclopedia:Check}检定{/g}与{g|Encyclopedia:Ability_Scores}属性检定{/g}上承受 -2 {g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "{g|ConditionFrightened}Panicked{/g}: must flee from the source of fear, and takes a -2 {g|Encyclopedia:Penalty}penalty{/g} on all {g|Encyclopedia:Attack}attack rolls{/g}, {g|Encyclopedia:Saving_Throw}saving throws{/g}, {g|Encyclopedia:Skills}skill{/g} {g|Encyclopedia:Check}checks{/g}, and {g|Encyclopedia:Ability_Scores}ability checks{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.shaken.name",
+    "zhCN": "战栗",
+    "enGB": "Shaken"
+  },
+  {
+    "Key": "rhodesdoctor.buff.nightterror.shaken.desc",
+    "zhCN": "处于{g|ConditionShaken}战栗{/g}状态：在所有{g|Encyclopedia:Attack}攻击检定{/g}、{g|Encyclopedia:Saving_Throw}豁免检定{/g}、{g|Encyclopedia:Skills}技能{/g}{g|Encyclopedia:Check}检定{/g}与{g|Encyclopedia:Ability_Scores}属性检定{/g}上承受 -2 {g|Encyclopedia:Penalty}减值{/g}。",
+    "enGB": "{g|ConditionShaken}Shaken{/g}: takes a -2 {g|Encyclopedia:Penalty}penalty{/g} on all {g|Encyclopedia:Attack}attack rolls{/g}, {g|Encyclopedia:Saving_Throw}saving throws{/g}, {g|Encyclopedia:Skills}skill{/g} {g|Encyclopedia:Check}checks{/g}, and {g|Encyclopedia:Ability_Scores}ability checks{/g}."
+  },
+  {
+    "Key": "rhodesdoctor.spell.ChainDetonation.mark.name",
+    "zhCN": "连锁殉爆（标记）",
+    "enGB": "Chain Detonation (marked)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.enduring.name",
+    "zhCN": "旧日的战术家（坚韧）",
+    "enGB": "Tactician of Old (enduring)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.TacticianOfOld.agile.name",
+    "zhCN": "旧日的战术家（敏捷）",
+    "enGB": "Tactician of Old (agile)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FinalSnipe.mark.name",
+    "zhCN": "终末狙击（标记）",
+    "enGB": "Final Snipe (marked)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.EternalGaze.buff.name",
+    "zhCN": "永恒的注视",
+    "enGB": "Eternal Gaze"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ReturnToAbyss.buff.name",
+    "zhCN": "潮",
+    "enGB": "Tide"
+  },
+  {
+    "Key": "rhodesdoctor.spell.SwiftBreach.buff.name",
+    "zhCN": "迅捷突破",
+    "enGB": "Swift Breach"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Smokescreen.conceal.name",
+    "zhCN": "烟幕掩护（隐蔽）",
+    "enGB": "Smokescreen (concealed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BeaconProjection.reveal.name",
+    "zhCN": "信标投射（显形）",
+    "enGB": "Beacon Projection (revealed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.HarvestYears.buff.name",
+    "zhCN": "岁稔（积攒）",
+    "enGB": "Harvest of Years (accumulating)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ShadowRealm.holder.name",
+    "zhCN": "影之疆域（领域）",
+    "enGB": "Shadow Realm (field)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.blind.name",
+    "zhCN": "耀阳颔首（目盲）",
+    "enGB": "Blazing Sun Bow (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlazingSunBow.dazzle.name",
+    "zhCN": "耀阳颔首（目眩）",
+    "enGB": "Blazing Sun Bow (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DelayedBlast.bomb.name",
+    "zhCN": "延时爆破（炸弹）",
+    "enGB": "Delayed Blast (bomb)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Volcano.ember.name",
+    "zhCN": "火山（余焰）",
+    "enGB": "Volcano (ember)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Twilight.melt.name",
+    "zhCN": "黄昏（熔火）",
+    "enGB": "Twilight (molten)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.dazzle.name",
+    "zhCN": "闪光弹（目眩）",
+    "enGB": "Flashbang (dazzled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.Flashbang.blind.name",
+    "zhCN": "闪光弹（目盲）",
+    "enGB": "Flashbang (blinded)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.ScorchingBreath.resist.name",
+    "zhCN": "灼烧（抗性降低）",
+    "enGB": "Scorch (resistance lowered)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.BlackSnakeFlame.burn.name",
+    "zhCN": "黑蛇之焰（灼烧）",
+    "enGB": "Black Snake Flame (burning)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.entangled.name",
+    "zhCN": "冰封领域（纠缠）",
+    "enGB": "Frozen Domain (entangled)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.FrozenDomain.halfspeed.name",
+    "zhCN": "冰封领域（减速）",
+    "enGB": "Frozen Domain (slowed)"
+  },
+  {
+    "Key": "rhodesdoctor.spell.DrunkenDream.sleep.name",
+    "zhCN": "醉梦（沉眠）",
+    "enGB": "Drunken Dream (asleep)"
+  }
+]

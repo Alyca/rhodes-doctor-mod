@@ -1,0 +1,219 @@
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+using Kingmaker.Utility;
+using Owlcat.Runtime.Core.Logging;
+using Owlcat.Runtime.Core.Utils;
+using Owlcat.Runtime.Core.Utils.Locator;
+
+namespace Kingmaker.EntitySystem;
+
+public class EntityService : IService, IDisposable
+{
+	public class Proxy : IDisposable
+	{
+		public readonly string Id;
+
+		[CanBeNull]
+		public EntityDataBase Entity { get; set; }
+
+		public bool IsDisposed { get; private set; }
+
+		public override int GetHashCode()
+		{
+			return Id?.GetHashCode() ?? 0;
+		}
+
+		public Proxy(string id)
+		{
+			Id = id;
+		}
+
+		public override string ToString()
+		{
+			return "proxy#" + Entity;
+		}
+
+		public void Dispose()
+		{
+			IsDisposed = true;
+			Entity = null;
+		}
+	}
+
+	private static ServiceProxy<EntityService> s_InstanceProxy;
+
+	private readonly Dictionary<string, Proxy> m_Entities = new Dictionary<string, Proxy>(StringComparer.Ordinal);
+
+	private readonly EntityListsCache m_Cache = new EntityListsCache();
+
+	private readonly object m_EntitiesLock = new object();
+
+	public static EntityService Instance
+	{
+		get
+		{
+			EntityService entityService = s_InstanceProxy?.Instance;
+			if (entityService == null)
+			{
+				s_InstanceProxy = Services.GetProxy<EntityService>();
+				entityService = s_InstanceProxy?.Instance;
+			}
+			if (entityService == null)
+			{
+				LogChannel.System.Error("EntitiesService is not available");
+			}
+			return entityService;
+		}
+	}
+
+	public ServiceLifetimeType Lifetime => ServiceLifetimeType.Game;
+
+	public void Dispose()
+	{
+		lock (m_EntitiesLock)
+		{
+			foreach (Proxy item in m_Entities.Values.ToTempList())
+			{
+				item.Entity?.Dispose();
+				item.Dispose();
+			}
+		}
+	}
+
+	public void Register(EntityDataBase entity)
+	{
+		if (entity.IsTransientPlaceholder)
+		{
+			return;
+		}
+		try
+		{
+			Proxy proxy = GetProxy(entity.UniqueId);
+			if (proxy.Entity != entity)
+			{
+				if (proxy.Entity != null)
+				{
+					LogChannel.System.Error("EntityService.Register: entity with same Id already registered (new: {0}; existing: {1})", entity, proxy.Entity);
+				}
+				else
+				{
+					proxy.Entity = entity;
+					entity.Proxy = proxy;
+					m_Cache.Add(entity);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			LogChannel.System.Exception(ex, null);
+		}
+	}
+
+	public void Unregister(EntityDataBase entity)
+	{
+		if (entity.IsTransientPlaceholder)
+		{
+			return;
+		}
+		try
+		{
+			GetProxy(entity.UniqueId).Dispose();
+			m_Entities.Remove(entity.UniqueId);
+			entity.Proxy = null;
+			m_Cache.Remove(entity);
+		}
+		catch (Exception ex)
+		{
+			LogChannel.System.Exception(ex, null);
+		}
+	}
+
+	[NotNull]
+	public Proxy GetProxy(string id)
+	{
+		lock (m_EntitiesLock)
+		{
+			Proxy proxy = m_Entities.Get(id);
+			if (proxy == null)
+			{
+				proxy = new Proxy(id);
+				m_Entities[id] = proxy;
+			}
+			return proxy;
+		}
+	}
+
+	[CanBeNull]
+	public EntityDataBase GetEntity(string id)
+	{
+		lock (m_EntitiesLock)
+		{
+			return m_Entities.Get(id)?.Entity;
+		}
+	}
+
+	[CanBeNull]
+	public TEntity GetEntity<TEntity>(string id) where TEntity : EntityDataBase
+	{
+		return GetEntity(id) as TEntity;
+	}
+
+	[CanBeNull]
+	public TEntity GetFirstEntity<TEntity>() where TEntity : EntityDataBase
+	{
+		lock (m_EntitiesLock)
+		{
+			foreach (Proxy value in m_Entities.Values)
+			{
+				if (value.Entity is TEntity result)
+				{
+					return result;
+				}
+			}
+			return null;
+		}
+	}
+
+	public bool Contains(EntityDataBase entity)
+	{
+		return GetProxy(entity.UniqueId).Entity == entity;
+	}
+
+	public List<TEntity> GetListUnsafe<TEntity>() where TEntity : EntityDataBase
+	{
+		m_Cache.Update<TEntity>(m_Entities);
+		return m_Cache.Get<TEntity>();
+	}
+
+	public List<EntityDataBase> GetListUnsafe()
+	{
+		m_Cache.Update<EntityDataBase>(m_Entities);
+		return m_Cache.Get<EntityDataBase>();
+	}
+
+	public List<TEntity> GetTempList<TEntity>() where TEntity : EntityDataBase
+	{
+		m_Cache.Update<TEntity>(m_Entities);
+		return m_Cache.Get<TEntity>().ToTempList();
+	}
+
+	private List<TEntity> GetTempListNoCache<TEntity>() where TEntity : EntityDataBase
+	{
+		List<TEntity> list = TempList.Get<TEntity>();
+		foreach (KeyValuePair<string, Proxy> entity in m_Entities)
+		{
+			LinqExtensions.Deconstruct(entity, out var _, out var value);
+			if (value.Entity is TEntity item)
+			{
+				list.Add(item);
+			}
+		}
+		return list;
+	}
+
+	public List<EntityDataBase> GetTempList()
+	{
+		return GetTempListNoCache<EntityDataBase>();
+	}
+}

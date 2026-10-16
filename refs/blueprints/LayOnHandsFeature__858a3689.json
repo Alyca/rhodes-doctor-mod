@@ -1,0 +1,87 @@
+{
+  "AssetId": "858a3689c285c844d9e6ce278e686491",
+  "SourcePath": "Classes/Paladin/LayOnHands/LayOnHandsFeature.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+      "$ReplaceCasterLevelOfAbility$0e8495b9-3db6-4879-93cb-9dc1e46d4863"
+    ],
+    "Components": [
+      {
+        "$type": "d79ad4ed064aa4f43ace0e9c238fb9b9, AddFacts",
+        "name": "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+        "m_Overrides": [],
+        "m_Facts": [
+          "!bp_a9f54ba0585042c489232f318a7b4295",
+          "!bp_caae1dc6fcf7b37408686971ee27db13",
+          "!bp_8d6073201e5395d458b8251386d72df1"
+        ],
+        "Dummy": null,
+        "CasterLevel": 0,
+        "DoNotRestoreMissingFacts": false,
+        "HasDifficultyRequirements": false,
+        "InvertDifficultyRequirements": false,
+        "MinDifficulty": "Story"
+      },
+      {
+        "$type": "78c4e71ab52672e4dabbc74b4b963d43, ReplaceCasterLevelOfAbility",
+        "name": "$ReplaceCasterLevelOfAbility$0e8495b9-3db6-4879-93cb-9dc1e46d4863",
+        "m_Overrides": [],
+        "m_Spell": "!bp_caae1dc6fcf7b37408686971ee27db13",
+        "m_Class": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "m_AdditionalClasses": [],
+        "m_Archetypes": []
+      },
+      {
+        "$type": "78c4e71ab52672e4dabbc74b4b963d43, ReplaceCasterLevelOfAbility",
+        "name": "$ReplaceCasterLevelOfAbility$54f190b2-823d-4dc9-96c5-45b4ef071342",
+        "m_Overrides": [],
+        "m_Spell": "!bp_8d6073201e5395d458b8251386d72df1",
+        "m_Class": "!bp_bfa11238e7ae3544bbeb4d0b92e897ec",
+        "m_AdditionalClasses": [],
+        "m_Archetypes": []
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "2320ce044048646498b7c4522a1aca06",
+        "stringkey": "63373101-2f01-483c-98c2-f55f0235bbf5"
+      }
+    },
+    "m_Description": {
+      "m_Key": "0a783318-a0f5-49a6-9e97-20170b1fe22c",
+      "m_OwnerString": "858a3689c285c844d9e6ce278e686491",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/LayOnHands/LayOnHandsFeature_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "e35fa1bf7ba8c0148a498d6a3b693f48",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

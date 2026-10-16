@@ -1,0 +1,51 @@
+{
+  "AssetId": "ecf79fc871f15074e95698a3fef47aee",
+  "SourcePath": "FX/Spell Level None/FireLine00.jbp",
+  "Data": {
+    "$type": "6370c9530f88b5c41bd101d35b8e4fd2, BlueprintProjectile",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "Speed": 17.0,
+    "MinTime": 0.0,
+    "View": {
+      "AssetId": "e45c3a777c6be6848996ce2b1b8c7221"
+    },
+    "CastFx": {
+      "AssetId": "2c17c9fd2d8a2314cb1efe869dba4b4a"
+    },
+    "CastEffectDuration": 10.0,
+    "LifetimeParticlesAfterHit": 15.0,
+    "ProjectileHit": {
+      "FollowTarget": false,
+      "HitFx": null,
+      "HitSnapFx": null,
+      "MissFx": null,
+      "MissDecalFx": null
+    },
+    "DamageHit": {
+      "FollowTarget": false,
+      "HitLevel": "Standard",
+      "MinorAdditionalHits": true,
+      "BillboardBlood": true,
+      "DirectionalBlood": false
+    },
+    "SourceBone": "Locator_PalmFX_Left",
+    "SourceBoneOffsetAtTarget": false,
+    "UseSourceBoneScale": false,
+    "SourceBoneCorpulenceOffset": 0.0,
+    "TargetBone": "Locator_HitFX_00",
+    "TargetBoneOnCrit": "Locator_HitCriticalFX_00",
+    "TargetBoneOffsetMultiplier": 1.0,
+    "FallsOnMiss": false,
+    "MissMinRadius": 1.0,
+    "MissMaxRadius": 3.0,
+    "MissRaycastDistance": 25.0,
+    "AddRagdollImpulse": 0.0,
+    "m_Trajectory": "!bp_5f93c1129ed214e4bbba3c95e781b2d7",
+    "FollowTerrain": false,
+    "StuckArrowPrefab": null,
+    "DeflectedArrowPrefab": null
+  }
+}

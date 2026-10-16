@@ -1,0 +1,91 @@
+# E7-Sleep 证据：睡眠免疫挡整法术/同上下文增益，恍惚须用无睡眠上下文单独施加（E7）
+来源：blueprints.zip Traits/Races/Elf/ElvenImmunities.jbp；
+反编译：Assembly-CSharp.dll（ilspycmd 9.0）Kingmaker.UnitLogic.FactLogic.BuffDescriptorImmunity、
+SpellImmunityToSpellDescriptor、Kingmaker.UnitLogic.Mechanics.Actions.ContextActionApplyBuff、
+Kingmaker.RuleSystem.Rules.RuleCanApplyBuff。
+
+## 1. 精灵睡眠免疫原文（ElvenImmunities.jbp Components）
+[
+ {
+  "$type": "3577eb7fd5b1caa4ca13855b16201704, BuffDescriptorImmunity",
+  "name": "$BuffDescriptorImmunity$4b17bca0-13f5-4a61-88da-4f2852e7bf06",
+  "PrototypeLink": {
+   "guid": "",
+   "name": null
+  },
+  "m_Overrides": [],
+  "Descriptor": {
+   "m_IntValue": 4294967296
+  },
+  "m_IgnoreFeature": null,
+  "CheckFact": false,
+  "m_FactToCheck": null
+ },
+ {
+  "$type": "12a48211ea743204e958350b082ecd52, SavingThrowBonusAgainstSchool",
+  "name": "$SavingThrowBonusAgainstSchool$28308899-3bb7-4839-8378-97e2215ed6af",
+  "PrototypeLink": {
+   "guid": "",
+   "name": null
+  },
+  "m_Overrides": [],
+  "School": "Enchantment",
+  "ModifierDescriptor": "None",
+  "Value": 2
+ },
+ {
+  "$type": "2fcb3a86db6cbf846bb0252ef04ba9b8, SpellImmunityToSpellDescriptor",
+  "name": "$SpellImmunityToSpellDescriptor$2d6168bc-d239-4d3c-83f6-ff55fa206865",
+  "PrototypeLink": {
+   "guid": "",
+   "name": null
+  },
+  "m_Overrides": [],
+  "Descriptor": {
+   "m_IntValue": 4294967296
+  },
+  "m_CasterIgnoreImmunityFact": null
+ }
+]
+
+说明：Descriptor m_IntValue 4294967296 = 2^32 = SpellDescriptor.Sleep；
+精灵同时具有 BuffDescriptorImmunity（挡带睡眠描述符上下文的增益）与
+SpellImmunityToSpellDescriptor（整法术睡眠描述符免疫，见下）。
+另有 SavingThrowBonusAgainstSchool（Enchantment +2）。
+
+## 2. BuffDescriptorImmunity（反编译原文，关键部分）
+  private bool IsImmune(MechanicsContext context)
+  {
+      ...
+      bool num = Descriptor.HasAnyFlag(context.SpellDescriptor);
+      ...
+      return num && flag2 && flag3;
+  }
+  public void OnEventAboutToTrigger(RuleCanApplyBuff evt)
+  {
+      if (IsImmune(evt.Context)) evt.Immunity = true;
+  }
+说明：按“上下文的法术描述符”判定。醉梦法术带 Sleep 描述符时，同一法术上下文施加的
+睡眠与恍惚增益都会被睡眠描述符免疫挡掉——“失败分支同时挂睡眠+恍惚”对描述符免疫者无效。
+（条件免疫 AddConditionImmunity(Sleeping) 只挡睡眠本身，恍惚本来就照常生效。）
+
+## 3. SpellImmunityToSpellDescriptor（反编译原文）
+  protected override void OnTurnOn()
+  {
+      base.Data.AppliedId = base.Owner.Ensure<UnitPartSpellResistance>().AddImmunity(
+          SpellImmunityType.SpellDescriptor, AlignmentComponent.None, null, Descriptor, CasterIgnoreImmunityFact);
+  }
+说明：向 UnitPartSpellResistance 登记整法术描述符免疫（IsImmune 按上下文判定）。
+
+## 4. ContextActionApplyBuff.IgnoreParentContext（反编译原文，关键部分）
+  TimeSpan? duration = CalculateDuration(mechanicsContext);
+  MechanicsContext parentContext = (IgnoreParentContext ? null : mechanicsContext);
+  Buff buff = buffTarget.Descriptor.AddBuff(Buff, parentContext, duration);
+说明：IgnoreParentContext=true 时新增强益不再继承法术上下文（含睡眠描述符），
+BuffDescriptorImmunity 的上下文判定不再命中，恍惚照常挂上；沉眠仍走正常上下文，照常被挡。
+原版 11 处 IgnoreParentContext=true 先例（ClawFlayingCriticalBuff、ShieldBlockBuff 等），机制安全。
+
+## 5. 本 mod 做法（SpellsSetup DrunkenDream）
+失败分支：ApplyBuff(沉眠，1 轮/级，正常上下文）+
+ApplyBuff(原版 Daze，1 轮，ignoreParentContext: true）。
+睡眠免疫者：沉眠被挡，恍惚照常生效 1 轮；受伤醒来再挂恍惚的 Wake 机制不变。

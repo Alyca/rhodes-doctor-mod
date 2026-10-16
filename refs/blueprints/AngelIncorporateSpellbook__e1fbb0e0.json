@@ -1,0 +1,53 @@
+{
+  "AssetId": "e1fbb0e0e610a3a4d91e5e5284587939",
+  "SourcePath": "Mythic/Angel/AngelSpellbookSelection 1/AngelIncorporateSpellbook.jbp",
+  "Data": {
+    "$type": "b5744fbecc1d4d968270856b03a18ef5, BlueprintFeatureSelectMythicSpellbook",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "452acf33-e8d3-4ce4-b48e-1995f6c31276",
+      "m_OwnerString": "e1fbb0e0e610a3a4d91e5e5284587939",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Mythic/Angel/AngelSpellbookSelection 1/AngelIncorporateSpellbook_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "ec92b1d0-9367-47e9-8b46-48fe980e3694",
+      "m_OwnerString": "e1fbb0e0e610a3a4d91e5e5284587939",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Mythic/Angel/AngelSpellbookSelection 1/AngelIncorporateSpellbook_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": null,
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [],
+    "m_AllowedSpellbooks": [
+      "!bp_673d39f7da699aa408cdda6282e7dcc0",
+      "!bp_4673d19a0cf2fab4f885cc4d1353da33",
+      "!bp_6c03364712b415941a98f74522a81273",
+      "!bp_44f16931dabdff643bfe2a48138e769f",
+      "!bp_fc78193f68150454483a7eea8b605b71",
+      "!bp_c8c471f1f9889e1408347d3c7987b4f1",
+      "!bp_d0313b3110357b14ebd3102c2d4cde20"
+    ],
+    "m_MythicSpellList": "!bp_deaffb4218ccf2f419ffd6e41603131a",
+    "m_SpellKnownForSpontaneous": "!bp_2d574ccdea8543bda1dffe63b0f16760"
+  }
+}

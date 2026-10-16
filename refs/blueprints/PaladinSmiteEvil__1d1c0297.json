@@ -1,0 +1,52 @@
+{
+  "AssetId": "1d1c02976b82476abf792dd2902f5a88",
+  "SourcePath": "Classes/Paladin/PaladinSmiteEvil.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "b389b939-28b0-4b02-9bdf-b2aeebed198f",
+      "m_OwnerString": "1d1c02976b82476abf792dd2902f5a88",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints\\Classes\\Paladin\\PaladinSmiteEvil_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "0ca4a17230337e6408c314c048dbc8b5",
+        "stringkey": "b9d25680-e6b7-4b6f-b35c-376ac8498251"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "0ca4a17230337e6408c314c048dbc8b5",
+        "stringkey": "b9d25680-e6b7-4b6f-b35c-376ac8498251"
+      }
+    },
+    "m_Icon": {
+      "guid": "14b8937cec1233349a9d0d7044323cc2",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

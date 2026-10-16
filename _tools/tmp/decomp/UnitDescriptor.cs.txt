@@ -1,0 +1,1270 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using JetBrains.Annotations;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Classes;
+using Kingmaker.Blueprints.Classes.Spells;
+using Kingmaker.Blueprints.Facts;
+using Kingmaker.Blueprints.Items;
+using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Blueprints.Root;
+using Kingmaker.Controllers.Units;
+using Kingmaker.Designers;
+using Kingmaker.Designers.Mechanics.Buffs;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Persistence.JsonUtility;
+using Kingmaker.EntitySystem.Stats;
+using Kingmaker.Enums;
+using Kingmaker.Items;
+using Kingmaker.PubSubSystem;
+using Kingmaker.UI.UnitSettings;
+using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
+using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Alignments;
+using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Buffs.Components;
+using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Mechanics;
+using Kingmaker.UnitLogic.Mechanics.Components;
+using Kingmaker.UnitLogic.Mechanics.Components.Fixers;
+using Kingmaker.UnitLogic.Parts;
+using Kingmaker.Utility;
+using Kingmaker.View.Spawners;
+using Kingmaker.Visual.Sound;
+using Newtonsoft.Json;
+using Owlcat.Runtime.Core.Utils;
+using UnityEngine;
+
+namespace Kingmaker.UnitLogic;
+
+public class UnitDescriptor : IDisposable
+{
+	public class FactionSwitcher
+	{
+		private bool IsStarted;
+
+		public UnitDescriptor UnitDescriptor { get; private set; }
+
+		public BlueprintFaction Faction { get; private set; }
+
+		public bool ResetAttackFactions { get; private set; }
+
+		public FactionSwitcher(UnitDescriptor unitDescriptor, BlueprintFaction faction, bool resetAttackFactions)
+		{
+			UnitDescriptor = unitDescriptor;
+			Faction = faction;
+			ResetAttackFactions = resetAttackFactions;
+		}
+
+		public void Start()
+		{
+			if (!IsStarted)
+			{
+				IsStarted = true;
+				UnitDescriptor.SwitchFactions(Faction, ResetAttackFactions, permanently: false);
+				UnitDescriptor.FactionSwitchers.Add(this);
+			}
+		}
+
+		public void Stop()
+		{
+			if (IsStarted)
+			{
+				IsStarted = false;
+				UnitDescriptor.FactionSwitchers.Remove(this);
+				BlueprintFaction faction = ((UnitDescriptor.FactionSwitchers.Count > 0) ? UnitDescriptor.FactionSwitchers.Last().Faction : UnitDescriptor.FactionOriginal);
+				UnitDescriptor.SwitchFactions(faction, ResetAttackFactions, permanently: false);
+			}
+		}
+	}
+
+	[JsonProperty]
+	public ItemsCollection m_Inventory;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	private int m_Damage;
+
+	[NotNull]
+	[JsonProperty]
+	private readonly Dictionary<BlueprintSpellbook, Spellbook> m_Spellbooks = new Dictionary<BlueprintSpellbook, Spellbook>();
+
+	[JsonProperty(PropertyName = "Faction")]
+	private BlueprintFaction m_Faction;
+
+	[JsonProperty]
+	public readonly CharacterStats Stats;
+
+	[JsonProperty]
+	public readonly UnitAttackFactions AttackFactions;
+
+	[JsonProperty]
+	public readonly UnitAbilityResourceCollection Resources;
+
+	[NotNull]
+	[JsonProperty]
+	public readonly UnitProgressionData Progression;
+
+	[JsonProperty]
+	public readonly UnitUISettings UISettings;
+
+	[JsonProperty]
+	public readonly UnitState State;
+
+	[JsonProperty]
+	public readonly UnitProficiency Proficiencies = new UnitProficiency();
+
+	[JsonProperty]
+	public readonly UnitAlignment Alignment;
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	[CanBeNull]
+	public Gender? CustomGender;
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	[CanBeNull]
+	public bool? LeftHandedOverride;
+
+	[DefaultValue("")]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public string CustomName = "";
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	public BlueprintUnitAsksList CustomAsks;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	public BlueprintUnitAsksList OverrideAsks;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool ForceUseClassEquipment;
+
+	[DefaultValue(-1)]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public int BirthDay = -1;
+
+	[DefaultValue(-1)]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public int BirthMonth = -1;
+
+	[DefaultValue("")]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[NotNull]
+	public string CustomPrefabGuid = "";
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	private List<string> m_AppliedFixers;
+
+	[JsonProperty]
+	private readonly CountableFlag m_IsEssentialForGame = new CountableFlag();
+
+	[CanBeNull]
+	private DollData m_LoadedDollData;
+
+	private MechanicsContext m_Context;
+
+	private bool? m_IsPlayerFactionCached;
+
+	private BlueprintFaction m_FactionOriginal;
+
+	private List<FactionSwitcher> FactionSwitchers = new List<FactionSwitcher>();
+
+	[JsonProperty]
+	public UnitBody Body { get; set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public BlueprintUnit ReplaceBlueprintForInspection { get; set; }
+
+	[JsonProperty]
+	public UnitBrain Brain { get; private set; }
+
+	[JsonProperty]
+	public BlueprintUnit OriginalBlueprint { get; private set; }
+
+	[JsonProperty]
+	public BlueprintUnit Blueprint { get; private set; }
+
+	[JsonProperty]
+	public UnitFact MainFact { get; private set; }
+
+	[JsonProperty]
+	public Encumbrance Encumbrance { get; set; }
+
+	[JsonProperty]
+	public bool HasOwnInventory { get; private set; }
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	public TimeSpan? LastRestTime { get; set; }
+
+	[JsonProperty]
+	[CanBeNull]
+	private DollData Doll
+	{
+		set
+		{
+			m_LoadedDollData = value;
+		}
+	}
+
+	public UnitEntityData Unit { get; private set; }
+
+	public bool IsTurnedOn { get; private set; }
+
+	public BlueprintFaction Faction
+	{
+		get
+		{
+			return m_Faction;
+		}
+		private set
+		{
+			m_Faction = value;
+			m_IsPlayerFactionCached = m_Faction == BlueprintRoot.Instance.PlayerFaction;
+			AttackFactions?.UpdateIsPlayerEnemy();
+		}
+	}
+
+	public BlueprintFaction FactionOriginal => m_FactionOriginal ?? (m_FactionOriginal = Faction);
+
+	public int Damage
+	{
+		get
+		{
+			return m_Damage;
+		}
+		set
+		{
+			m_Damage = Math.Max(0, value);
+		}
+	}
+
+	public AbilityCollection Abilities => Unit.Abilities;
+
+	public ActivatableAbilityCollection ActivatableAbilities => Unit.ActivatableAbilities;
+
+	public BuffCollection Buffs => Unit.Buffs;
+
+	public int DamageNonLethal => Stats.DamageNonLethal.ModifiedValue;
+
+	public Gender Gender => CustomGender ?? Blueprint.Gender;
+
+	public bool IsLeftHanded => LeftHandedOverride ?? Blueprint.IsLeftHanded;
+
+	public string CharacterName
+	{
+		get
+		{
+			if ((bool)ReplaceBlueprintForInspection)
+			{
+				return ReplaceBlueprintForInspection.CharacterName;
+			}
+			if (!string.IsNullOrEmpty(CustomName))
+			{
+				return CustomName;
+			}
+			return Blueprint.CharacterName;
+		}
+	}
+
+	[CanBeNull]
+	public BlueprintUnitAsksList Asks
+	{
+		get
+		{
+			if (OverrideAsks != null)
+			{
+				return OverrideAsks;
+			}
+			if (CustomAsks != null)
+			{
+				return CustomAsks;
+			}
+			return Blueprint.Visual.Barks;
+		}
+	}
+
+	public bool UseClassEquipment
+	{
+		get
+		{
+			if (!(Unit.PreviewOf.Entity != null))
+			{
+				if (!ForceUseClassEquipment && !Unit.IsMainCharacter)
+				{
+					return Unit.IsCustomCompanion();
+				}
+				return true;
+			}
+			return Unit.PreviewOf.Entity.Descriptor.UseClassEquipment;
+		}
+	}
+
+	public Size OriginalSize => SimpleBlueprintExtendAsObject.Or(Progression.Race, null)?.Size ?? Blueprint.Size;
+
+	public MechanicsContext Context
+	{
+		get
+		{
+			MechanicsContext obj = m_Context ?? (m_Context = new MechanicsContext(null, this, OriginalBlueprint));
+			MechanicsContext result = obj;
+			m_Context = obj;
+			return result;
+		}
+	}
+
+	public EntityFactsManager Facts => Unit.Facts;
+
+	public ItemsCollection Inventory => m_Inventory;
+
+	public int HPLeft => (int)Stats.HitPoints - Damage;
+
+	public int MaxHP => Stats.HitPoints;
+
+	public int TemporaryHP => Stats.TemporaryHitPoints;
+
+	public IEnumerable<Spellbook> Spellbooks => m_Spellbooks.Values;
+
+	public bool IsPlayerFaction
+	{
+		get
+		{
+			if (!m_IsPlayerFactionCached.HasValue)
+			{
+				m_IsPlayerFactionCached = Faction == BlueprintRoot.Instance.PlayerFaction;
+			}
+			if (!m_IsPlayerFactionCached.Value || AttackFactions.IsPlayerEnemy)
+			{
+				return false;
+			}
+			return true;
+		}
+	}
+
+	public bool HasUMDSkill => Stats.ActualSkillUseMagicDevice.BaseValue > 0;
+
+	public bool IsImmuneToVisualEffects
+	{
+		get
+		{
+			if (!State.HasCondition(UnitCondition.Blindness))
+			{
+				return State.HasCondition(UnitCondition.TrueSeeing);
+			}
+			return true;
+		}
+	}
+
+	public bool IsSeeInvisibility
+	{
+		get
+		{
+			if (!State.HasCondition(UnitCondition.SeeInvisibility))
+			{
+				return State.HasCondition(UnitCondition.TrueSeeing);
+			}
+			return true;
+		}
+	}
+
+	public bool IsUndead => this.HasFact(BlueprintRoot.Instance.SystemMechanics.UndeadType);
+
+	public bool IsEssentialForGame
+	{
+		get
+		{
+			if (!m_IsEssentialForGame)
+			{
+				return IsMainCharacter;
+			}
+			return true;
+		}
+	}
+
+	public bool UseMartialArts => State.Features.ImprovedUnarmedStrike;
+
+	public PortraitData Portrait => UISettings.Portrait;
+
+	public PortraitData OverridePortrait => UISettings.OverridePortrait;
+
+	public PortraitData CrossPortrait => UISettings.CrossPortrait;
+
+	public bool IsMainCharacter => Unit.IsMainCharacter;
+
+	public BlueprintUnit BlueprintForInspection => SimpleBlueprintExtendAsObject.Or(ReplaceBlueprintForInspection, null) ?? Blueprint;
+
+	[CanBeNull]
+	public TPart Get<TPart>() where TPart : OldStyleUnitPart
+	{
+		return Unit.Get<TPart>();
+	}
+
+	public TPart Ensure<TPart>() where TPart : OldStyleUnitPart, new()
+	{
+		return Unit.Ensure<TPart>();
+	}
+
+	public void Remove<TPart>() where TPart : OldStyleUnitPart
+	{
+		Unit.Remove<TPart>();
+	}
+
+	public void TurnOn()
+	{
+		IsTurnedOn = true;
+		Progression.CheckStatPrerequisitesAndUpdate();
+		if (Inventory.OwnerUnit == this)
+		{
+			Inventory.TurnOn();
+		}
+		Body.TurnOn();
+		Brain.TurnOn();
+	}
+
+	public void TurnOff()
+	{
+		IsTurnedOn = false;
+		if (Inventory.OwnerUnit == this)
+		{
+			Inventory.TurnOff();
+		}
+		Body.TurnOff();
+		Brain.TurnOff();
+	}
+
+	public void PreSave()
+	{
+		Body.PreSave();
+		Progression.PreSave();
+		foreach (Spellbook value in m_Spellbooks.Values)
+		{
+			value.PreSave();
+		}
+		if (Inventory.OwnerUnit == this)
+		{
+			Inventory.PreSave();
+		}
+		Brain.PreSave();
+	}
+
+	public void PostLoad(UnitEntityData entity)
+	{
+		Unit = entity;
+		if (OriginalBlueprint == null)
+		{
+			OriginalBlueprint = Blueprint;
+		}
+		Stats.PostLoad(this);
+		Alignment.PostLoad(this);
+		Resources.PostLoad(this);
+		if (!ContextData<UnitEntityData.Respec>.Current)
+		{
+			Body.PostLoad(this);
+		}
+		Progression.PostLoad(this);
+		foreach (Spellbook value in m_Spellbooks.Values)
+		{
+			value.PostLoad(this);
+		}
+		State.PostLoad(this);
+		AttackFactions.PostLoad(this);
+		if (Unit == GameHelper.GetPlayerCharacter())
+		{
+			Brain.SetBrain(Blueprint.DefaultBrain);
+			Brain.RestoreAvailableActions();
+		}
+		Brain.PostLoad(this);
+	}
+
+	public void OnComponentsDidPostLoad()
+	{
+		UISettings.PostLoad(this);
+	}
+
+	public void ApplyPostLoadFixes()
+	{
+		if (m_LoadedDollData != null)
+		{
+			Unit.Ensure<UnitPartDollData>().SetDefault(m_LoadedDollData);
+		}
+		OnDifficultyChanged();
+		EnsureNaturalProficiencies();
+		Stats.ApplyPostLoadFixes();
+		Body.ApplyPostLoadFixes();
+		State.ApplyPostLoadFixes();
+		if (IsMainCharacter && !m_IsEssentialForGame)
+		{
+			m_IsEssentialForGame.Retain();
+		}
+		foreach (var (key, spellbook2) in m_Spellbooks.ToTempList())
+		{
+			if (spellbook2.RawBaseLevel < 1 && spellbook2.MythicLevel < 1)
+			{
+				m_Spellbooks.Remove(key);
+			}
+			else
+			{
+				spellbook2.ApplyPostLoadFixes();
+			}
+		}
+		AddPostLoadActions component = Blueprint.GetComponent<AddPostLoadActions>();
+		if (component != null && component.Actions.HasActions)
+		{
+			using (new MechanicsContext(Unit, this, Blueprint).GetDataScope())
+			{
+				component.Actions.Run();
+			}
+		}
+		Blueprint.CallComponents(delegate(FixUnitOnPostLoad a)
+		{
+			if (!m_AppliedFixers.HasItem(a.name))
+			{
+				a.OnPostLoad(this);
+				m_AppliedFixers = m_AppliedFixers ?? new List<string>();
+				m_AppliedFixers.Add(a.name);
+				PFLog.Default.Log($"Fixer applied to unit: {this} ({a.name})");
+			}
+		});
+		if (!State.IsFinallyDead)
+		{
+			RemoveBuffsOnResurrect();
+		}
+		if (AttackFactions.Contains(Faction))
+		{
+			AttackFactions.Remove(Faction);
+			PFLog.Default.Error("AttackFactions of unit can't contains unit's own Faction, fixed ({0})", this);
+		}
+		if (Body.IsPolymorphed && !Facts.List.HasItem((EntityFact i) => i.GetComponent<Polymorph>() != null))
+		{
+			Body.CancelPolymorphEffect();
+		}
+		Progression.ApplyPostLoadFixes();
+	}
+
+	private void EnsureNaturalProficiencies()
+	{
+		foreach (WeaponCategory allCategory in WeaponSubCategory.Natural.GetAllCategories())
+		{
+			if (!Proficiencies.Contains(allCategory))
+			{
+				Proficiencies.Add(allCategory);
+			}
+		}
+	}
+
+	public void Dispose()
+	{
+		if (Body != null && Body.Owner == this)
+		{
+			Body.Dispose();
+		}
+		Progression.Dispose();
+		foreach (Spellbook value in m_Spellbooks.Values)
+		{
+			value.Dispose();
+		}
+		if (!IsPlayerFaction && Inventory.OwnerUnit == this)
+		{
+			Inventory.Dispose();
+		}
+	}
+
+	public FactionSwitcher GetFactionSwitcher(BlueprintFaction faction, bool resetAttackFactions = false)
+	{
+		return new FactionSwitcher(this, faction, resetAttackFactions);
+	}
+
+	public void SwitchFactions(BlueprintFaction faction, bool resetAttackFactions = false)
+	{
+		SwitchFactions(faction, resetAttackFactions, permanently: true);
+	}
+
+	private void SwitchFactions(BlueprintFaction faction, bool resetAttackFactions, bool permanently)
+	{
+		if (Faction == faction)
+		{
+			if (resetAttackFactions)
+			{
+				AttackFactions.Match(faction.AttackFactions);
+			}
+			return;
+		}
+		if (resetAttackFactions)
+		{
+			AttackFactions.Match(faction.AttackFactions);
+		}
+		else
+		{
+			List<BlueprintFaction> second = AttackFactions.Except(Faction.AttackFactions).ToList();
+			List<BlueprintFaction> second2 = Faction.AttackFactions.Except(AttackFactions).ToList();
+			AttackFactions.Match(faction.AttackFactions.Except(second2).Concat(second));
+		}
+		m_FactionOriginal = (permanently ? faction : (m_FactionOriginal ?? Faction));
+		Faction = faction;
+		SetupInventory();
+		EventBus.RaiseEvent(delegate(IUnitFactionHandler h)
+		{
+			h.HandleFactionChanged(Unit);
+		});
+		Unit.Group.UpdateAttackFactionsCache();
+		if (Unit.IsInCombat && !Unit.Group.HasEnemyInCombat())
+		{
+			Unit.LeaveCombat();
+		}
+		foreach (UnitEntityData unit in Game.Instance.State.Units)
+		{
+			UnitPartSummonedMonster unitPartSummonedMonster = unit.Get<UnitPartSummonedMonster>();
+			if (unitPartSummonedMonster != null && unitPartSummonedMonster.Summoner == Unit)
+			{
+				unitPartSummonedMonster.Owner.SwitchFactions(faction, resetAttackFactions);
+			}
+		}
+	}
+
+	public void FixInventoryOnPlayerPostLoad()
+	{
+		if (IsPlayerFaction && Unit.IsPet)
+		{
+			HasOwnInventory = false;
+		}
+		SetupInventory(restoreOnPlayerPostLoad: true);
+	}
+
+	private void SetupInventory(bool restoreOnPlayerPostLoad = false)
+	{
+		ItemsCollection itemsCollection = m_Inventory;
+		if (IsPlayerFaction && !HasOwnInventory)
+		{
+			itemsCollection = Game.Instance.Player.EnsureInventory();
+		}
+		else if (m_Inventory?.OwnerUnit != this)
+		{
+			itemsCollection = new ItemsCollection((UnitEntityData)this);
+		}
+		if (itemsCollection == null)
+		{
+			PFLog.Default.Error("New inventory is null");
+		}
+		else
+		{
+			if (m_Inventory == itemsCollection)
+			{
+				return;
+			}
+			if (restoreOnPlayerPostLoad)
+			{
+				PFLog.Default.Error(OriginalBlueprint, $"Fix inventory for unit {this} (faction: {Faction})");
+			}
+			m_Inventory = itemsCollection;
+			using (ContextData<ItemsCollection.DoNotRemoveFromSlot>.Request())
+			{
+				foreach (ItemEntity item in Body.Items)
+				{
+					if (item.Collection != null && item.Collection != itemsCollection)
+					{
+						PFLog.Default.Log($"{this}: move item {item} to actual inventory");
+						item.Collection.Transfer(item, itemsCollection);
+					}
+				}
+			}
+		}
+	}
+
+	public void SetFakeBlueprint([CanBeNull] BlueprintUnit fake)
+	{
+		if (fake == null)
+		{
+			Blueprint = OriginalBlueprint;
+		}
+		else
+		{
+			Blueprint = fake;
+		}
+	}
+
+	public UnitDescriptor(BlueprintUnit blueprint, UnitEntityData data)
+	{
+		UnitSpawningData current = ContextData<UnitSpawningData>.Current;
+		Unit = data;
+		Unit.Descriptor = this;
+		Blueprint = (OriginalBlueprint = blueprint);
+		Faction = blueprint.Faction;
+		AttackFactions = new UnitAttackFactions(this);
+		Stats = new CharacterStats(this);
+		m_Inventory = current?.Inventory ?? (IsPlayerFaction ? Game.Instance.Player.EnsureInventory() : new ItemsCollection((UnitEntityData)this));
+		Progression = new UnitProgressionData(this);
+		Body = current?.Body ?? new UnitBody(this);
+		Brain = new UnitBrain(this);
+		Resources = new UnitAbilityResourceCollection(this);
+		State = new UnitState(this);
+		Alignment = new UnitAlignment(this);
+		UISettings = new UnitUISettings(this);
+		Blueprint.CallComponents(delegate(FixUnitOnPostLoad a)
+		{
+			if (!m_AppliedFixers.HasItem(a.name))
+			{
+				m_AppliedFixers = m_AppliedFixers ?? new List<string>();
+				m_AppliedFixers.Add(a.name);
+			}
+		});
+	}
+
+	public void EnsureOwnInventory()
+	{
+		if (m_Inventory.IsPlayerInventory)
+		{
+			HasOwnInventory = true;
+			SetupInventory();
+		}
+	}
+
+	public void SetupSharedInventoryForPet()
+	{
+		if (IsPlayerFaction && !m_Inventory.IsPlayerInventory)
+		{
+			HasOwnInventory = false;
+			SetupInventory();
+		}
+	}
+
+	public override string ToString()
+	{
+		return OriginalBlueprint.ToString();
+	}
+
+	[UsedImplicitly]
+	private UnitDescriptor(JsonConstructorMark _)
+	{
+	}
+
+	public void Initialize()
+	{
+		Initialize(this, OriginalBlueprint);
+	}
+
+	private static void Initialize(UnitDescriptor unit, BlueprintUnit blueprint)
+	{
+		if (blueprint == null)
+		{
+			PFLog.Default.Error("Unit created without blueprint");
+			return;
+		}
+		unit.Ensure<LevelUpPlanUnitHolder>();
+		unit.Stats.HitPoints.BaseValue = blueprint.MaxHP;
+		InitializeStat(unit.Stats.Strength, blueprint.Strength);
+		InitializeStat(unit.Stats.Dexterity, blueprint.Dexterity);
+		InitializeStat(unit.Stats.Constitution, blueprint.Constitution);
+		InitializeStat(unit.Stats.Intelligence, blueprint.Intelligence);
+		InitializeStat(unit.Stats.Wisdom, blueprint.Wisdom);
+		InitializeStat(unit.Stats.Charisma, blueprint.Charisma);
+		unit.Stats.Speed.BaseValue = blueprint.Speed.Value;
+		unit.SetSkills(blueprint.Skills);
+		if (!unit.IsPlayerFaction)
+		{
+			unit.HasOwnInventory = true;
+		}
+		unit.EnsureNaturalProficiencies();
+		unit.Alignment.Initialize(blueprint.Alignment);
+		bool flag = true;
+		bool flag2 = true;
+		UnitSpawningData current = ContextData<UnitSpawningData>.Current;
+		if (current != null)
+		{
+			if (current.Race != null)
+			{
+				unit.Progression.SetRace(current.Race);
+			}
+			if (current.Voice != null)
+			{
+				unit.CustomAsks = current.Voice;
+			}
+			if (current.Gender.HasValue)
+			{
+				unit.CustomGender = current.Gender;
+			}
+			if (current.LeftHanded.HasValue)
+			{
+				unit.LeftHandedOverride = current.LeftHanded;
+			}
+			if (!unit.Body.IsPolymorphed)
+			{
+				unit.CustomPrefabGuid = current.PrefabGuid;
+			}
+			flag = current.Inventory == null && !current.IsFromPlaceholder;
+			flag2 = current.Body == null;
+			current.Body?.SetOwner(unit);
+			current.Inventory?.SetOwner(unit);
+			current.Body?.PrePostLoad(unit);
+		}
+		if (unit.Progression.Race == null && blueprint.Race != null)
+		{
+			unit.Progression.SetRace(blueprint.Race);
+		}
+		unit.State.Size = unit.OriginalSize;
+		if (!unit.Faction)
+		{
+			PFLog.Default.Error(blueprint, "Faction not set for " + blueprint);
+		}
+		unit.AttackFactions.UnionWith(blueprint.AttackFactions);
+		unit.MainFact = unit.Unit.Facts.Add(new MainUnitFact(blueprint));
+		unit.AddFact(BlueprintRoot.Instance.SystemMechanics.ChargeAbility);
+		(from a in blueprint.GetComponents<AddAbilityToCharacterComponent>().SelectMany((AddAbilityToCharacterComponent c) => c.Abilities)
+			where a
+			select a).ForEach(delegate(BlueprintAbility a)
+		{
+			unit.AddFact(a);
+		});
+		(from a in blueprint.GetComponents<AddActivatableAbilityComponent>().SelectMany((AddActivatableAbilityComponent c) => c.ActivatableAbilities)
+			where a
+			select a).ForEach(delegate(BlueprintActivatableAbility a)
+		{
+			unit.AddFact(a);
+		});
+		foreach (BlueprintUnitFact item in blueprint.AddFacts.EmptyIfNull())
+		{
+			if ((bool)item)
+			{
+				unit.AddFact(item);
+			}
+		}
+		foreach (BlueprintUnitTemplate item2 in blueprint.AdditionalTemplates.EmptyIfNull())
+		{
+			ApplyTemplate(unit, item2);
+		}
+		if (!ContextData<UnitEntityData.ChargenUnit>.Current)
+		{
+			if (flag2)
+			{
+				using (ProfileScope.New("Body"))
+				{
+					unit.Body.Initialize();
+				}
+			}
+			if (flag)
+			{
+				using (ProfileScope.New("Starting Inventory"))
+				{
+					AddStartingInventory(unit, blueprint);
+				}
+			}
+		}
+		else
+		{
+			unit.Body.EnsureActiveHands();
+		}
+		using (ProfileScope.New("Brain"))
+		{
+			unit.Brain.RestoreAvailableActions();
+		}
+		using (ProfileScope.New("HandleInventoryInitialized Event"))
+		{
+			blueprint.CallComponents(delegate(IHandleInventoryInitialized c)
+			{
+				c.OnInventoryInitialized(unit);
+			});
+		}
+		unit.Remove<LevelUpPlanUnitHolder>();
+		if (unit.IsPlayerFaction)
+		{
+			unit.Ensure<UnitPartPartyWeatherBuff>();
+		}
+		unit.IsTurnedOn = true;
+		foreach (Spellbook spellbook in unit.Spellbooks)
+		{
+			spellbook.UpdateAllSlotsSize(allowShrink: true);
+		}
+		unit.Replenish();
+	}
+
+	public void AddStartingInventory()
+	{
+		AddStartingInventory(this, OriginalBlueprint);
+	}
+
+	private static void AddStartingInventory(UnitDescriptor unit, BlueprintUnit blueprint)
+	{
+		if ((bool)ContextData<UnitEntityData.DoNotCreateItems>.Current)
+		{
+			return;
+		}
+		foreach (BlueprintItem item in blueprint.StartingInventory)
+		{
+			if ((bool)item)
+			{
+				using (ProfileScope.New("Add Item"))
+				{
+					using (ContextData<ItemsCollection.SuppressEvents>.Request())
+					{
+						unit.Inventory.Add(item);
+					}
+				}
+			}
+			else
+			{
+				PFLog.Default.Error("Unit '{0}' has NULL in StartingInventory", blueprint);
+			}
+		}
+	}
+
+	private static void InitializeStat(ModifiableValueAttributeStat stat, int value)
+	{
+		if ((bool)ContextData<UnitEntityData.DoNotInitializeStats>.Current)
+		{
+			value = 10;
+		}
+		if (value < 1)
+		{
+			stat.RetainDisabled();
+		}
+		else
+		{
+			stat.BaseValue = value;
+		}
+	}
+
+	private void SetSkills(BlueprintUnit.UnitSkills skills)
+	{
+		if (!ContextData<UnitEntityData.DoNotInitializeStats>.Current)
+		{
+			Stats.SkillMobility.BaseValue = skills.Acrobatics;
+			Stats.SkillAthletics.BaseValue = skills.Physique;
+			Stats.SkillPersuasion.BaseValue = skills.Diplomacy;
+			Stats.SkillThievery.BaseValue = skills.Thievery;
+			Stats.SkillPerception.BaseValue = skills.Perception;
+			Stats.SkillStealth.BaseValue = skills.Stealth;
+			Stats.SkillUseMagicDevice.BaseValue = skills.UseMagicDevice;
+			Stats.SkillLoreNature.BaseValue = skills.LoreNature;
+			Stats.SkillKnowledgeArcana.BaseValue = skills.KnowledgeArcana;
+			Stats.SkillLoreReligion.BaseValue = skills.LoreReligion;
+			Stats.SkillKnowledgeWorld.BaseValue = skills.KnowledgeWorld;
+		}
+	}
+
+	public static void ApplyTemplate(UnitDescriptor unit, BlueprintUnitTemplate template)
+	{
+		if (template == null)
+		{
+			return;
+		}
+		foreach (BlueprintUnitFact item in template.AddFacts.EmptyIfNull())
+		{
+			if ((bool)item)
+			{
+				unit.AddFact(item);
+			}
+			else
+			{
+				PFLog.Default.Warning("NULL fact in template");
+			}
+		}
+		foreach (BlueprintUnitFact item2 in template.RemoveFacts.EmptyIfNull())
+		{
+			if ((bool)item2)
+			{
+				unit.AddFact(item2);
+			}
+			else
+			{
+				PFLog.Default.Warning("NULL buff in template");
+			}
+		}
+		foreach (BlueprintUnitTemplate.StatAdjustment item3 in template.StatAdjustments.EmptyIfNull())
+		{
+			ModifiableValue stat = unit.Stats.GetStat(item3.Stat);
+			if (stat != null)
+			{
+				if (!(stat is ModifiableValueAttributeStat modifiableValueAttributeStat) || (modifiableValueAttributeStat.Enabled && modifiableValueAttributeStat.BaseValue > 2))
+				{
+					stat.BaseValue += item3.Adjustment;
+				}
+			}
+			else
+			{
+				PFLog.Default.Warning($"Cannot change stat {item3.Stat}: stat not found", template);
+			}
+		}
+	}
+
+	[CanBeNull]
+	public Spellbook GetSpellbook([NotNull] BlueprintCharacterClass characterClass)
+	{
+		ClassData classData = Progression.GetClassData(characterClass);
+		if (classData?.Spellbook == null)
+		{
+			return null;
+		}
+		return GetSpellbook(classData.Spellbook);
+	}
+
+	[NotNull]
+	public Spellbook DemandSpellbook([NotNull] BlueprintCharacterClass characterClass)
+	{
+		ClassData classData = Progression.GetClassData(characterClass);
+		if (classData == null)
+		{
+			if (characterClass.Spellbook != null)
+			{
+				PFLog.Default.Warning($"Demanding spellbook for class unit doesnt have: {this}, {characterClass}. Returning default");
+				return DemandSpellbook(characterClass.Spellbook);
+			}
+			PFLog.Default.Error($"Demanding spellbook for class unit doesnt have: {this}, {characterClass}. Class doesnt have default spellbook.");
+			return new Spellbook(this, null);
+		}
+		if (classData.Spellbook == null)
+		{
+			PFLog.Default.Error($"Demanding spellbook for class without one: {this}, {characterClass}.");
+			return new Spellbook(this, null);
+		}
+		return DemandSpellbook(classData.Spellbook);
+	}
+
+	[CanBeNull]
+	public Spellbook GetSpellbook([NotNull] BlueprintSpellbook blueprint)
+	{
+		if (blueprint == null)
+		{
+			return null;
+		}
+		return m_Spellbooks.Get(blueprint);
+	}
+
+	[NotNull]
+	public Spellbook DemandSpellbook([NotNull] BlueprintSpellbook blueprint)
+	{
+		Spellbook spellbook = m_Spellbooks.Get(blueprint);
+		if (spellbook == null)
+		{
+			spellbook = new Spellbook(this, blueprint);
+			m_Spellbooks[blueprint] = spellbook;
+		}
+		return spellbook;
+	}
+
+	public void DeleteSpellbook(BlueprintSpellbook spellbook)
+	{
+		m_Spellbooks.Remove(spellbook);
+	}
+
+	public void OnGainClassLevel(BlueprintCharacterClass @class)
+	{
+		Stats.HitPoints.UpdateValue();
+		EventBus.RaiseEvent(Unit, delegate(IOwnerGainLevelHandler h)
+		{
+			h.HandleUnitGainLevel();
+		});
+	}
+
+	public void Resurrect(UnitEntityData initiator = null, float resultHealthPart = 0f, bool restoreHealth = true)
+	{
+		Resurrect(initiator, resultHealthPart, restoreHealth, fullRestore: false);
+	}
+
+	public void ResurrectAndFullRestore(UnitEntityData initiator = null)
+	{
+		Resurrect(initiator, 0f, restoreHealth: false, fullRestore: true);
+	}
+
+	private void Resurrect([CanBeNull] UnitEntityData initiator, float resultHealthPart, bool restoreHealth, bool fullRestore)
+	{
+		bool isFinallyDead = State.IsFinallyDead;
+		State.IsFinallyDead = false;
+		State.RemoveConditionAll(UnitCondition.DeathDoor);
+		State.RemoveConditionAll(UnitCondition.WalkingDead);
+		State.ForceKill = false;
+		State.MarkedForDeath = false;
+		if (fullRestore)
+		{
+			Damage = 0;
+		}
+		if (Damage > (int)Stats.HitPoints - Progression.CharacterLevel)
+		{
+			Damage = (restoreHealth ? Math.Min((int)Stats.HitPoints - Math.Max(1, Progression.CharacterLevel), (int)((float)(int)Stats.HitPoints * (1f - resultHealthPart))) : Damage);
+		}
+		StatType[] attributes = StatTypeHelper.Attributes;
+		foreach (StatType type in attributes)
+		{
+			ModifiableValueAttributeStat stat = Stats.GetStat<ModifiableValueAttributeStat>(type);
+			if (fullRestore)
+			{
+				stat.Damage = 0;
+				stat.Drain = 0;
+			}
+			if (stat.ModifiedValueRaw < 1)
+			{
+				int num = -stat.ModifiedValueRaw + 1;
+				int num2 = Math.Min(stat.Damage, num);
+				stat.Damage -= num2;
+				num -= num2;
+				int num3 = Math.Min(stat.Drain, num);
+				stat.Drain -= num3;
+			}
+		}
+		UnitPartNegativeLevels unitPartNegativeLevels = Get<UnitPartNegativeLevels>();
+		if ((bool)unitPartNegativeLevels && fullRestore)
+		{
+			unitPartNegativeLevels.RemoveAll();
+		}
+		while ((bool)unitPartNegativeLevels && unitPartNegativeLevels.Count >= Progression.CharacterLevel)
+		{
+			if (unitPartNegativeLevels.RemoveTemporary(all: false) < 1 && unitPartNegativeLevels.RemovePermanent(all: false) < 1)
+			{
+				PFLog.Default.Error("Can't remove negative levels, something wrong");
+				break;
+			}
+		}
+		if ((bool)Unit.View)
+		{
+			if (IsPlayerFaction)
+			{
+				initiator = initiator ?? Game.Instance.Player.GetMainPartyUnit();
+				if (Unit.IsHiddenBecauseDead)
+				{
+					Vector3 resurrectPosition = ResurrectionLogic.GetResurrectPosition(initiator, Unit);
+					Unit.Position = resurrectPosition;
+					Unit.View.gameObject.transform.position = resurrectPosition;
+				}
+				else if (isFinallyDead && AstarPath.active.GetNearest(Unit.Position).node?.Area != AstarPath.active.GetNearest(initiator.Position).node?.Area)
+				{
+					Vector3 resurrectPosition2 = ResurrectionLogic.GetResurrectPosition(initiator, Unit);
+					Unit.Position = resurrectPosition2;
+					Unit.View.gameObject.transform.position = resurrectPosition2;
+				}
+			}
+			Unit.View.RigidbodyController?.CancelRagdoll();
+			State.Prone.Active = false;
+			Unit.View.LeaveProneState();
+			Unit.View.AnimationManager?.StandUpImmediately();
+			Game.Instance.HandsEquipmentController?.ScheduleUpdate(Unit);
+			Unit.View.ResetMouseHighlighted();
+		}
+		Unit.IsHiddenBecauseDead = false;
+		UnitPartDualCompanion unitPartDualCompanion = Get<UnitPartDualCompanion>();
+		if (unitPartDualCompanion != null)
+		{
+			unitPartDualCompanion.IsDead = false;
+		}
+		RemoveBuffsOnResurrect();
+		EventBus.RaiseEvent(delegate(IUnitResurrectedHandler h)
+		{
+			h.HandleUnitResurrected(Unit);
+		});
+		if (State.IsConscious)
+		{
+			return;
+		}
+		foreach (Buff buff in Buffs)
+		{
+			foreach (AddCondition item in buff.SelectComponents<AddCondition>())
+			{
+				if (item.Condition == UnitCondition.Petrified)
+				{
+					buff.Remove();
+					break;
+				}
+			}
+			foreach (BuffStatusCondition item2 in buff.SelectComponents<BuffStatusCondition>())
+			{
+				if (item2.Condition == UnitCondition.Petrified)
+				{
+					buff.Remove();
+					break;
+				}
+			}
+		}
+		State.RemoveConditionAll(UnitCondition.Petrified);
+		UnitLifeController.ForceUnitConscious(this);
+	}
+
+	public void RemoveBuffsOnResurrect()
+	{
+		List<Buff> list = null;
+		foreach (Buff buff in Buffs)
+		{
+			if (buff.Blueprint.RemoveOnResurrect)
+			{
+				list = list ?? new List<Buff>();
+				list.Add(buff);
+			}
+		}
+		if (list == null)
+		{
+			return;
+		}
+		foreach (Buff item in list)
+		{
+			Buffs.RemoveFact(item);
+		}
+	}
+
+	public void UpdateSizeModifiers()
+	{
+		Stats.AdditionalAttackBonus.RemoveModifiers(ModifierDescriptor.Size);
+		Stats.AC.RemoveModifiers(ModifierDescriptor.Size);
+		Stats.SkillStealth.RemoveModifiers(ModifierDescriptor.Size);
+		Stats.Reach.RemoveModifiers(ModifierDescriptor.Size);
+		ObjectExtensions.Or(Unit.View, null)?.ResetSizeScale();
+		WeaponSizeExtension.SizeModifiers modifiers = State.Size.GetModifiers();
+		if (modifiers != null)
+		{
+			Stats.AdditionalAttackBonus.AddModifier(modifiers.AttackAndAC, ModifierDescriptor.Size);
+			Stats.AC.AddModifier(modifiers.AttackAndAC, ModifierDescriptor.Size);
+			Stats.SkillStealth.AddModifier(modifiers.Stealth, ModifierDescriptor.Size);
+			Stats.Reach.AddModifier(modifiers.Reach, ModifierDescriptor.Size);
+		}
+	}
+
+	public Feet GetWeaponRange([CanBeNull] BlueprintItemWeapon weapon = null)
+	{
+		Feet feet = SimpleBlueprintExtendAsObject.Or(weapon, null)?.AttackRange ?? GameConsts.MinWeaponRange;
+		if ((bool)State.Features.PointBlankRange && feet.Value > 30)
+		{
+			feet = 30.Feet();
+		}
+		Feet reachRange = Stats.ReachRange;
+		return feet + reachRange;
+	}
+
+	public void OnDifficultyChanged()
+	{
+		if (IsPlayerFaction)
+		{
+			return;
+		}
+		foreach (Feature feature in Progression.Features)
+		{
+			if ((bool)feature.Context.AssociatedBlueprint.GetComponent<ContextAbilityParamsCalculator>())
+			{
+				feature.Context.RecalculateAbilityParams();
+			}
+		}
+		foreach (Buff buff in Buffs)
+		{
+			if ((bool)buff.Context.AssociatedBlueprint.GetComponent<ContextAbilityParamsCalculator>())
+			{
+				buff.Context.RecalculateAbilityParams();
+			}
+		}
+	}
+
+	public static implicit operator UnitEntityData(UnitDescriptor unit)
+	{
+		return unit?.Unit;
+	}
+
+	public void AddEssentialMark()
+	{
+		m_IsEssentialForGame.Retain();
+		PFLog.History.Party.Log($"AddEssentialMark: {this}, count {m_IsEssentialForGame.Count}");
+	}
+
+	public void RemoveEssentialMark()
+	{
+		m_IsEssentialForGame.Release();
+		PFLog.History.Party.Log($"RemoveEssentialMark: {this}, count {m_IsEssentialForGame.Count}");
+	}
+}

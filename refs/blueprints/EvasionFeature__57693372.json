@@ -1,0 +1,79 @@
+{
+  "AssetId": "576933720c440aa4d8d42b0c54b77e80",
+  "SourcePath": "Classes/Rogue/Evasion.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$Evasion$ec84f562-6fc6-4367-a77c-6df3642ea7cf"
+    ],
+    "Components": [
+      {
+        "$type": "74d82bf729940b04da45d841b7b171f9, Evasion",
+        "m_Flags": 0,
+        "name": "$Evasion$ec84f562-6fc6-4367-a77c-6df3642ea7cf",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "SavingThrow": "Reflex"
+      },
+      {
+        "$type": "335732aafd9506041bd15e96b782fd61, PrerequisiteNoFeature",
+        "m_Flags": 0,
+        "name": "$PrerequisiteNoFeature$bdade0a8-3489-40d4-aebb-bd159aa02287",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Group": "All",
+        "CheckInProgression": false,
+        "HideInUI": true,
+        "IsFeatureSelectionWhiteList": false,
+        "m_Feature": "!bp_576933720c440aa4d8d42b0c54b77e80"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "c490856e-9144-498b-9586-11d08d3511e9",
+      "m_OwnerString": "576933720c440aa4d8d42b0c54b77e80",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Rogue/Evasion_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "3ba3cf57914b01848b676ea9cb862168",
+        "stringkey": "0cff07a9-830f-4dca-98f9-09c51d427892"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "b571fe5defdcf67489e23c8f115f1f2c",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": true,
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [
+      "!bp_0d35d6c4d5eef8d4790d09bd9a874e57"
+    ]
+  }
+}

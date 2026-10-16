@@ -1,0 +1,421 @@
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Area;
+using Kingmaker.Blueprints.Root;
+using Kingmaker.Controllers.Units;
+using Kingmaker.Designers.EventConditionActionSystem.ContextData;
+using Kingmaker.Dungeon;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.PubSubSystem;
+using Kingmaker.QA;
+using Kingmaker.ResourceManagement;
+using Kingmaker.UnitLogic.Customization;
+using Kingmaker.UnitLogic.Parts;
+using Kingmaker.Utility;
+using Kingmaker.View;
+using Kingmaker.View.Equipment;
+using Kingmaker.View.MapObjects;
+using Kingmaker.View.MapObjects.SriptZones;
+using Kingmaker.View.MapObjects.Traps.Detailed;
+using Kingmaker.View.Spawners;
+using Kingmaker.Visual.Sound;
+using Owlcat.Runtime.Core.Utils;
+using UnityEngine;
+
+namespace Kingmaker.Controllers;
+
+public class EntityCreationController : IController, IDisposable
+{
+	public struct CreateEntry
+	{
+		public EntityDataBase Entity;
+
+		public SceneEntitiesState State;
+	}
+
+	public class EntityCreationData : ContextData<EntityCreationData>
+	{
+		public EntityViewBase View { get; private set; }
+
+		public SceneEntitiesState TargetState { get; private set; }
+
+		public EntityCreationData Setup(EntityViewBase view, SceneEntitiesState state)
+		{
+			View = view;
+			TargetState = state;
+			return this;
+		}
+
+		protected override void Reset()
+		{
+			View = null;
+			TargetState = null;
+		}
+	}
+
+	private readonly List<CreateEntry> m_ToCreate = new List<CreateEntry>();
+
+	public CountableFlag SuppressCreate = new CountableFlag();
+
+	[NotNull]
+	public IEnumerable<CreateEntry> CreationQueue => m_ToCreate;
+
+	public T SpawnEntityView<T>(T prefab, Vector3 position, Quaternion rotation, [CanBeNull] SceneEntitiesState state) where T : EntityViewBase
+	{
+		return (T)SpawnEntity(prefab, position, rotation, state).View;
+	}
+
+	private EntityDataBase SpawnEntity(EntityViewBase prefab, Vector3 position, Quaternion rotation, [CanBeNull] SceneEntitiesState state)
+	{
+		EntityViewBase entityViewBase = UnityEngine.Object.Instantiate(prefab, position, rotation);
+		entityViewBase.UniqueId = Game.Instance.Player.GetNewUniqueId();
+		return SpawnEntityWithView(entityViewBase, state);
+	}
+
+	public EntityDataBase SpawnEntityWithView(EntityViewBase view, [CanBeNull] SceneEntitiesState state)
+	{
+		if ((bool)SuppressCreate)
+		{
+			throw new Exception("Попытка создать новую сущность при заблокированном EntityCreationController. Вероятно, вы пытаетесь сделать этот в неправильный момент");
+		}
+		state = state ?? Game.Instance.State.LoadedAreaState.MainState;
+		using (ContextData<EntityCreationData>.Request().Setup(view, state))
+		{
+			EntityDataBase entityDataBase = view.CreateEntityData(load: false);
+			if (entityDataBase == null)
+			{
+				PFLog.Default.Error($"Failed to create data for view {view}.");
+				return null;
+			}
+			if (entityDataBase is UnitEntityData obj)
+			{
+				try
+				{
+					ContextData<UnitSpawningData>.Current?.BeforeAttachViewAction?.Invoke(obj);
+				}
+				catch (Exception exception)
+				{
+					PFLog.Default.ExceptionWithReport(exception, null);
+				}
+			}
+			entityDataBase.AttachView(view);
+			AddEntity(entityDataBase, state);
+			if (view is UnitEntityView unitEntityView)
+			{
+				UnitPlaceOnGroundController.ForcedTick(unitEntityView.Data);
+			}
+			return entityDataBase;
+		}
+	}
+
+	public void AddEntity(EntityDataBase entity, [CanBeNull] SceneEntitiesState state)
+	{
+		state = state ?? Game.Instance.State.LoadedAreaState.MainState;
+		if (entity.View != null)
+		{
+			((state == Game.Instance.Player.CrossSceneState) ? Game.Instance.CrossSceneRoot : Game.Instance.DynamicRoot).Add(entity.View.transform);
+		}
+		m_ToCreate.Add(new CreateEntry
+		{
+			Entity = entity,
+			State = state
+		});
+	}
+
+	public void RemoveEntity(EntityDataBase entity)
+	{
+		for (int i = 0; i < m_ToCreate.Count; i++)
+		{
+			if (m_ToCreate[i].Entity == entity)
+			{
+				m_ToCreate.RemoveAt(i);
+				break;
+			}
+		}
+	}
+
+	public UnitEntityData SpawnUnit(BlueprintUnit unit, Vector3 position, Quaternion rotation, SceneEntitiesState state, string uniqueId = null)
+	{
+		if (unit == null)
+		{
+			PFLog.Default.Error("Trying to spawn null unit");
+			return null;
+		}
+		if (BuildModeUtility.Data.Loading.IgnoreSpawners)
+		{
+			PFLog.Default.Error("Skip spawn of " + unit);
+			return null;
+		}
+		if (state == null)
+		{
+			PFLog.Default.Error("Trying to summon unit from caster without holding state!");
+			return null;
+		}
+		UnitSpawningData current = ContextData<UnitSpawningData>.Current;
+		using UnitSpawningData unitSpawningData = ContextData<UnitSpawningData>.RequestIf(current == null);
+		current = current ?? unitSpawningData;
+		if (unit.CustomizationPreset != null && current.PrefabGuid.IsNullOrEmpty() && !current.RestrictVariations)
+		{
+			UnitCustomizationVariation unitCustomizationVariation = unit.CustomizationPreset.SelectVariation(unit, null, current.Race);
+			if (unitCustomizationVariation == null)
+			{
+				PFLog.Default.Error("Failed to select customization variation for unit {0} (preset = {1})", unit, unit.CustomizationPreset);
+			}
+			else
+			{
+				BlueprintUnitAsksList voice = unit.CustomizationPreset.SelectVoice(unitCustomizationVariation.Gender);
+				bool value = unit.CustomizationPreset.SelectLeftHanded();
+				current.Setup(unitCustomizationVariation.Prefab.AssetId, unitCustomizationVariation.Race, unitCustomizationVariation.Gender, voice, value);
+			}
+		}
+		string text = (current.PrefabGuid.IsNullOrEmpty() ? unit.Prefab.AssetId : current.PrefabGuid);
+		string assetId = BlueprintRoot.Instance.OptimizationDummyUnit.AssetId;
+		string text2 = (ShouldSpawnOptimizedDummy(current, position, state) ? assetId : text);
+		using BundledResourceHandle<UnitEntityView> bundledResourceHandle = BundledResourceHandle<UnitEntityView>.Request(text2);
+		UnitEntityView @object = bundledResourceHandle.Object;
+		if (@object == null && OverrideLegacyUnits.Instance.TryGetOverrideGuid(text2, out var resultGuid))
+		{
+			using BundledResourceHandle<UnitEntityView> bundledResourceHandle2 = BundledResourceHandle<UnitEntityView>.Request(resultGuid);
+			@object = bundledResourceHandle2.Object;
+		}
+		UnitEntityData unitEntityData;
+		using (CodeTimerTraceScope.New("Spawn"))
+		{
+			unitEntityData = SpawnUnit(unit, @object, position, rotation, state, uniqueId);
+		}
+		if (unitEntityData != null)
+		{
+			unitEntityData.IsInGame = !current.SpawnHidden;
+			if (current.SimplifyWhenHidden)
+			{
+				unitEntityData.Ensure<UnitPartOptimizeWhenHidden>();
+			}
+		}
+		return unitEntityData;
+	}
+
+	private bool ShouldSpawnOptimizedDummy(UnitSpawningData spawningData, Vector3 position, SceneEntitiesState sceneEntitiesState)
+	{
+		if (sceneEntitiesState == Game.Instance.Player.CrossSceneState)
+		{
+			return false;
+		}
+		StartupJson data = BuildModeUtility.Data;
+		if (data != null && data.DisableUnitOptimization)
+		{
+			return false;
+		}
+		if (spawningData.SimplifyWhenHidden && spawningData.SpawnHidden)
+		{
+			return true;
+		}
+		if (Game.Instance.CurrentlyLoadedArea.HasParts)
+		{
+			Bounds? bounds = ObjectExtensions.Or(AreaService.Instance.CurrentAreaPart.Bounds, null)?.MechanicBounds;
+			if (bounds.HasValue && !bounds.Value.Contains(position))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public UnitEntityData SpawnUnit(BlueprintUnit unit, UnitEntityView prefab, Vector3 position, Quaternion rotation, SceneEntitiesState state, string uniqueId = null)
+	{
+		UnitEntityView unitEntityView = null;
+		try
+		{
+			if (unit == null)
+			{
+				PFLog.Default.Error("Trying to spawn null unit");
+				return null;
+			}
+			if (prefab == null)
+			{
+				PFLog.Default.Error("Trying to spawn unit without prefab {0}", unit);
+				return null;
+			}
+			UnitSpawningData current = ContextData<UnitSpawningData>.Current;
+			unitEntityView = current?.Doll?.CreateUnitView() ?? UnityEngine.Object.Instantiate(prefab, position, rotation);
+			unitEntityView.UniqueId = uniqueId ?? Game.Instance.Player.GetNewUniqueId();
+			unitEntityView.Blueprint = unit;
+			UnitEntityData unitEntityData = (UnitEntityData)SpawnEntityWithView(unitEntityView, state);
+			if (current?.Doll != null)
+			{
+				unitEntityData.Ensure<UnitPartDollData>().SetDefault(current.Doll);
+			}
+			return unitEntityData;
+		}
+		catch (Exception ex)
+		{
+			if (unitEntityView != null)
+			{
+				UnityEngine.Object.Destroy(unitEntityView.gameObject);
+			}
+			PFLog.Default.Exception(ex, null);
+			return null;
+		}
+	}
+
+	public DetailedTrapObjectData SpawnTrap(BlueprintTrap trap, ScriptZone scriptZone, SceneEntitiesState state, [CanBeNull] BlueprintUnit actor = null, Guid? uniqueId = null)
+	{
+		DetailedTrapObjectView view = DetailedTrapObjectView.CreateView(trap, uniqueId.ToString(), actor, scriptZone.UniqueId, null);
+		DetailedTrapObjectData obj = (DetailedTrapObjectData)SpawnEntityWithView(view, state);
+		obj.View.OnAreaDidLoad();
+		return obj;
+	}
+
+	public DynamicMapObjectView.EntityData SpawnMapObject(BlueprintDynamicMapObject blueprint, Vector3 position, Quaternion rotation, SceneEntitiesState state)
+	{
+		if (blueprint.Prefab == null)
+		{
+			PFLog.Default.Error("Trying to spawn map object without prefab: {0}", blueprint);
+			return null;
+		}
+		DynamicMapObjectView component = blueprint.Prefab.GetComponent<DynamicMapObjectView>();
+		component.Blueprint = blueprint;
+		return (DynamicMapObjectView.EntityData)SpawnEntityView(component, position, rotation, state).Data;
+	}
+
+	public UnitEntityData ChangeUnitBlueprint(UnitEntityData unit, BlueprintUnit newBlueprint, bool toCrossState, bool keepOld = false)
+	{
+		UnitEntityView view = unit.View;
+		if (!keepOld)
+		{
+			unit.MarkForDestroy();
+		}
+		else
+		{
+			unit.IsInGame = false;
+		}
+		unit.Pets.ForEach(delegate(EntityPartRef<UnitEntityData, UnitPartPet> i)
+		{
+			i.Entity?.MarkForDestroy();
+		});
+		unit.DetachView();
+		view.Blueprint = newBlueprint;
+		view.UniqueId = Game.Instance.Player.GetNewUniqueId();
+		UnitEntityData unitEntityData = new UnitEntityData(view);
+		foreach (WeaponSet value in view.HandsEquipment.Sets.Values)
+		{
+			value.MainHand.DestroyModel();
+			value.OffHand.DestroyModel();
+		}
+		unitEntityData.AttachView(view);
+		unitEntityData.Position = unit.Position;
+		unitEntityData.Orientation = unit.Orientation;
+		CreateEntry createEntry = default(CreateEntry);
+		createEntry.Entity = unitEntityData;
+		createEntry.State = (toCrossState ? Game.Instance.Player.CrossSceneState : Game.Instance.State.LoadedAreaState.MainState);
+		CreateEntry item = createEntry;
+		m_ToCreate.Add(item);
+		return unitEntityData;
+	}
+
+	public UnitEntityData RecruitNPC([CanBeNull] UnitEntityData npc, BlueprintUnit companionBlueprint)
+	{
+		UnitEntityData unitEntityData = UnitPartCompanion.FindCompanion(companionBlueprint, CompanionState.ExCompanion);
+		if (unitEntityData == null)
+		{
+			unitEntityData = ChangeUnitBlueprint(npc, companionBlueprint, toCrossState: true);
+		}
+		else
+		{
+			if (npc != null && npc != unitEntityData)
+			{
+				npc.MarkForDestroy();
+				unitEntityData.Position = npc.Position;
+				unitEntityData.Orientation = npc.Orientation;
+			}
+			unitEntityData.IsInGame = true;
+		}
+		if (!unitEntityData.IsPet)
+		{
+			Game.Instance.Player.AddCompanion(unitEntityData);
+		}
+		return unitEntityData;
+	}
+
+	public UnitEntityData UnrecruitNPC(UnitEntityData npc, BlueprintUnit companionBlueprint)
+	{
+		Game.Instance.Player.RemoveCompanion(npc, stayInGame: true);
+		return ChangeUnitBlueprint(npc, companionBlueprint, toCrossState: false);
+	}
+
+	public bool IsViewWaitToCreate(EntityViewBase view, bool throwOnWrongScene)
+	{
+		foreach (CreateEntry item in m_ToCreate)
+		{
+			if (item.Entity == view.Data)
+			{
+				if (item.State != Game.Instance.Player.CrossSceneState && !item.State.IsSceneLoaded && !item.State.IsPostLoadExecuted && throwOnWrongScene)
+				{
+					throw new Exception($"View {view} can't not be created, becouse state {item.State} not loaded");
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void Tick()
+	{
+		for (int i = 0; i < m_ToCreate.Count; i++)
+		{
+			CreateEntry createEntry = m_ToCreate[i];
+			EntityDataBase entity = createEntry.Entity;
+			createEntry.State.AddEntityData(entity);
+			UnitEntityData unit = entity as UnitEntityData;
+			if (unit != null)
+			{
+				if (unit.View != null && !unit.View.IsOptimizationDummy && unit.View.AgentASP != null)
+				{
+					unit.View.AgentASP.Stop();
+				}
+				if (!unit.Get<UnitPlaceholderEntityData.PlaceholderMarkPart>())
+				{
+					using (ContextData<SpawnedUnitData>.Request().Setup(unit))
+					{
+						EventBus.RaiseEvent(delegate(IUnitHandler h)
+						{
+							h.HandleUnitSpawned(unit);
+						});
+						EventBus.RaiseEvent(delegate(IUnitSpawnHandler h)
+						{
+							h.HandleUnitSpawned(unit);
+						});
+					}
+					DungeonController.HandleUnitSpawned(unit);
+				}
+				unit.Remove<UnitPlaceholderEntityData.PlaceholderMarkPart>();
+			}
+			MapObjectEntityData mapObject = entity as MapObjectEntityData;
+			if (mapObject != null)
+			{
+				EventBus.RaiseEvent(delegate(IMapObjectHandler h)
+				{
+					h.HandleMapObjectSpawned(mapObject);
+				});
+			}
+			ObjectExtensions.Or(entity.View, null)?.UpdateViewActive();
+		}
+		m_ToCreate.Clear();
+	}
+
+	public void Activate()
+	{
+	}
+
+	public void Deactivate()
+	{
+	}
+
+	public void Dispose()
+	{
+		m_ToCreate.Clear();
+	}
+}

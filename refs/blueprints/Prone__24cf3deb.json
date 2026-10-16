@@ -1,0 +1,63 @@
+{
+  "AssetId": "24cf3deb078d3df4d92ba24b176bda97",
+  "SourcePath": "Buffs/Prone.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddCondition$f5118253-2e9d-4bda-bba7-4f7ef9ff0694"
+    ],
+    "Components": [
+      {
+        "$type": "4c36aacebf153574eb39757fc3965edb, AddCondition",
+        "m_Flags": 0,
+        "name": "$AddCondition$f5118253-2e9d-4bda-bba7-4f7ef9ff0694",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Condition": "Prone"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "161c842a35a5c60498e1aea8de689aa0",
+        "stringkey": "ebb2c9f6-451b-42df-b923-e723fce0fc03"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "87620a678b9d5584d970ba6c47ba33f4",
+        "stringkey": "2e312213-ccc0-43e7-92f1-a4dee65d4eea"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": null,
+    "IsClassFeature": false,
+    "m_Flags": "HiddenInUi",
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": null,
+    "FxOnRemove": null,
+    "ResourceAssetIds": []
+  }
+}

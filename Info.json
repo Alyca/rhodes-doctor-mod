@@ -1,0 +1,9 @@
+{
+  "Id": "RhodesDoctor",
+  "DisplayName": "罗德岛博士 Rhodes Island Doctor (Paladin Archetype)",
+  "Author": "RhodesDoctorMod",
+  "Version": "0.6.4",
+  "ManagerVersion": "0.27.0",
+  "AssemblyName": "RhodesDoctor.dll",
+  "EntryMethod": "RhodesDoctor.Main.Load"
+}

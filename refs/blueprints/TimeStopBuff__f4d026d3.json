@@ -1,0 +1,58 @@
+{
+  "AssetId": "f4d026d3bf5a4e8183ded452e8d87260",
+  "SourcePath": "Spells/DLC5NewSpells/TimeStopBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [
+      {
+        "$type": "25b073dd90738ed46939db4777aafe17, AddAreaEffect",
+        "m_Flags": 0,
+        "name": "$AddAreaEffect$8b448c51-e9b0-4420-9568-ae1292c41061",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_AreaEffect": "!bp_22f6aa316f394e7c88814f98227ed421"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "cfc6e6bc96027564ab476d92fde69c20",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": "StayOnDeath",
+    "Stacking": "Ignore",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": null,
+    "FxOnRemove": null,
+    "ResourceAssetIds": []
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "AssetId": "525f980cb29bc2240b93e953974cb325",
+  "SourcePath": "Spells/Level2/InvisibilityBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$BuffInvisibility$d626d20a-09dc-4e48-9d45-17aa80954fa4",
+      "$AddFactContextActions$3d4b4904-0c06-46f0-9114-e04342d47d10"
+    ],
+    "Components": [
+      {
+        "$type": "90ad7cd428ee00b40834f378e9613708, BuffInvisibility",
+        "m_Flags": 0,
+        "name": "$BuffInvisibility$d626d20a-09dc-4e48-9d45-17aa80954fa4",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "NotDispellAfterOffensiveAction": false,
+        "m_StealthBonus": 20,
+        "DispelWithAChance": false,
+        "Chance": {
+          "ValueType": "Simple",
+          "Value": 0,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null,
+          "m_AbilityParameter": "Level",
+          "PropertyName": "Value1"
+        }
+      },
+      {
+        "$type": "25d172d2be8f52f468b2050d14d59806, AddFactContextActions",
+        "m_Flags": 0,
+        "name": "$AddFactContextActions$3d4b4904-0c06-46f0-9114-e04342d47d10",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Activated": {
+          "Actions": []
+        },
+        "Deactivated": {
+          "Actions": [
+            {
+              "$type": "79321e7cc8830c2459f5aef8d5f0d530, ContextActionRemoveBuffSingleStack",
+              "name": "$ContextActionRemoveBuffSingleStack$0d24188c-f6b2-4c10-9bbd-b1d87c8cae9a",
+              "m_TargetBuff": "!bp_21d0ca87ffdda4845be154ba0fe3ac6a"
+            }
+          ]
+        },
+        "NewRound": {
+          "Actions": []
+        },
+        "Dispose": {
+          "Actions": []
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "87d931dedc7cdda49b32715b84e4c3b1",
+        "stringkey": "3d8a1d99-ea31-4ea1-aaaa-cc9829260ec9"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "ce010e97c9ed24c4ebc02afbb98281b5",
+        "stringkey": "acba851c-2995-4340-8988-4ba81103e69a"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "57a5e3232472df44bac5df62ed9f8cdd",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": "IsFromSpell",
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": {
+      "AssetId": "ccd3a2dcada23c145b232501d105c55d"
+    },
+    "FxOnRemove": {
+      "AssetId": "c8a27802aeafc8747bf979f0c6c467f6"
+    },
+    "ResourceAssetIds": [
+      "ccd3a2dcada23c145b232501d105c55d",
+      "c8a27802aeafc8747bf979f0c6c467f6"
+    ]
+  }
+}

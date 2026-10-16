@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>RhodesDoctor</AssemblyName>
+    <RootNamespace>RhodesDoctor</RootNamespace>
+    <Nullable>disable</Nullable>
+
+    <!-- 游戏安装目录。任选其一：
+         1) 命令行：dotnet build -p:WrathPath="C:\Games\Pathfinder Wrath of the Righteous"
+         2) 环境变量 WOTR_PATH 指向游戏目录 -->
+    <WrathPath Condition="'$(WrathPath)'==''">$(WOTR_PATH)</WrathPath>
+    <WrathManaged>$(WrathPath)\Wrath_Data\Managed</WrathManaged>
+    <!-- 游戏开启 mod 支持后会自动生成公开化程序集（可访问 internal 成员），优先引用 -->
+    <Publicized>$(WrathManaged)\publicized_assemblies</Publicized>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WW-Blueprint-Core 2.8.7（BlueprintCore 的新名；旧名 BlueprintCore 在 NuGet 已不存在） -->
+    <PackageReference Include="WW-Blueprint-Core" Version="2.8.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 随编译输出一起拷出的运行时文件：UMM 清单 + 本地化包 -->
+    <None Include="Info.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LocalizedStrings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="icons\**\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(Publicized)\Assembly-CSharp.dll" Condition="Exists('$(Publicized)\Assembly-CSharp.dll')">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\Assembly-CSharp.dll" Condition="!Exists('$(Publicized)\Assembly-CSharp.dll')">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\UnityModManager\UnityModManager.dll" Condition="Exists('$(WrathManaged)\UnityModManager\UnityModManager.dll')">
+      <Private>false</Private>
+    </Reference>
+    <!-- Harmony 直接用游戏自带的 0Harmony.dll，不再引 NuGet 的 Lib.Harmony -->
+    <Reference Include="$(WrathManaged)\0Harmony.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\Newtonsoft.Json.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\UnityEngine.ImageConversionModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <!-- UMM 测试面板的 GUILayout 在此程序集 -->
+    <Reference Include="$(WrathManaged)\UnityEngine.IMGUIModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <!-- 烟雾重染的粒子系统 / 音源清理 -->
+    <Reference Include="$(WrathManaged)\UnityEngine.ParticleSystemModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\UnityEngine.AudioModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <!-- 云的实时调参热键（Input.GetKeyDown / KeyCode 在 InputLegacyModule 里） -->
+    <Reference Include="$(WrathManaged)\UnityEngine.InputLegacyModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\UnityEngine.CoreModule.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WrathManaged)\UnityEngine.dll">
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

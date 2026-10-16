@@ -1,0 +1,110 @@
+{
+  "AssetId": "df6d1025da07524429afbae248845ecc",
+  "SourcePath": "Spells/Level0/DazzledBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BuffStatusCondition$eddde023-1b4d-4ba2-8da6-cbf9502cb4a0",
+      "$SpellDescriptorComponent$c5a4cf82-141f-4637-92d3-70b6f631113c",
+      "$AddFactContextActions$c915540d-8cc6-4ba9-a811-2942d30b628e"
+    ],
+    "Components": [
+      {
+        "$type": "49cf7fa20ee7abd40bfe4f18cbc94f04, BuffStatusCondition",
+        "m_Flags": 0,
+        "name": "$BuffStatusCondition$eddde023-1b4d-4ba2-8da6-cbf9502cb4a0",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "SaveEachRound": false,
+        "Condition": "Dazzled",
+        "SaveType": "Fortitude"
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$c5a4cf82-141f-4637-92d3-70b6f631113c",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 8796227239936
+        }
+      },
+      {
+        "$type": "25d172d2be8f52f468b2050d14d59806, AddFactContextActions",
+        "m_Flags": 0,
+        "name": "$AddFactContextActions$c915540d-8cc6-4ba9-a811-2942d30b628e",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Activated": {
+          "Actions": [
+            {
+              "$type": "120df4726e71c854e95f84b87a99a3c5, ContextActionSpawnFx",
+              "name": "$ContextActionSpawnFx$c77de5f2-f4fd-4836-8855-903879d8d407",
+              "PrefabLink": {
+                "AssetId": "c388856d0e8855f429a83ccba67944ba"
+              }
+            }
+          ]
+        },
+        "Deactivated": {
+          "Actions": []
+        },
+        "NewRound": {
+          "Actions": []
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": true,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "a7388a1d1986bfc4f815c577000172fe",
+        "stringkey": "120b9059-3ccf-4847-895d-b53e4f1d8ef7"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "055dec2375b613a4c89cbc944ba9038c",
+        "stringkey": "4aee55cb-613f-4f33-9d4c-f2abaae01edf"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "e1166369a1fd8184c8622aba232bec13",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": 0,
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": null,
+    "FxOnRemove": null,
+    "ResourceAssetIds": []
+  }
+}

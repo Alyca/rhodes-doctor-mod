@@ -1,0 +1,49 @@
+{
+  "AssetId": "51e38593f13d66d4cb73d71a35c56bfd",
+  "SourcePath": "Mythic/Angel/AngelSword/AngelSwordEffectEffectBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddStatBonusAbilityValue$c87c0575-f48b-45d8-9628-703f69e1bc53",
+      "$AddStatBonusAbilityValue$ff5b4a47-9a6b-489b-bb69-0f8c3371a8a4"
+    ],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "3d320d4d92527fc47bfe130a255fe265",
+      "fileid": 21300000
+    },
+    "IsClassFeature": true,
+    "m_Flags": "HiddenInUi, StayOnDeath",
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": null,
+    "FxOnRemove": null,
+    "ResourceAssetIds": []
+  }
+}

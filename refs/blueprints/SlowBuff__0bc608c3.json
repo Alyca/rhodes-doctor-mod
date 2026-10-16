@@ -1,0 +1,184 @@
+{
+  "AssetId": "0bc608c3f2b548b44b7146b7530613ac",
+  "SourcePath": "Spells/Level3/SlowBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddStatBonus$904add4b-db59-4639-bc24-1a25f2cd3ced",
+      "$AddStatBonus$48e82514-02f8-48d5-9d8c-6dc37cf84c82",
+      "$AddStatBonus$114eb6ac-57d8-4087-a4e2-32e760feaed0",
+      "$AddCondition$cc7984eb-79f7-44f0-96de-0a0bdd4ae610",
+      "$AddCondition$8fde3f63-1a7d-4aed-af6d-6fcaa3fc2ab2"
+    ],
+    "Components": [
+      {
+        "$type": "a2844c135c0324e439072bd3cc2f9260, AddStatBonus",
+        "m_Flags": 0,
+        "name": "$AddStatBonus$904add4b-db59-4639-bc24-1a25f2cd3ced",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": "Dodge",
+        "Stat": "AC",
+        "Value": -1,
+        "ScaleByBasicAttackBonus": false
+      },
+      {
+        "$type": "a2844c135c0324e439072bd3cc2f9260, AddStatBonus",
+        "m_Flags": 0,
+        "name": "$AddStatBonus$48e82514-02f8-48d5-9d8c-6dc37cf84c82",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": "Dodge",
+        "Stat": "SaveReflex",
+        "Value": -1,
+        "ScaleByBasicAttackBonus": false
+      },
+      {
+        "$type": "a2844c135c0324e439072bd3cc2f9260, AddStatBonus",
+        "m_Flags": 0,
+        "name": "$AddStatBonus$114eb6ac-57d8-4087-a4e2-32e760feaed0",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": "UntypedStackable",
+        "Stat": "AdditionalAttackBonus",
+        "Value": -1,
+        "ScaleByBasicAttackBonus": false
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$83a67b3f-1a5f-455f-a640-326497d76fdd",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 562949954469888
+        }
+      },
+      {
+        "$type": "4c36aacebf153574eb39757fc3965edb, AddCondition",
+        "m_Flags": 0,
+        "name": "$AddCondition$cc7984eb-79f7-44f0-96de-0a0bdd4ae610",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Condition": "Staggered",
+        "Exceptions": null
+      },
+      {
+        "$type": "4c36aacebf153574eb39757fc3965edb, AddCondition",
+        "m_Flags": 0,
+        "name": "$AddCondition$8fde3f63-1a7d-4aed-af6d-6fcaa3fc2ab2",
+        "PrototypeLink": {
+          "guid": "",
+          "name": null
+        },
+        "m_Overrides": [],
+        "Condition": "Slowed",
+        "Exceptions": null
+      },
+      {
+        "$type": "6e30704b447c407a9ca5623a0afb8939, ChangeImpatience",
+        "m_Flags": 0,
+        "name": "$ChangeImpatience$d97ab896-0394-4165-ae46-ac9df7f37b31",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Delta": -1
+      },
+      {
+        "$type": "6e5523c38f556614fb970220b86809a8, AddBuffActions",
+        "m_Flags": 0,
+        "name": "$AddBuffActions$e92bd035-d971-4862-a2a6-ea885c1f702b",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Activated": {
+          "Actions": []
+        },
+        "Deactivated": {
+          "Actions": [
+            {
+              "$type": "23ddfb172c2d3c144ab007dec380d712, ContextActionRemoveBuff",
+              "name": "$ContextActionRemoveBuff$33c6353b-dfe2-4bf3-96a5-3e7a3d20b064",
+              "m_Buff": "!bp_73d093966fa949559a779279a91202f9",
+              "RemoveRank": false,
+              "ToCaster": false,
+              "OnlyFromCaster": false
+            }
+          ]
+        },
+        "NewRound": {
+          "Actions": []
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "6d8261de18ca85947b943a1551b59b4f",
+        "stringkey": "66eaff7a-0b8c-471c-90f1-097ee17a004f"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "3dbea0d809f67f147984f5671f20af7d",
+        "stringkey": "21f12f54-68ab-41b6-a986-fc62f3240dca"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "3dbea0d809f67f147984f5671f20af7d",
+        "stringkey": "21f12f54-68ab-41b6-a986-fc62f3240dca"
+      }
+    },
+    "m_Icon": {
+      "guid": "97f3658a72847324c8f7d4e2b1c52594",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": 0,
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": {
+      "AssetId": "d6a8c6aead8ec1e4b9362cff1c2373a2"
+    },
+    "FxOnRemove": null,
+    "ResourceAssetIds": [
+      "d6a8c6aead8ec1e4b9362cff1c2373a2"
+    ]
+  }
+}

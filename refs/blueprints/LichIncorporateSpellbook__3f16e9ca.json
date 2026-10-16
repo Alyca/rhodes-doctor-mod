@@ -1,0 +1,66 @@
+{
+  "AssetId": "3f16e9caf7c683c40884c7c455ed26af",
+  "SourcePath": "Mythic/Lich/LichSpellbookSelection/LichIncorporateSpellbookFeature.jbp",
+  "Data": {
+    "$type": "b5744fbecc1d4d968270856b03a18ef5, BlueprintFeatureSelectMythicSpellbook",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "c0fae530-a2cb-488f-9b16-af249c81b60b",
+      "m_OwnerString": "3f16e9caf7c683c40884c7c455ed26af",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Mythic/Lich/LichSpellbookSelection/LichIncorporateSpellbookFeature_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "7f08d60c-0647-4af8-98dc-d495bf6cf26b",
+      "m_OwnerString": "3f16e9caf7c683c40884c7c455ed26af",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Mythic/Lich/LichSpellbookSelection/LichIncorporateSpellbookFeature_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": null,
+    "HideInUI": true,
+    "HideInCharacterSheetAndLevelUp": true,
+    "HideNotAvailibleInUI": false,
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [],
+    "m_AllowedSpellbooks": [
+      "!bp_5a38c9ac8607890409fcb8f6342da6f4",
+      "!bp_5785f40e7b1bfc94ea078e7156aa9711",
+      "!bp_97cd3941ce333ce46ae09436287ed699",
+      "!bp_74b87962a97d56c4583979216631eb4c",
+      "!bp_05b105ddee654db4fb1547ba48ffa160",
+      "!bp_9e4b96d7b02f8c8498964aeee6eaef9b",
+      "!bp_cbc30bcc7b8adec48a53a6540f5596ae",
+      "!bp_58b15cc36ceda8942a7a29aafa755452",
+      "!bp_b3db3766a4b605040b366265e2af0e50",
+      "!bp_cc2052732997b654e93eac268a39a0a9",
+      "!bp_cb9d75e5cb08572439a6b5cd562297a5",
+      "!bp_b897fe0947e4b804082b1a687c21e6e2",
+      "!bp_fb4e216b322d3924e9c7041016b46999",
+      "!bp_dd04f9239f655ea438976742728e4909",
+      "!bp_67b574abd845f3e42983ea6eb53a6f90",
+      "!bp_b242f991107095d41ae129f46ed5d97a",
+      "!bp_33903fe5c4abeaa45bc249adb9d98848",
+      "!bp_cb0be5988031ebe4c947086a1170eacc",
+      "!bp_d09794fb6f93e4a40929a965b434070d",
+      "!bp_3ed7e38dc8134af28e1a2b105f74fb7b"
+    ],
+    "m_MythicSpellList": "!bp_a06bcb035c214ad4db605491be9da13d",
+    "m_SpellKnownForSpontaneous": "!bp_2d574ccdea8543bda1dffe63b0f16760"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "AssetId": "69c3bc09d43b4c34a9e79e6e88c71c2a",
+  "SourcePath": "Units/Monsters/AirElemental/AirElementalBrain/AirElementalBrain.jbp",
+  "Data": {
+    "$type": "d0e20ba43f1689d4a964ffe958a5fa1a, BlueprintBrain",
+    "PrototypeLink": "",
+    "m_Overrides": [],
+    "Components": [],
+    "Comment": "",
+    "m_Actions": [
+      "!bp_866ffa6c34000cd4a86fb1671f86c7d8",
+      "!bp_70b2eeb1d2fdf6d449bc23ec5d3207bb",
+      "!bp_cee6c602f895e9d41868e2abf3b7128e",
+      "!bp_565c49da5aa97274a9e93bb7c2a6868e",
+      "!bp_8888694f9aaf71b4fa9a04d49fc05dd6",
+      "!bp_e5a02c06b42b8fe49b3921df7bb8603a",
+      "!bp_21c86384e6254d64382d370ffd73ef03"
+    ]
+  }
+}

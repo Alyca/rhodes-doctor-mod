@@ -1,0 +1,282 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Persistence.JsonUtility;
+using Kingmaker.Items;
+using Kingmaker.Utility;
+using Newtonsoft.Json;
+using Owlcat.Runtime.Core.Logging;
+using Owlcat.Runtime.Core.Utils;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Kingmaker.EntitySystem;
+
+public class SceneEntitiesState
+{
+	[JsonProperty]
+	public string SceneName;
+
+	[JsonProperty]
+	private readonly List<EntityDataBase> m_EntityData = new List<EntityDataBase>();
+
+	[JsonProperty]
+	public bool HasEntityData { get; set; }
+
+	public bool SkipSerialize { get; set; }
+
+	public List<EntityDataBase> AllEntityData => m_EntityData;
+
+	public bool IsSceneLoaded => SceneManager.GetSceneByName(SceneName).isLoaded;
+
+	public bool IsSceneLoadedThreadSafe { get; set; }
+
+	public bool IsTurnedOn { get; private set; }
+
+	public bool IsPostLoadExecuted { get; private set; }
+
+	public static event Action<SceneEntitiesState, EntityDataBase> OnAdded;
+
+	public static event Action<SceneEntitiesState, EntityDataBase> OnRemoved;
+
+	public static void ClearSubscriptions()
+	{
+		SceneEntitiesState.OnAdded = null;
+		SceneEntitiesState.OnRemoved = null;
+	}
+
+	public SceneEntitiesState(string sceneName)
+	{
+		SceneName = sceneName;
+		IsPostLoadExecuted = true;
+		IsTurnedOn = true;
+	}
+
+	[UsedImplicitly]
+	private SceneEntitiesState(JsonConstructorMark _)
+	{
+	}
+
+	public void Dispose()
+	{
+		foreach (EntityDataBase item in AllEntityData.ToList())
+		{
+			if (item.HoldingState == this)
+			{
+				RemoveEntityData(item);
+			}
+		}
+		IsSceneLoadedThreadSafe = false;
+	}
+
+	public void AddEntityData([NotNull] EntityDataBase data)
+	{
+		if (m_EntityData.HasItem((EntityDataBase e) => e.UniqueId == data.UniqueId))
+		{
+			PFLog.Default.Error($"Can't add {data} to state {SceneName}: duplicate id {data.UniqueId}");
+			return;
+		}
+		m_EntityData.Add(data);
+		data.HoldingState = this;
+		if (SceneEntitiesState.OnAdded != null)
+		{
+			SceneEntitiesState.OnAdded(this, data);
+		}
+	}
+
+	public void RemoveEntityData([NotNull] EntityDataBase data)
+	{
+		data.HoldingState = null;
+		try
+		{
+			data.Dispose();
+		}
+		catch (Exception ex)
+		{
+			PFLog.Default.Error("Exception when disposing of {0}", data);
+			PFLog.Default.Exception(ex, null);
+		}
+		if (m_EntityData.Remove(data) && SceneEntitiesState.OnRemoved != null)
+		{
+			SceneEntitiesState.OnRemoved(this, data);
+		}
+	}
+
+	public void PostLoad()
+	{
+		if (IsPostLoadExecuted)
+		{
+			PFLog.System.Error("AreaPersistentState.PostLoad: already executed");
+			return;
+		}
+		IsPostLoadExecuted = true;
+		PFLog.Default.Log("SceneEntitiesState.PostLoad: " + SceneName);
+		using (CodeTimer.New("PrePostLoad"))
+		{
+			foreach (EntityDataBase entityDatum in m_EntityData)
+			{
+				EntityDataBase entity = EntityService.Instance.GetEntity(entityDatum.UniqueId);
+				if (entity != null)
+				{
+					string text = "Entity Data " + entityDatum.UniqueId + " Unique ID was duplicated, try to load another save";
+					if (Application.isEditor)
+					{
+						Exception ex = new Exception(text);
+						Runner.ReportException(ex);
+						throw new LoadGameException(text, ex);
+					}
+					if (entityDatum is UnitEntityData && entity is UnitEntityData)
+					{
+						Exception ex2 = new Exception(text);
+						Runner.ReportException(ex2);
+						throw new LoadGameException(text, ex2);
+					}
+					PFLog.Default.Error(text);
+				}
+				SceneEntitiesState.OnAdded?.Invoke(this, entityDatum);
+				entityDatum.HoldingState = this;
+				entityDatum.PrePostLoad();
+			}
+		}
+		using (CodeTimer.New("PostLoad"))
+		{
+			foreach (EntityDataBase entityDatum2 in m_EntityData)
+			{
+				try
+				{
+					entityDatum2.PostLoad();
+				}
+				catch (Exception ex3)
+				{
+					PFLog.Default.Exception(ex3, null);
+					entityDatum2.HoldingState = null;
+				}
+			}
+		}
+		if (Game.Instance.Player.CrossSceneState != this)
+		{
+			using (CodeTimer.New("Inventory.PostLoad"))
+			{
+				foreach (EntityDataBase entityDatum3 in m_EntityData)
+				{
+					if (entityDatum3.HoldingState != null && entityDatum3 is UnitEntityData unitEntityData)
+					{
+						try
+						{
+							unitEntityData.Inventory.PostLoad();
+						}
+						catch (Exception ex4)
+						{
+							PFLog.Default.Exception(ex4, null);
+						}
+					}
+				}
+			}
+		}
+		using (CodeTimer.New("ApplyPostLoadFixes"))
+		{
+			foreach (EntityDataBase item in m_EntityData.ToTempList())
+			{
+				try
+				{
+					using (CodeTimer.New("Entities"))
+					{
+						item.ApplyPostLoadFixes();
+					}
+				}
+				catch (Exception ex5)
+				{
+					PFLog.Default.Exception(ex5, null);
+				}
+				if (Game.Instance.Player.CrossSceneState == this || item.HoldingState == null || !(item is UnitEntityData unitEntityData2))
+				{
+					continue;
+				}
+				using (CodeTimer.New("Items"))
+				{
+					try
+					{
+						foreach (ItemEntity item2 in unitEntityData2.Inventory.Items)
+						{
+							item2.ApplyPostLoadFixes();
+						}
+					}
+					catch (Exception ex6)
+					{
+						PFLog.Default.Exception(ex6, null);
+					}
+				}
+			}
+		}
+	}
+
+	public void PreSave()
+	{
+		foreach (EntityDataBase entityDatum in m_EntityData)
+		{
+			try
+			{
+				entityDatum.PreSave();
+			}
+			catch (Exception ex)
+			{
+				PFLog.Default.Exception(ex, null);
+			}
+		}
+	}
+
+	public void TurnOn()
+	{
+		if (IsTurnedOn)
+		{
+			LogChannel.System.Error("AreaPersistentState.TurnOn: already turned on");
+			return;
+		}
+		IsTurnedOn = true;
+		foreach (EntityDataBase entityDatum in m_EntityData)
+		{
+			try
+			{
+				if (!entityDatum.IsTurnedOn)
+				{
+					entityDatum.TurnOn();
+				}
+			}
+			catch (Exception ex)
+			{
+				PFLog.Default.Exception(ex, null);
+			}
+		}
+	}
+
+	public void TurnOff()
+	{
+		if (!IsTurnedOn)
+		{
+			LogChannel.System.Error("AreaPersistentState.TurnOff: already turned off");
+			return;
+		}
+		IsTurnedOn = false;
+		foreach (EntityDataBase entityDatum in m_EntityData)
+		{
+			try
+			{
+				if (entityDatum.IsTurnedOn)
+				{
+					entityDatum.TurnOff();
+				}
+			}
+			catch (Exception ex)
+			{
+				PFLog.Default.Exception(ex, null);
+			}
+		}
+	}
+
+	public override string ToString()
+	{
+		return GetType().Name + "#" + SceneName;
+	}
+}

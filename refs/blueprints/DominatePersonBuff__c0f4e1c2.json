@@ -1,0 +1,143 @@
+{
+  "AssetId": "c0f4e1c24c9cd334ca988ed1bd9d201f",
+  "SourcePath": "Spells/Level5/DominatePersonBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$SpellDescriptorComponent$d34fcf2f-bb3d-4131-8bbf-d4e0695b8af2",
+      "$ChangeFaction$1fa1de3b-b120-40e8-ae14-0bde1f116b6e",
+      "$AddFactContextActions$651bac22-eda4-409f-b121-a77714f783cd"
+    ],
+    "Components": [
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$d34fcf2f-bb3d-4131-8bbf-d4e0695b8af2",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 80
+        }
+      },
+      {
+        "$type": "1fbc22235f60369428389f7ee134267f, ChangeFaction",
+        "m_Flags": 0,
+        "name": "$ChangeFaction$1fa1de3b-b120-40e8-ae14-0bde1f116b6e",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "m_Type": "ToCaster",
+        "m_Faction": null,
+        "m_AllowDirectControl": false,
+        "m_NoFogOfWarOnMainCharacter": true
+      },
+      {
+        "$type": "25d172d2be8f52f468b2050d14d59806, AddFactContextActions",
+        "m_Flags": 0,
+        "name": "$AddFactContextActions$651bac22-eda4-409f-b121-a77714f783cd",
+        "PrototypeLink": {
+          "guid": null,
+          "name": null
+        },
+        "m_Overrides": [],
+        "Activated": {
+          "Actions": []
+        },
+        "Deactivated": {
+          "Actions": []
+        },
+        "NewRound": {
+          "Actions": [
+            {
+              "$type": "5e2f2046f3bd6984c8833bf019c8e8ad, ContextActionSavingThrow",
+              "name": "$ContextActionSavingThrow$9e9871c2-96e3-49ab-9e77-cf3ed03f4d61",
+              "Type": "Will",
+              "FromBuff": false,
+              "m_ConditionalDCIncrease": [],
+              "HasCustomDC": false,
+              "CustomDC": {
+                "ValueType": "Simple",
+                "Value": 0,
+                "ValueRank": "Default",
+                "ValueShared": "Damage",
+                "Property": "None",
+                "m_CustomProperty": null
+              },
+              "Actions": {
+                "Actions": [
+                  {
+                    "$type": "d61949c589ee885458c9439b2aa202b6, ContextActionConditionalSaved",
+                    "name": "$ContextActionConditionalSaved$f8fef8f9-f298-4f6c-8eea-d6a9e56453a8",
+                    "Succeed": {
+                      "Actions": [
+                        {
+                          "$type": "1e0ebe55f7204066b7cdb0eb124b863a, ContextActionRemoveSelf",
+                          "name": "$ContextActionRemoveSelf$9a441f22-1987-479e-9312-6a1e313ff38b"
+                        }
+                      ]
+                    },
+                    "Failed": {
+                      "Actions": []
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "1a13e3bd93f4d3f499698fb038d45595",
+        "stringkey": "d73e55b1-24a3-4fb5-843f-8d9c612238d1"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "7f49b278e5ef5ee4183fdcc7583c7e59",
+        "stringkey": "1664c077-aca2-49d0-be2d-db04edd95af7"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "7f1b2c99decf9f441b7a9281d8ce3733",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": "IsFromSpell",
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": {
+      "AssetId": "53975f48f933c534ea9c6bb97a3f64eb"
+    },
+    "FxOnRemove": null,
+    "ResourceAssetIds": [
+      "53975f48f933c534ea9c6bb97a3f64eb"
+    ]
+  }
+}

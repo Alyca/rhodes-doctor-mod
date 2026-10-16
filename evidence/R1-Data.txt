@@ -1,0 +1,37 @@
+# R1 证据：为什么蓝图组件字段共用、Data 按效果隔离
+# 来源：D:\steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\Assembly-CSharp.dll（ilspycmd 9.0 反编译）
+# 与 BlueprintCore 无关，均为游戏本体。
+
+## 1. Delegate（蓝图上的那一份） vs Runtime（每个效果的一份）
+# EntityFactComponentDelegate<TEntity,TData>（游戏本体）：
+# - 本体是 BlueprintComponent（蓝图上的那一份，所有效果共用；字段写这里即共用）。
+# - IRuntimeEntityFactComponentProvider.CreateRuntimeFactComponent() 每次返回 new ComponentRuntime()。
+# - EntityFact.Setup(blueprint)：遍历 BlueprintComponents，对每个 IRuntimeEntityFactComponentProvider 创建 Runtime 并 AddComponent。
+#   即每个 Buff（EntityFact）都有自己的一份 ComponentRuntime。
+
+## 2. 事件调用时按 Runtime 隔离（RequestEventContext）
+# SubscriptionManager.ExecuteAction：
+#   if (subscriber is ISubscriptionProxy proxy && proxy.GetSubscriber() is T)
+#     using (proxy.RequestEventContext()) ExecuteActionInternal(...)
+# ComponentRuntime.RequestEventContext() 把 CurrentRuntime 设为本效果的 Runtime。
+# Delegate 内的 Owner/Fact/Context/Data/MaybeData 全部取自 ComponentEventContext.CurrentRuntime。
+# 因此 handler 里读写 base.Data 即读写本效果的 Data；读写 Delegate 自己的字段即读写蓝图共用份。
+
+## 3. 原版写法（TemporaryHitPointsPerLevel，游戏本体）：
+# public class TemporaryHitPointsPerLevel : UnitFactComponentDelegate<TemporaryHitPointsPerLevelData>
+# public class TemporaryHitPointsPerLevelData { [JsonProperty] public ModifiableValue.Modifier Modifier; }
+# protected override void OnActivate() { ...
+#   base.Data.Modifier = base.Owner.Stats.TemporaryHitPoints.AddModifier(num, base.Runtime, Descriptor); }
+# protected override void OnDeactivate() { base.Data.Modifier?.Remove(); base.Data.Modifier = null; }
+# 结论：计数/标记/落点/DC/修饰引用一律存 base.Data（TData），不存 Delegate 字段。
+
+## 4. 存档
+# ComponentRuntime（游戏本体）：
+#   [JsonProperty] private TData m_Data;   // Data 进存档
+# EntityFact（游戏本体）：
+#   Components 经 ComponentsDictionary（[JsonProperty(PropertyName="Components")]）序列化，
+#   每个 Runtime（含 m_Data）都进存档。
+# 因此 int/bool/Vector3 等纯值 Data 读档后还在。
+# ModifiableValue.Modifier 标 [JsonObject(IsReference=true)]，引用恢复是否可靠未经实测：
+# 最坏情况读档后余温临时生命丢失（增益还在，修饰没了）或修饰残留；OnDeactivate 仍按 Data 移除，不会跨效果污染。
+# 本轮 HarvestYearsResidual.OnActivate 含 Amount>0 且 Modifier==null 时补加分支（覆盖部分读档路径）。

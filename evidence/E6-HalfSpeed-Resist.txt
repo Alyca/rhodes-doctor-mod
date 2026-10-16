@@ -1,0 +1,38 @@
+# E6 证据：速度减半与降低能量抗力的原版现成写法（5.2）
+来源：游戏本体 Assembly-CSharp.dll（ilspycmd 9.0）；blueprints.zip（Data.Components）
+
+## 1. 速度减半：BuffMovementSpeed + CappedOnMultiplier/MultiplierCap
+### 本体原文 Kingmaker.Designers.Mechanics.Buffs.BuffMovementSpeed.OnTurnOn
+# int num = ContextBonus.Calculate(base.Context);
+# int num2 = Value + num;
+# int num3 = ((CappedOnMultiplier && (float)base.Owner.Stats.Speed.BaseValue * MultiplierCap < (float)((int)base.Owner.Stats.Speed + num2)) ? ((int)((float)base.Owner.Stats.Speed.BaseValue * (MultiplierCap - 1f))) : num2);
+# 即 Value=0、CappedOnMultiplier=true、MultiplierCap=0.5 时，加值为 Base*(0.5-1)=-一半，精确半速，与基础速度无关。
+### 原版蓝图 Spells/Level8/IronBodyBuff.jbp（AssetId 2eabea6a1f9a58246a822f207e8ca79e）
+# {"$type": "cefaecfa273585b4a90126ba985bb9cd, BuffMovementSpeed", "Descriptor": "None",
+#   "Value": 0, "CappedOnMultiplier": true, "MultiplierCap": 0.5}
+# （钢铁之躯：速度减半的原版先例；本 mod 照抄三字段。）
+### 采用：C15 成功者半速、FrozenHalfSpeedBuff；C26 钙质化敌方半速（替换 Slowed）。
+# cfg.AddComponent<BuffMovementSpeed>(c => { c.Value = 0; c.CappedOnMultiplier = true; c.MultiplierCap = 0.5f; });
+
+## 2. 降低能量抗力：AddDamageResistanceEnergy 负值
+### 本体逻辑 Kingmaker.UnitLogic.Parts.UnitPartDamageReduction
+# GetBestPenalty：取 Reduction<=0 且未被 Bypass 的 chunk；
+# ApplyReductionPenalty：num = chunk.Reduction * -1（ clamp 后再 *-1），加到 ReductionBecauseResistance，
+# 即负值抗力按罚值冲掉正抗力（Valmallos 实测即此语义）。
+### 原版蓝图 Valmallos_Buff_AeonGazeEnemy.jbp（AssetId 6bb2996309f44a3fa494e686d9ee405f）
+# {"$type": "28c478c0c3f715e43bef94a3a6f8b8bc, AddDamageResistanceEnergy",
+#   "Value": {"ValueType": "Simple", "Value": -10, ...}, "Type": "Fire"}
+# （还有 Acid/Cold/Sonic/Electricity 各 -10；Aeon 凝视敌方减抗的原版先例。）
+### 采用：C10 灼烧失败者火焰抗力 -10，1 轮/级。
+# cfg.AddComponent<AddDamageResistanceEnergy>(c => { c.Type = Fire; c.Value = ContextValues.Constant(-10); });
+
+## 3. 查过的其他原版蓝图（速度类，未采用）
+# BlazingRondoEffectBuff（MultiplierCap 2.0，上限加速）、HasteBuffEffect（2.0）、
+# WildShape 系列 BuffMovementSpeed（固定 +10/+20/+30，无 CappedOnMultiplier）。
+# 结论：只有 IronBody 用 0.5 精确半速，直接照抄。
+
+## 4. C17“忽略一半火焰抗力、火焰免疫只算减半”
+# 查过：AddDamageResistanceEnergy（只能整体减抗，无“忽略一半”字段）、AddEnergyDamageImmunity（免疫开关，无半伤字段）、
+# RuleDealDamage.IgnoreDamageReduction（只管物理 DR，不管能量抗力/免疫）。
+# 原版蓝图未找到“忽略一半抗力/免疫半伤”的现成组件（Ascendant Element 等走神话无视免疫，与“仅减半”语义不同）。
+# 结论：该子项做不到（见回报做不到栏）；持续灼烧 3d6 已做，文字保留，按规则不改文字迎合代码。

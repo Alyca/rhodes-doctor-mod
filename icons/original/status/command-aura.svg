@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="指挥灵光：金色指挥纹章统领三面蓝色护盾">
+<defs>
+  <radialGradient id="sky"><stop stop-color="#38606b"/><stop offset=".65" stop-color="#18333f"/><stop offset="1" stop-color="#07141f"/></radialGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff2bb"/><stop offset=".3" stop-color="#9c7743"/><stop offset=".58" stop-color="#28323c"/><stop offset=".83" stop-color="#cfaa63"/><stop offset="1" stop-color="#4d514d"/></linearGradient>
+  <linearGradient id="gold" x1="0" x2=".8" y2="1"><stop stop-color="#fff7d0"/><stop offset=".38" stop-color="#f0bf66"/><stop offset="1" stop-color="#906044"/></linearGradient>
+  <linearGradient id="plate" x2="1" y2="1"><stop stop-color="#8de0dc"/><stop offset=".44" stop-color="#39808d"/><stop offset="1" stop-color="#203a54"/></linearGradient>
+  <filter id="halo" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="19"/></filter>
+  <clipPath id="field"><rect x="21" y="21" width="470" height="470" rx="58"/></clipPath>
+</defs>
+<rect width="512" height="512" rx="68" fill="#08121b"/>
+<rect x="12" y="12" width="488" height="488" rx="64" fill="url(#rim)"/>
+<rect x="21" y="21" width="470" height="470" rx="58" fill="url(#sky)"/>
+<g clip-path="url(#field)">
+  <circle cx="256" cy="253" r="163" fill="#66e5dd" opacity=".3" filter="url(#halo)"/>
+  <path d="m50 365 206-168 206 168M35 427l221-165 221 165" fill="none" stroke="#71c6c2" stroke-width="5" opacity=".2"/>
+  <path d="M256 62 301 112 256 96 211 112Z" fill="url(#gold)"/>
+  <path d="m256 102 96 73-30 8-66-43-66 43-30-8Z" fill="url(#gold)" stroke="#fff0b8" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M256 134 304 164 256 150 208 164Z" fill="#fff5ce" opacity=".74"/>
+  <path d="m76 213 64-22 64 22v75c0 54-32 84-64 102-32-18-64-48-64-102Z" fill="#0b2331" stroke="#d4ad69" stroke-width="10"/>
+  <path d="m94 229 46-16 46 16v59c0 40-20 64-46 82-26-18-46-42-46-82Z" fill="url(#plate)"/>
+  <path d="m308 213 64-22 64 22v75c0 54-32 84-64 102-32-18-64-48-64-102Z" fill="#0b2331" stroke="#d4ad69" stroke-width="10"/>
+  <path d="m326 229 46-16 46 16v59c0 40-20 64-46 82-26-18-46-42-46-82Z" fill="url(#plate)"/>
+  <path d="m157 193 99-35 99 35v116c0 81-49 126-99 154-50-28-99-73-99-154Z" fill="#0c202a" stroke="url(#gold)" stroke-width="15" stroke-linejoin="round"/>
+  <path d="m177 207 79-28 79 28v98c0 65-35 104-79 133-44-29-79-68-79-133Z" fill="url(#plate)" stroke="#99ded1" stroke-width="3"/>
+  <path d="m256 202 48 66-48-14-48 14Z" fill="url(#gold)" stroke="#fff2ba" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M245 282h22v103h-22z" fill="#f8dda2"/>
+  <path d="m204 329 52-28 52 28-52 31Z" fill="#f2c674" stroke="#fff0c4" stroke-width="5"/>
+  <path d="M212 396q44 26 88 0" fill="none" stroke="#dbf5e8" stroke-width="5" opacity=".7"/>
+</g>
+<rect x="12" y="12" width="488" height="488" rx="64" fill="none" stroke="#f3db9a" stroke-opacity=".77" stroke-width="5"/>
+</svg>

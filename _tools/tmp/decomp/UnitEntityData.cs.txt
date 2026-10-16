@@ -1,0 +1,2555 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using JetBrains.Annotations;
+using Kingmaker.AreaLogic.Cutscenes;
+using Kingmaker.Armies;
+using Kingmaker.Armies.TacticalCombat;
+using Kingmaker.Armies.TacticalCombat.Parts;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Classes;
+using Kingmaker.Blueprints.Classes.Spells;
+using Kingmaker.Blueprints.Root;
+using Kingmaker.Cheats;
+using Kingmaker.Controllers.Combat;
+using Kingmaker.Controllers.Units;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem.Persistence.JsonUtility;
+using Kingmaker.EntitySystem.Persistence.Versioning;
+using Kingmaker.EntitySystem.Stats;
+using Kingmaker.Enums;
+using Kingmaker.GameModes;
+using Kingmaker.Items;
+using Kingmaker.Items.Slots;
+using Kingmaker.PubSubSystem;
+using Kingmaker.QA;
+using Kingmaker.ResourceManagement;
+using Kingmaker.RuleSystem.Rules.Damage;
+using Kingmaker.Settings;
+using Kingmaker.UI.MVVM._VM.ServiceWindows.LocalMap.Utils;
+using Kingmaker.UI.UnitSettings;
+using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.Alignments;
+using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Buffs.Blueprints;
+using Kingmaker.UnitLogic.Commands;
+using Kingmaker.UnitLogic.Commands.Base;
+using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Groups;
+using Kingmaker.UnitLogic.Interaction;
+using Kingmaker.UnitLogic.Mechanics;
+using Kingmaker.UnitLogic.Parts;
+using Kingmaker.Utility;
+using Kingmaker.View;
+using Kingmaker.View.MapObjects;
+using Kingmaker.View.MapObjects.SriptZones;
+using Kingmaker.View.Spawners;
+using Kingmaker.Visual.Animation.Kingmaker;
+using Kingmaker.Visual.Animation.Kingmaker.Actions;
+using Kingmaker.Visual.CharacterSystem;
+using Kingmaker.Visual.CharacterSystem.Dismemberment;
+using Kingmaker.Visual.Critters;
+using Kingmaker.Visual.HitSystem;
+using Newtonsoft.Json;
+using Owlcat.Runtime.Core.Logging;
+using Owlcat.Runtime.Core.Utils;
+using Owlcat.Runtime.Visual.RenderPipeline.RendererFeatures.FogOfWar;
+using TurnBased.Controllers;
+using UniRx;
+using UnityEngine;
+
+namespace Kingmaker.EntitySystem.Entities;
+
+[JsonObject(MemberSerialization.OptIn)]
+public class UnitEntityData : EntityDataBase, IAreaHandler, IGlobalSubscriber, ISubscriber, IEntityPartsManagerDelegate
+{
+	public class DoNotCreateItems : ContextFlag<DoNotCreateItems>
+	{
+	}
+
+	public class InsideInspector : ContextFlag<InsideInspector>
+	{
+	}
+
+	public class DoNotInitializeStats : ContextFlag<DoNotInitializeStats>
+	{
+	}
+
+	public class ChargenUnit : ContextFlag<ChargenUnit>
+	{
+	}
+
+	public class Respec : ContextFlag<Respec>
+	{
+	}
+
+	public class RespecCommit : ContextFlag<RespecCommit>
+	{
+	}
+
+	public class LevelChangeCommit : ContextFlag<LevelChangeCommit>
+	{
+	}
+
+	[JsonProperty]
+	private string m_GroupId;
+
+	[JsonProperty(PropertyName = "Position")]
+	private Vector3 m_Position;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	private SavedRagdollState m_SavedRagdoll;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	private SavedDismembermentState m_SavedDismemberment;
+
+	[DefaultValue(true)]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	private bool m_AiEnabled = true;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	private bool m_AiEnabledInTurnBased;
+
+	[JsonProperty]
+	private float m_Orientation;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	private EntityRef<DroppedLoot.EntityData> m_DroppedLootEntityDataRef;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	private bool m_IsDeathRevealed;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	[CanBeNull]
+	private List<BlueprintUnitUpgrader> m_AppliedUpgraders;
+
+	private UnitGroup m_Group;
+
+	private bool m_IsSleeping = PlatformManager.IsConsole && Game.Instance.CurrentMode != GameModeType.TacticalCombat;
+
+	private PerFrameVar<float> m_MemoizedSpeed = new PerFrameVar<float>();
+
+	private bool m_IsCloneOfManeCharacter;
+
+	public readonly ObservableCountFlag Passive = new ObservableCountFlag();
+
+	public readonly CountableFlag PreventDirectControl = new CountableFlag();
+
+	public readonly List<Familiar> Familiars = new List<Familiar>();
+
+	public readonly UnitSightCache SightCache;
+
+	public readonly HashSet<UnitEntityData> CanBeInVisionRange = new HashSet<UnitEntityData>();
+
+	public readonly CountableFlag Sleepless = new CountableFlag();
+
+	private UnitEntityData m_TempUnmountPet;
+
+	public bool IsLinkedToPersonage;
+
+	private bool m_IsOverrideBlood;
+
+	private BloodType m_OverrideBlood = BloodType.None_effect;
+
+	public readonly CountableFlag IsForceRevealerOnFogOfWar = new CountableFlag();
+
+	private static Dictionary<BlueprintBuff, EntityFact> m_BuffsDuplicates = new Dictionary<BlueprintBuff, EntityFact>();
+
+	[JsonProperty]
+	public UnitStealth Stealth { get; private set; } = new UnitStealth();
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool HoldState { get; set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool StopState { get; private set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool IsExtra { get; private set; }
+
+	public bool AllowEvaluatorsForSaveOptimization { get; set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool HasDummyView { get; private set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public float BonusExperience { get; private set; }
+
+	[JsonProperty]
+	public Vector3 SpawnPosition { get; set; }
+
+	[JsonProperty]
+	public TimeSpan LastMoveTime { get; set; }
+
+	[JsonProperty]
+	public UnitDescriptor Descriptor { get; set; }
+
+	[DefaultValue(true)]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool IsLink { get; set; } = true;
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public float FlyHeight { get; set; }
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	public Vector3? LootSpawnPosition { get; set; }
+
+	[JsonProperty]
+	public Vector3 PreviousPosition { get; set; }
+
+	[JsonProperty]
+	public float DesiredOrientation { get; set; }
+
+	[JsonProperty]
+	public float TimeToNextRoundTick { get; set; }
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	public float? VisionRangeMetersOverride { get; set; }
+
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+	public float? CombatVisionRangeMetersOverride { get; set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public int CachedPerceptionRoll { get; set; }
+
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool IsHiddenBecauseDead { get; set; }
+
+	[DefaultValue(true)]
+	[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+	public bool GiveExperienceOnDeath { get; set; } = true;
+
+	public bool IsRestoredFromPlaceholder { get; set; }
+
+	public override Vector3 Position
+	{
+		get
+		{
+			return m_Position;
+		}
+		set
+		{
+			if (m_Position != value)
+			{
+				m_Position = value;
+				Wake();
+				OnPositionChanged();
+			}
+		}
+	}
+
+	public override SceneEntitiesState HoldingState
+	{
+		get
+		{
+			return base.HoldingState;
+		}
+		set
+		{
+			base.HoldingState = value;
+			if (value != Game.Instance.Player.CrossSceneState && value != null && !Descriptor.HasOwnInventory)
+			{
+				Descriptor.EnsureOwnInventory();
+			}
+		}
+	}
+
+	public EntityRef<UnitEntityData> PreviewOf { get; set; }
+
+	public int Damage
+	{
+		get
+		{
+			return Descriptor.Damage;
+		}
+		set
+		{
+			Descriptor.Damage = value;
+		}
+	}
+
+	[JsonProperty]
+	public OptimizationLevel OptimizationLevel { get; private set; }
+
+	public AbilityCollection Abilities { get; private set; }
+
+	public ActivatableAbilityCollection ActivatableAbilities { get; private set; }
+
+	public BuffCollection Buffs { get; private set; }
+
+	public UnitCommands Commands { get; private set; }
+
+	[NotNull]
+	public UnitCombatState CombatState { get; private set; }
+
+	public float AwakeTimer { get; set; } = -1f;
+
+	public float FadeAwakeTimer { get; set; } = -1f;
+
+	[JsonProperty]
+	public bool LootViewed { get; set; }
+
+	[CanBeNull]
+	public RuleDealDamage LastHandledDamage { get; set; }
+
+	public ScriptZone ExtendedVisionArea { get; set; }
+
+	[CanBeNull]
+	public CutsceneControlledUnit CutsceneControlledUnit { get; set; }
+
+	public bool IsSleeping
+	{
+		get
+		{
+			return m_IsSleeping;
+		}
+		set
+		{
+			if (m_IsSleeping != value)
+			{
+				m_IsSleeping = value;
+				CanBeInVisionRange.Clear();
+				if ((bool)View)
+				{
+					View.UpdateViewActive();
+				}
+			}
+		}
+	}
+
+	public bool IsNoFadeSleeping { get; set; }
+
+	public string GroupId
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(m_GroupId))
+			{
+				m_GroupId = (IsPlayerFaction ? "<directly-controllable-unit>" : base.UniqueId);
+			}
+			return m_GroupId;
+		}
+		set
+		{
+			if (!(m_GroupId == value))
+			{
+				m_Group?.Remove(this);
+				m_Group = null;
+				m_GroupId = value;
+			}
+		}
+	}
+
+	public float Orientation
+	{
+		get
+		{
+			return m_Orientation;
+		}
+		set
+		{
+			m_Orientation = value;
+			DesiredOrientation = value;
+		}
+	}
+
+	public bool IsAIEnabled
+	{
+		get
+		{
+			if (!IsDirectlyControllable)
+			{
+				return true;
+			}
+			if (SettingsRoot.Game.TurnBased.EnableTurnBasedMode ? m_AiEnabledInTurnBased : m_AiEnabled)
+			{
+				return Game.Instance.BlueprintRoot.CompanionsAI;
+			}
+			return false;
+		}
+		set
+		{
+			if ((bool)SettingsRoot.Game.TurnBased.EnableTurnBasedMode)
+			{
+				m_AiEnabledInTurnBased = value;
+			}
+			else
+			{
+				m_AiEnabled = value;
+			}
+		}
+	}
+
+	public BlueprintUnit ReplaceBlueprintForInspection
+	{
+		get
+		{
+			return Descriptor.ReplaceBlueprintForInspection;
+		}
+		set
+		{
+			Descriptor.ReplaceBlueprintForInspection = value;
+		}
+	}
+
+	public bool IsDeathRevealed
+	{
+		get
+		{
+			return m_IsDeathRevealed;
+		}
+		set
+		{
+			if (m_IsDeathRevealed != value)
+			{
+				m_IsDeathRevealed = value;
+				if (View != null)
+				{
+					View.VisibleThroughFog = value;
+					View.UpdateViewActive();
+				}
+			}
+		}
+	}
+
+	public UnitPartRider RiderPart { get; set; }
+
+	public UnitPartSaddled SaddledPart { get; set; }
+
+	private bool HasLoot
+	{
+		get
+		{
+			if (!IsPlayerFaction && !Descriptor.State.HasCondition(UnitCondition.Unlootable) && Inventory.Any((ItemEntity i) => i.IsLootable))
+			{
+				return m_DroppedLootEntityDataRef == null;
+			}
+			return false;
+		}
+	}
+
+	[CanBeNull]
+	public SavedRagdollState SavedRagdoll => m_SavedRagdoll;
+
+	[CanBeNull]
+	public SavedDismembermentState SavedDismemberment => m_SavedDismemberment;
+
+	public Vector3 EyePosition => m_Position + LineOfSightGeometry.EyeShift;
+
+	public UnitBody Body => Descriptor.Body;
+
+	public UnitAttackFactions AttackFactions => Descriptor.AttackFactions;
+
+	public BlueprintFaction Faction => Descriptor.Faction;
+
+	public PortraitData Portrait => UISettings.Portrait;
+
+	public BlueprintPortrait OverridePortrait => UISettings.OverridePortraitBlueprintRaw;
+
+	public PortraitData CrossPortrait => UISettings.CrossPortrait;
+
+	public int DamageNonLethal => Descriptor.DamageNonLethal;
+
+	public int HPLeft => Descriptor.HPLeft;
+
+	public int MaxHP => Descriptor.MaxHP;
+
+	public int TemporaryHP => Descriptor.TemporaryHP;
+
+	public UnitProgressionData Progression => Descriptor.Progression;
+
+	public CharacterStats Stats => Descriptor.Stats;
+
+	public bool IsInCombat
+	{
+		get
+		{
+			if (CombatState != null)
+			{
+				return CombatState.IsInCombat;
+			}
+			return false;
+		}
+	}
+
+	public bool CanDismissCompanion => Get<UnitPartCompanion>()?.CanDismiss ?? false;
+
+	public override bool IsViewActive => GetViewActive(includedFade: true);
+
+	public bool IsViewActiveNoFade => GetViewActive(includedFade: false);
+
+	public UnitGroup Group
+	{
+		get
+		{
+			UpdateGroup();
+			return m_Group;
+		}
+	}
+
+	public UnitGroupMemory Memory => Group.Memory;
+
+	public bool IsAwake => Game.Instance.State.AwakeUnits.Contains(this);
+
+	public BlueprintUnit Blueprint => Descriptor.Blueprint;
+
+	public BlueprintUnit OriginalBlueprint => Descriptor.OriginalBlueprint;
+
+	public BlueprintUnit BlueprintForInspection => Descriptor.BlueprintForInspection;
+
+	public Gender Gender => Descriptor.Gender;
+
+	public string CharacterName => Descriptor.CharacterName;
+
+	private float ConsoleSpeedModifier
+	{
+		get
+		{
+			if (!Game.Instance.IsControllerGamepad || !IsPlayerFaction)
+			{
+				return 1f;
+			}
+			return 1.25f;
+		}
+	}
+
+	public Feet NonCombatBaseSpeedFeet
+	{
+		get
+		{
+			if (IsPlayerFaction && (bool)SettingsRoot.Difficulty.EncumbranceSlowdown && Game.Instance.CurrentMode != GameModeType.Cutscene)
+			{
+				if (Game.Instance.Player.Encumbrance == Encumbrance.Heavy)
+				{
+					return 20.Feet() * ConsoleSpeedModifier;
+				}
+				if (Game.Instance.Player.Encumbrance == Encumbrance.Overload)
+				{
+					return 10.Feet() * ConsoleSpeedModifier;
+				}
+			}
+			return 30.Feet() * ConsoleSpeedModifier;
+		}
+	}
+
+	public float BaseSpeedMps
+	{
+		get
+		{
+			UnitEntityData saddledUnit = this.GetSaddledUnit();
+			if (saddledUnit != null && Blueprint.GetArmyData() == null)
+			{
+				return saddledUnit.BaseSpeedMps;
+			}
+			if (BuildModeUtility.IsCheatsEnabled && !CheatsAnimation.SpeedLock)
+			{
+				return Stats.Speed.Mps;
+			}
+			if (IsPlayerFaction && !IsInCombat)
+			{
+				Feet nonCombatBaseSpeedFeet = NonCombatBaseSpeedFeet;
+				float num = nonCombatBaseSpeedFeet.Meters / 3f;
+				if (nonCombatBaseSpeedFeet < 30.Feet())
+				{
+					return num;
+				}
+				return Mathf.Max(num, Stats.Speed.Mps);
+			}
+			return Stats.Speed.Mps;
+		}
+	}
+
+	public float CurrentSpeedMps
+	{
+		get
+		{
+			if (!m_MemoizedSpeed.UpToDate || TacticalCombatHelper.IsActive)
+			{
+				m_MemoizedSpeed.Value = CalculateCurrentSpeed();
+			}
+			return m_MemoizedSpeed.Value;
+		}
+	}
+
+	public float CombatSpeedMps
+	{
+		get
+		{
+			UnitEntityData unitEntityData = Get<UnitPartRider>()?.SaddledUnit;
+			if (unitEntityData != null && Blueprint.GetArmyData() == null)
+			{
+				return unitEntityData.BaseSpeedMps;
+			}
+			return Math.Max(GameConsts.MinUnitSpeedMps, Stats.Speed.Mps * CalculateSpeedModifier());
+		}
+	}
+
+	public float ModifiedSpeedMps
+	{
+		get
+		{
+			UnitEntityData unitEntityData = Get<UnitPartRider>()?.SaddledUnit;
+			if (unitEntityData != null && Blueprint.GetArmyData() == null)
+			{
+				return unitEntityData.ModifiedSpeedMps;
+			}
+			return Math.Max(GameConsts.MinUnitSpeedMps, BaseSpeedMps * CalculateSpeedModifier());
+		}
+	}
+
+	public bool SpeedIsAffected => CalculateSpeedModifier() < 1f;
+
+	public bool HasMotionThisTick => Position != PreviousPosition;
+
+	public Vector3 OrientationDirection => Quaternion.Euler(0f, Orientation, 0f) * Vector3.forward;
+
+	[HideInStateExplorer]
+	public new UnitEntityView View => (UnitEntityView)base.View;
+
+	public UnitBrain Brain => Descriptor.Brain;
+
+	public bool AiMovementForbidden
+	{
+		get
+		{
+			if ((!IsDirectlyControllable || !HoldState) && Descriptor.State.CanMove)
+			{
+				return this.HasRangedRider();
+			}
+			return true;
+		}
+	}
+
+	public ItemsCollection Inventory => Descriptor.Inventory;
+
+	[HideInStateExplorer]
+	public ItemsCollection VendorInventory => Descriptor.Ensure<UnitPartVendor>().Inventory;
+
+	public bool IsDeadAndHasLoot
+	{
+		get
+		{
+			if (Descriptor.State.IsFinallyDead && HasLoot)
+			{
+				return !Descriptor.State.Features.IsUntargetable;
+			}
+			return false;
+		}
+	}
+
+	public bool IsPlayerFaction => Descriptor.IsPlayerFaction;
+
+	public bool IsPlayersEnemy
+	{
+		get
+		{
+			if (!Faction.EnemyForEveryone)
+			{
+				return Group?.AttackFactions.Contains(Game.Instance.BlueprintRoot.PlayerFaction) ?? false;
+			}
+			return true;
+		}
+	}
+
+	public bool IsMainCharacter
+	{
+		get
+		{
+			if (!(Game.Instance.Player.MainCharacter.Value == this))
+			{
+				return Game.Instance.Player.MainCharacter.Value == PreviewOf.Entity;
+			}
+			return true;
+		}
+	}
+
+	[JsonProperty]
+	public bool IsImportedCustomCompanion { get; set; }
+
+	public bool IsCloneOfMainCharacter
+	{
+		get
+		{
+			if (!m_IsCloneOfManeCharacter)
+			{
+				return Game.Instance.Player.MainCharacter.Value?.Blueprint == Blueprint;
+			}
+			return true;
+		}
+	}
+
+	public float VisionRangeMeters
+	{
+		get
+		{
+			if (IsPlayerFaction && !VisionRangeMetersOverride.HasValue && !CombatVisionRangeMetersOverride.HasValue)
+			{
+				return 11.7f;
+			}
+			float num = VisionRangeMetersOverride ?? 8.5f;
+			if (!IsInCombat)
+			{
+				return num;
+			}
+			return CombatVisionRangeMetersOverride ?? Math.Max(11.7f, num);
+		}
+	}
+
+	public UnitUISettings UISettings => Descriptor.UISettings;
+
+	public bool IsDirectlyControllable
+	{
+		get
+		{
+			if (!base.IsInGame)
+			{
+				return false;
+			}
+			if ((bool)PreventDirectControl)
+			{
+				return false;
+			}
+			CountingGuard countingGuard = Game.Instance.LoadedAreaState?.Settings.CapitalPartyMode;
+			if (countingGuard != null && (bool)countingGuard)
+			{
+				if (IsMainCharacter)
+				{
+					return true;
+				}
+				UnitEntityData master = Master;
+				if ((object)master != null && master.IsMainCharacter)
+				{
+					CompanionSpawner companionSpawner = Get<UnitPartCompanion>()?.GetCurrentSpawner();
+					if (!(companionSpawner == null))
+					{
+						return companionSpawner.SpawnedUnit != this;
+					}
+					return true;
+				}
+				return false;
+			}
+			if (TacticalCombatHelper.IsActive)
+			{
+				UnitPartLeaderTacticalCombat unitPartLeaderTacticalCombat = Get<UnitPartLeaderTacticalCombat>();
+				if (unitPartLeaderTacticalCombat == null || unitPartLeaderTacticalCombat.Faction != ArmyFaction.Crusaders)
+				{
+					UnitPartTacticalCombat unitPartTacticalCombat = Get<UnitPartTacticalCombat>();
+					if (unitPartTacticalCombat == null || unitPartTacticalCombat.Faction != ArmyFaction.Crusaders)
+					{
+						return false;
+					}
+				}
+				return !Descriptor.State.IsFinallyDead;
+			}
+			if (!Descriptor.Faction.IsDirectlyControllable || Descriptor.State.IsFinallyDead || Descriptor.State.IsPanicked || IsDetached)
+			{
+				return false;
+			}
+			if (Get<UnitPartSummonedMonster>() != null && !Blueprint.Faction.IsDirectlyControllable)
+			{
+				return false;
+			}
+			UnitPartCompanion unitPartCompanion = Master?.Get<UnitPartCompanion>() ?? Get<UnitPartCompanion>();
+			if (unitPartCompanion != null && unitPartCompanion.State != CompanionState.ExCompanion)
+			{
+				return unitPartCompanion.State != CompanionState.Remote;
+			}
+			return false;
+		}
+	}
+
+	public bool AreHandsBusyWithAnimation
+	{
+		get
+		{
+			CountingGuard countingGuard = ObjectExtensions.Or(View, null)?.HandsEquipment?.AreHandsBusyWithAnimation;
+			if (countingGuard == null)
+			{
+				return false;
+			}
+			return countingGuard;
+		}
+	}
+
+	public BloodType BloodType
+	{
+		get
+		{
+			if (m_IsOverrideBlood)
+			{
+				return m_OverrideBlood;
+			}
+			if (Descriptor.State.HasCondition(UnitCondition.Petrified))
+			{
+				return BloodType.Stone;
+			}
+			return Blueprint.Visual.BloodType;
+		}
+	}
+
+	public bool IsDetached
+	{
+		get
+		{
+			UnitEntityData master = Master;
+			if (master != null)
+			{
+				return master.IsDetached;
+			}
+			UnitPartCompanion unitPartCompanion = Get<UnitPartCompanion>();
+			if (unitPartCompanion == null)
+			{
+				return false;
+			}
+			return unitPartCompanion.State == CompanionState.InPartyDetached;
+		}
+	}
+
+	public float Corpulence
+	{
+		get
+		{
+			if (!View)
+			{
+				return 0.5f;
+			}
+			return View.Corpulence;
+		}
+	}
+
+	public bool SilentCaster => GetActivePolymorph().Component?.SilentCaster ?? Blueprint.Visual.SilentCaster;
+
+	[NotNull]
+	public IList<EntityPartRef<UnitEntityData, UnitPartPet>> Pets => Get<UnitPartPetMaster>()?.Pets ?? TempList.Get<EntityPartRef<UnitEntityData, UnitPartPet>>();
+
+	[CanBeNull]
+	public UnitEntityData Master
+	{
+		get
+		{
+			object obj = Get<UnitPartPet>()?.Master;
+			if (obj == null)
+			{
+				UnitEntityData entity = PreviewOf.Entity;
+				if ((object)entity == null)
+				{
+					return null;
+				}
+				obj = entity.Master;
+			}
+			return (UnitEntityData)obj;
+		}
+	}
+
+	public bool IsPet
+	{
+		get
+		{
+			if (!Get<UnitPartPet>())
+			{
+				if (PreviewOf.Entity != null)
+				{
+					return PreviewOf.Entity.IsPet;
+				}
+				return false;
+			}
+			return true;
+		}
+	}
+
+	public bool IsReallyInFactPet
+	{
+		get
+		{
+			if (Get<UnitPartPet>()?.Master?.Get<UnitPartPetMaster>()?.IsExPet(base.UniqueId) ?? true)
+			{
+				return PreviewOf.Entity?.IsReallyInFactPet ?? false;
+			}
+			return true;
+		}
+	}
+
+	public UnitState State => Descriptor.State;
+
+	public int BaseCR => Math.Max(0, CR - (State.Features.MythicFullLevelToCR ? Progression.MythicLevel : (Progression.MythicLevel / 2)));
+
+	public int CR => Blueprint.CR;
+
+	public IEnumerable<Spellbook> Spellbooks => Descriptor.Spellbooks;
+
+	public override bool AlwaysDestroyViewOnDispose => true;
+
+	public override bool RequiresSphereBoundsCollider => true;
+
+	public Size OriginalSize => Descriptor.OriginalSize;
+
+	public UnitProficiency Proficiencies => Descriptor.Proficiencies;
+
+	public UnitAlignment Alignment => Descriptor.Alignment;
+
+	public UnitAbilityResourceCollection Resources => Descriptor.Resources;
+
+	public UnitFact MainFact => Descriptor.MainFact;
+
+	public MechanicsContext Context => MainFact.MaybeContext;
+
+	public override bool IsSuppressible => true;
+
+	public override bool IsAffectedByFogOfWar => true;
+
+	public override bool AlwaysRevealedInFogOfWar
+	{
+		get
+		{
+			if (!IsDirectlyControllable)
+			{
+				return IsForceRevealerOnFogOfWar;
+			}
+			return true;
+		}
+	}
+
+	public FootprintType FootprintType
+	{
+		get
+		{
+			BlueprintClassAdditionalVisualSettings additionalVisualSettings = Progression.AdditionalVisualSettings;
+			if (additionalVisualSettings == null || !additionalVisualSettings.OverrideFootprintType)
+			{
+				return Blueprint.Visual.FootprintType;
+			}
+			return Progression.AdditionalVisualSettings.FootprintType;
+		}
+	}
+
+	public ReactiveCommand UpdateCommand { get; } = new ReactiveCommand();
+
+	public event Action<EntityPart> PartAddedEvent;
+
+	public event Action<EntityPart> PartRemovedEvent;
+
+	private bool GetViewActive(bool includedFade)
+	{
+		if (!base.IsViewActive)
+		{
+			return false;
+		}
+		if (((includedFade && IsSleeping) || (!includedFade && IsNoFadeSleeping)) && !IsDeathRevealed)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	private float CalculateCurrentSpeed()
+	{
+		UnitEntityData unitEntityData = Get<UnitPartRider>()?.SaddledUnit;
+		if (unitEntityData != null && Blueprint.GetArmyData() == null)
+		{
+			return unitEntityData.CurrentSpeedMps;
+		}
+		UnitCommand unitCommand = Commands.GetCommand(UnitCommand.CommandType.Move) ?? Commands.Standard;
+		if (unitCommand != null && unitCommand.OverrideSpeed.HasValue)
+		{
+			return unitCommand.OverrideSpeed.Value;
+		}
+		float num = ModifiedSpeedMps;
+		if (unitCommand != null)
+		{
+			switch (unitCommand.MovementType)
+			{
+			case UnitAnimationActionLocoMotion.WalkSpeedType.Slow:
+				num *= 0.5f;
+				break;
+			case UnitAnimationActionLocoMotion.WalkSpeedType.Charge:
+				if (unitCommand != null && unitCommand.IsAccelerated)
+				{
+					if (View?.AgentOverride == null)
+					{
+						num *= 1.8f;
+					}
+				}
+				else
+				{
+					num *= 1.2f;
+				}
+				break;
+			case UnitAnimationActionLocoMotion.WalkSpeedType.Stealth:
+				num *= 0.5f;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+			case UnitAnimationActionLocoMotion.WalkSpeedType.Normal:
+				break;
+			}
+			if ((!IsInCombat || unitCommand.ApplySpeedLimitInCombat) && unitCommand.SpeedLimit.HasValue && unitCommand.SpeedLimit < num)
+			{
+				num = unitCommand.SpeedLimit.Value;
+			}
+		}
+		num = Math.Max(GameConsts.MinUnitSpeedMps, num);
+		if (!IsInCombat && Game.Instance.IsControllerGamepad && IsDirectlyControllable)
+		{
+			UnitEntityView unitEntityView = Game.Instance.SelectionCharacter.SingleSelectedUnit?.View;
+			UnitMovementAgentContinuous unitMovementAgentContinuous = unitEntityView?.AgentOverride as UnitMovementAgentContinuous;
+			if (unitEntityView != null && this != unitEntityView.EntityData && this != unitEntityView.EntityData.GetSaddledUnit() && unitEntityView.EntityData.Commands.MoveContinuously != null && unitMovementAgentContinuous != null)
+			{
+				num *= unitMovementAgentContinuous?.DirectionFromControllerMagnitude ?? 1f;
+				if (num < unitMovementAgentContinuous.Speed)
+				{
+					return num;
+				}
+				return unitMovementAgentContinuous.Speed;
+			}
+		}
+		return num;
+	}
+
+	public void SetOverrideBlood(bool isOn, BloodType overrideBlood = BloodType.None_effect)
+	{
+		m_IsOverrideBlood = isOn;
+		m_OverrideBlood = overrideBlood;
+	}
+
+	public UnitEntityData(UnitEntityView view)
+		: this(view.UniqueId, view.IsInGameBySettings, view.Blueprint)
+	{
+		HasDummyView = view.IsOptimizationDummy;
+		SightCache = new UnitSightCache(this);
+	}
+
+	public UnitEntityData(string uniqueId, bool isInGame, BlueprintUnit blueprint)
+		: base(uniqueId, isInGame)
+	{
+		EnsureFactProcessors();
+		Descriptor = new UnitDescriptor(blueprint, this);
+		Initialize();
+		SightCache = new UnitSightCache(this);
+	}
+
+	protected UnitEntityData(JsonConstructorMark _)
+		: base(_)
+	{
+		SightCache = new UnitSightCache(this);
+	}
+
+	private void EnsureFactProcessors()
+	{
+		Buffs = Facts.EnsureFactProcessor<BuffCollection>();
+		Abilities = Facts.EnsureFactProcessor<AbilityCollection>();
+		ActivatableAbilities = Facts.EnsureFactProcessor<ActivatableAbilityCollection>();
+	}
+
+	private void Initialize()
+	{
+		using (ProfileScope.New("Create Combat State"))
+		{
+			CombatState = new UnitCombatState(this);
+		}
+		using (ProfileScope.New("Create Combats"))
+		{
+			Commands = new UnitCommands(this);
+		}
+		using (ProfileScope.New("Initialize Descriptor"))
+		{
+			Descriptor.Initialize();
+		}
+		UnitSpawningData current = ContextData<UnitSpawningData>.Current;
+		if (current != null)
+		{
+			m_SavedRagdoll = current.Ragdoll;
+			m_SavedDismemberment = current.Dismemberment;
+		}
+		UnitPartInteractions.SetupBlueprintInteractions(this);
+		BonusExperience = BlueprintRoot.Instance.DifficultyList.GetExperienceBonus(SettingsRoot.Difficulty.CombatEncountersCapacity);
+		UnitUpgraderHelper.SetAllUpgradersApplied(OriginalBlueprint, fromPlaceholder: false, ref m_AppliedUpgraders);
+		EventBus.RaiseEvent(this, delegate(IUnitInitializedHandler h)
+		{
+			h.HandleUnitInitialized();
+		});
+	}
+
+	public void UpdateHasDummyView()
+	{
+		if (HoldingState == null)
+		{
+			return;
+		}
+		bool flag = HoldingState != Game.Instance.Player.CrossSceneState && (base.Suppressed || ((bool)Get<UnitPartOptimizeWhenHidden>() && !base.IsInGame));
+		StartupJson data = BuildModeUtility.Data;
+		if (data != null && data.DisableUnitOptimization)
+		{
+			flag = false;
+		}
+		if ((!flag && IsSleeping && HasDummyView && !IsDeathRevealed) || flag == HasDummyView)
+		{
+			return;
+		}
+		HasDummyView = flag;
+		UnitEntityView view = View;
+		if (!view)
+		{
+			return;
+		}
+		using (ProfileScope.New("Change View Dummy-to-Real"))
+		{
+			AttachToViewOnLoad(null);
+			Game.Instance.DynamicRoot.Add(View.transform);
+			using (ProfileScope.New("Update View state"))
+			{
+				UnitAnimationManager animationManager = View.AnimationManager;
+				if (animationManager != null)
+				{
+					animationManager.Tick();
+					animationManager.UpdateTime(0.1f);
+				}
+				using (ProfileScope.New("Update Visibility"))
+				{
+					if ((bool)View.Fader)
+					{
+						View.SetVisible(View.IsVisible, force: true);
+					}
+				}
+			}
+			UnityEngine.Object.Destroy(view.gameObject);
+		}
+	}
+
+	protected override void OnIsInGameChanged()
+	{
+		using (ProfileScope.New("base.OnIsInGameChanged"))
+		{
+			base.OnIsInGameChanged();
+		}
+		using (ProfileScope.New("UpdateHasDummyView"))
+		{
+			UpdateHasDummyView();
+		}
+		if ((bool)Parts.Get<UnitPartCompanion>())
+		{
+			Game.Instance.Player.InvalidateCharacterLists();
+		}
+		if (base.IsInGame)
+		{
+			TranslocatePetsClose();
+		}
+		foreach (EntityPartRef<UnitEntityData, UnitPartPet> pet in Pets)
+		{
+			if (pet.Entity != null && pet.EntityPart != null && (!pet.EntityPart.ShouldBeHidden || !base.IsInGame))
+			{
+				pet.Entity.IsInGame = base.IsInGame;
+			}
+		}
+		using (ProfileScope.New("Buffs de/activate"))
+		{
+			Descriptor.Buffs.SetActive(base.IsInGame);
+		}
+		using (ProfileScope.New("ActAbs de/activate"))
+		{
+			Descriptor.ActivatableAbilities.SetActive(base.IsInGame);
+		}
+		using (ProfileScope.New("Abilities de/activate"))
+		{
+			Descriptor.Abilities.SetActive(base.IsInGame);
+		}
+		m_Group?.Remove(this);
+		m_Group = null;
+		LastHandledDamage = null;
+	}
+
+	private void TranslocatePetsClose()
+	{
+		if (!AstarPath.active)
+		{
+			return;
+		}
+		foreach (EntityPartRef<UnitEntityData, UnitPartPet> pet in Pets)
+		{
+			UnitEntityData entity = pet.Entity;
+			if (!(entity == null))
+			{
+				float num = Corpulence + entity.Corpulence;
+				if (DistanceTo(entity) > num * 2f || ObstacleAnalyzer.GetArea(Position) != ObstacleAnalyzer.GetArea(entity.Position))
+				{
+					Vector3 vector = UnityEngine.Random.insideUnitCircle.normalized.To3D() * num * 2f;
+					Vector3 pos = Position + vector;
+					pos = ObstacleAnalyzer.GetNearestNode(pos).position;
+					entity.Position = pos;
+				}
+			}
+		}
+	}
+
+	private float GetScaleMultiplierBySize(BlueprintUnit unit)
+	{
+		float num = 1f;
+		return unit.Size switch
+		{
+			Size.Fine => 0.1f, 
+			Size.Diminutive => 0.25f, 
+			Size.Tiny => 0.5f, 
+			Size.Small => 0.75f, 
+			Size.Medium => 1f, 
+			Size.Large => 1.5f, 
+			Size.Huge => 2f, 
+			Size.Gargantuan => 2.5f, 
+			Size.Colossal => 3f, 
+			_ => 1f, 
+		};
+	}
+
+	public void DropLootToGround(bool dismember = false, Vector3? overridePos = null, bool force = false)
+	{
+		if (!(HasLoot || force))
+		{
+			return;
+		}
+		DroppedLoot unityObject = (dismember ? BlueprintRoot.Instance.HitSystemRoot.GetDismemberLoot(BloodType) : null);
+		unityObject = ObjectExtensions.Or(unityObject, null) ?? BlueprintRoot.Instance.Prefabs.DroppedLootBag;
+		DroppedLoot droppedLoot = Game.Instance.EntityCreator.SpawnEntityView(unityObject, overridePos ?? Position, View.transform.rotation, HoldingState);
+		float scaleMultiplierBySize = GetScaleMultiplierBySize(Blueprint);
+		droppedLoot.transform.localScale = new Vector3(droppedLoot.transform.localScale.x * scaleMultiplierBySize, droppedLoot.transform.localScale.y * scaleMultiplierBySize, droppedLoot.transform.localScale.z * scaleMultiplierBySize);
+		droppedLoot.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f);
+		droppedLoot.Data.Get<InteractionLootPart>()?.SetUnit(Blueprint);
+		if (dismember)
+		{
+			DroppedLoot.EntityData obj = (DroppedLoot.EntityData)droppedLoot.Data;
+			obj.IsDismember = true;
+			obj.BloodType = BloodType;
+			Inventory.Items.Where((ItemEntity i) => i.NeedSkinningForCollect).ToArray().ForEach(delegate(ItemEntity i)
+			{
+				Inventory.Remove(i);
+			});
+		}
+		droppedLoot.Loot = Inventory;
+		droppedLoot.DroppedBy = new EntityRef<UnitEntityData>(base.UniqueId);
+		m_DroppedLootEntityDataRef = new EntityRef<DroppedLoot.EntityData>(droppedLoot.Data?.UniqueId);
+		LocalMapMarkerPart localMapMarkerPart = droppedLoot.Data.Ensure<LocalMapMarkerPart>();
+		localMapMarkerPart.IsRuntimeCreated = true;
+		localMapMarkerPart.Settings.Type = LocalMapMarkType.Loot;
+		localMapMarkerPart.NonLocalizedDescription = CharacterName;
+	}
+
+	public void Translocate(Vector3 position, float? orientation)
+	{
+		Position = position;
+		if (orientation.HasValue)
+		{
+			Orientation = orientation.Value;
+		}
+		CombatState.PreventAttacksOfOpporunityNextFrame = true;
+		if (View != null)
+		{
+			View.transform.position = position;
+			UnitPlaceOnGroundController.ForcedTick(this);
+			if (orientation.HasValue)
+			{
+				View.transform.rotation = Quaternion.Euler(0f, orientation.Value, 0f);
+			}
+		}
+	}
+
+	public bool InRange(Vector3 center, float radius)
+	{
+		return GeometryUtils.SqrMechanicsDistance(Position, center) <= radius * radius;
+	}
+
+	public float DistanceTo(UnitEntityData other)
+	{
+		return DistanceTo(other.Position);
+	}
+
+	public float DistanceTo(Vector3 point)
+	{
+		return GeometryUtils.MechanicsDistance(Position, point);
+	}
+
+	internal float DistanceTo(StaticEntityData data)
+	{
+		return DistanceTo(data.View.Transform.position);
+	}
+
+	public float SqrDistanceTo(UnitEntityData other)
+	{
+		return SqrDistanceTo(other.Position);
+	}
+
+	public float SqrDistanceTo(Vector3 point)
+	{
+		return GeometryUtils.SqrMechanicsDistance(Position, point);
+	}
+
+	public bool IsEnemy(UnitEntityData unit)
+	{
+		if (unit != null)
+		{
+			return Group.IsEnemy(unit);
+		}
+		return false;
+	}
+
+	public bool IsAlly(UnitEntityData unit)
+	{
+		if (!IsPlayerFaction)
+		{
+			if (!IsEnemy(unit))
+			{
+				return Faction.IsAlly(unit.Faction);
+			}
+			return false;
+		}
+		if (!unit.IsPlayerFaction && unit.Group != Group)
+		{
+			return unit.Get<UnitPartSummonedMonster>()?.Summoner?.IsPlayerFaction == true;
+		}
+		return true;
+	}
+
+	public bool CanAttack(UnitEntityData unit)
+	{
+		if (unit.Descriptor.Faction.Neutral)
+		{
+			return true;
+		}
+		if (!Group.IsEnemy(unit))
+		{
+			UnitPartConfusion unitPartConfusion = Get<UnitPartConfusion>();
+			if (unitPartConfusion == null)
+			{
+				return false;
+			}
+			return unitPartConfusion.State == ConfusionState.AttackNearest;
+		}
+		return true;
+	}
+
+	public bool HasLOS(UnitEntityData other)
+	{
+		using (ProfileScope.New("UnitEntityData.HasLOS Cached"))
+		{
+			return (Blueprint.IsFake || CanBeInVisionRange.Contains(other)) && SightCache.GetLOS(other);
+		}
+	}
+
+	public bool HasLOS(Vector3 point, float fudgeRadius = 0f)
+	{
+		using (ProfileScope.New("UnitEntityData.HasLOS(Vector3)"))
+		{
+			Vector3 eyePosition = EyePosition;
+			float visionRangeMeters = VisionRangeMeters;
+			return (GeometryUtils.SqrDistance2D(eyePosition, point) <= visionRangeMeters * visionRangeMeters && !LineOfSightGeometry.Instance.HasObstacle(eyePosition, point, fudgeRadius)) || ((bool)ExtendedVisionArea && ExtendedVisionArea.ContainsPosition(point));
+		}
+	}
+
+	public bool HasLOS(EntityViewBase view)
+	{
+		return HasLOS(view.transform.position, (view as MapObjectView)?.FogOfWarFudgeRadius ?? 0f);
+	}
+
+	public bool HasLOS(Vector3 point, Vector3 overridePosition)
+	{
+		try
+		{
+			Vector3 p = overridePosition + LineOfSightGeometry.EyeShift;
+			CheckLOSBetweenPoints(p, point, out var hasLOS, out var _);
+			return hasLOS;
+		}
+		finally
+		{
+		}
+	}
+
+	public void CheckLOS(Vector3 point, Vector3 overridePosition, out bool hasLOS, out bool hasLOSWithoutDistance)
+	{
+		try
+		{
+			Vector3 p = overridePosition + LineOfSightGeometry.EyeShift;
+			CheckLOSBetweenPoints(p, point, out hasLOS, out hasLOSWithoutDistance);
+		}
+		finally
+		{
+		}
+	}
+
+	private void CheckLOSBetweenPoints(Vector3 p1, Vector3 p2, out bool hasLOS, out bool hasLOSWithoutDistance)
+	{
+		float visionRangeMeters = VisionRangeMeters;
+		bool flag = GeometryUtils.SqrDistance2D(p1, p2) <= visionRangeMeters * visionRangeMeters;
+		bool flag2 = LineOfSightGeometry.Instance.HasObstacle(p1, p2);
+		bool flag3 = (object)ExtendedVisionArea != null && ExtendedVisionArea.ContainsPosition(p2);
+		hasLOS = (flag && !flag2) || flag3;
+		hasLOSWithoutDistance = !flag2 || flag3;
+	}
+
+	public void UpdateGroup()
+	{
+		if (base.IsDisposed)
+		{
+			if (m_Group == null || !m_Group.IsFake)
+			{
+				PFLog.Default.ErrorWithReport($"UnitEntityData.UpdateGroup: trying to access group of disposed unit ({this})");
+				m_Group?.Remove(this);
+				m_Group = null;
+			}
+			if (m_Group == null)
+			{
+				m_Group = new UnitGroup(null);
+				m_Group.Add(this);
+			}
+		}
+		else if (m_Group == null || m_Group.IsFake || m_Group.Disposed)
+		{
+			if (HoldingState != null && base.IsInGame)
+			{
+				m_Group = Game.Instance.UnitGroupsController.GetGroup(GroupId);
+				m_Group.Add(this);
+			}
+			else if (m_Group == null)
+			{
+				m_Group = new UnitGroup(null);
+				m_Group.Add(this);
+			}
+		}
+	}
+
+	public void JoinCombat(bool notSurprised)
+	{
+		UnitCommand standard = Commands.Standard;
+		if (standard != null && !Game.Instance.Player.IsTurnBasedModeOn() && standard.IsActed && !standard.IsFinished && (!(standard is UnitAttack { IsAttackFull: not false } unitAttack) || unitAttack.GetAttackIndex() == 0))
+		{
+			return;
+		}
+		CachedPerceptionRoll = 0;
+		CombatState.JoinCombat(notSurprised);
+		CutsceneControlledUnit.UpdateActiveCutscene(this);
+		EventBus.RaiseEvent(delegate(IUnitCombatHandler h)
+		{
+			h.HandleUnitJoinCombat(this);
+		});
+		if ((bool)View.Animator)
+		{
+			View.HandsEquipment.OnCombatStateChanged(inCombat: true);
+			if (View.gameObject.activeSelf)
+			{
+				UpdateCombatSwitch();
+			}
+		}
+		PFLog.Default.Log(View, "Unit join combat: {0}", this);
+	}
+
+	public void LeaveCombat()
+	{
+		if (TacticalCombatHelper.IsActive && !State.IsFinallyDead && !base.Destroyed)
+		{
+			return;
+		}
+		CombatState.LeaveCombat();
+		if (base.Destroyed)
+		{
+			return;
+		}
+		CancelStop();
+		Commands.InterruptAiCommands();
+		CutsceneControlledUnit.UpdateActiveCutscene(this);
+		if ((bool)View && (bool)View.Animator)
+		{
+			View.HandsEquipment.OnCombatStateChanged(inCombat: false);
+			if (View.gameObject.activeSelf)
+			{
+				UpdateCombatSwitch();
+			}
+		}
+		if ((bool)SettingsRoot.Difficulty.RemoveAnnoyingBuffsAfterCombat)
+		{
+			Buffs.RemoveAnnoyingBuffs();
+		}
+		EventBus.RaiseEvent(delegate(IUnitCombatHandler h)
+		{
+			h.HandleUnitLeaveCombat(this);
+		});
+		PFLog.Default.Log(View, "Unit leave combat: {0}", this);
+	}
+
+	public void UpdateCombatSwitch()
+	{
+		AkSoundEngine.SetSwitch("CharacterCombat", IsInCombat ? "On" : "Off", View.gameObject);
+	}
+
+	public UnitEntityView CreateView()
+	{
+		BlueprintComponentAndRuntime<Polymorph> activePolymorph = GetActivePolymorph();
+		if (activePolymorph.Component != null)
+		{
+			UnitEntityView unitEntityView = activePolymorph.Component.CreatePolymorphView(this);
+			if (unitEntityView != null)
+			{
+				unitEntityView.transform.position = Position;
+				unitEntityView.transform.rotation = (unitEntityView.ForbidRotation ? Quaternion.identity : Quaternion.Euler(0f, Orientation, 0f));
+				activePolymorph.GetData<PolymorphData>().ViewReplacement = unitEntityView.gameObject;
+				unitEntityView.DisableSizeScaling = true;
+				return unitEntityView;
+			}
+		}
+		DollData dollData = Get<UnitPartDollData>()?.Default;
+		if (dollData?.RacePreset != null)
+		{
+			UnitEntityView unitEntityView2 = dollData.CreateUnitView();
+			unitEntityView2.transform.position = Position;
+			unitEntityView2.transform.rotation = Quaternion.Euler(0f, Orientation, 0f);
+			return unitEntityView2;
+		}
+		string text = (string.IsNullOrEmpty(Descriptor.CustomPrefabGuid) ? Blueprint.Prefab.AssetId : Descriptor.CustomPrefabGuid);
+		text = (HasDummyView ? BlueprintRoot.Instance.OptimizationDummyUnit.AssetId : text);
+		using (BundledResourceHandle<UnitEntityView> bundledResourceHandle = BundledResourceHandle<UnitEntityView>.Request(text))
+		{
+			UnitEntityView @object = bundledResourceHandle.Object;
+			if ((bool)@object)
+			{
+				return InstantiateView_Internal(@object);
+			}
+		}
+		if (OverrideLegacyUnits.Instance.TryGetOverrideGuid(text, out var resultGuid))
+		{
+			text = resultGuid;
+			using BundledResourceHandle<UnitEntityView> bundledResourceHandle2 = BundledResourceHandle<UnitEntityView>.Request(text);
+			UnitEntityView object2 = bundledResourceHandle2.Object;
+			if ((bool)object2)
+			{
+				return InstantiateView_Internal(object2);
+			}
+		}
+		PFLog.Default.Error(Blueprint, $"Cannot find prefab for unit {this} ({text})");
+		return null;
+	}
+
+	private UnitEntityView InstantiateView_Internal(UnitEntityView originalPrefab)
+	{
+		Quaternion rotation = (originalPrefab.ForbidRotation ? Quaternion.identity : Quaternion.Euler(0f, Orientation, 0f));
+		return UnityEngine.Object.Instantiate(originalPrefab, Position, rotation);
+	}
+
+	[CanBeNull]
+	public BlueprintComponentAndRuntime<Polymorph> GetActivePolymorph()
+	{
+		List<Buff> rawFacts = Buffs.RawFacts;
+		for (int num = rawFacts.Count - 1; num >= 0; num--)
+		{
+			Buff buff = rawFacts[num];
+			if (buff.Active && !buff.Deactivating)
+			{
+				BlueprintComponentAndRuntime<Polymorph> componentWithRuntime = buff.GetComponentWithRuntime<Polymorph>();
+				if ((bool)componentWithRuntime.Component)
+				{
+					return componentWithRuntime;
+				}
+			}
+		}
+		return default(BlueprintComponentAndRuntime<Polymorph>);
+	}
+
+	public string GetPrefabGuid()
+	{
+		if (Get<UnitPartDollData>() != null)
+		{
+			return "";
+		}
+		if (!string.IsNullOrEmpty(Descriptor.CustomPrefabGuid))
+		{
+			return Descriptor.CustomPrefabGuid;
+		}
+		return Blueprint.Prefab.AssetId;
+	}
+
+	protected override EntityViewBase CreateViewForData()
+	{
+		try
+		{
+			UnitEntityView unitEntityView = CreateView();
+			if (unitEntityView != null)
+			{
+				unitEntityView.Blueprint = Blueprint;
+			}
+			return unitEntityView;
+		}
+		catch (Exception ex)
+		{
+			if (Blueprint != null)
+			{
+				PFLog.Default.Exception(ex, "Fail create view for " + Blueprint.name + ". Reason: " + ex.Message);
+			}
+			else
+			{
+				PFLog.Default.Exception(ex, "Fail create view for [???] (UnitEntityData not have Blueprint). Reason: " + ex.Message);
+			}
+			return null;
+		}
+	}
+
+	protected override void OnViewDidAttach()
+	{
+		Progression.UpdateAdditionalVisualSettings();
+		View.UpdateAdditionalVisualSettings();
+		EventBus.RaiseEvent(this, delegate(IUnitViewAttachedHandler h)
+		{
+			h.HandleUnitViewAttached();
+		});
+		EventBus.RaiseEvent(delegate(IUnitViewAttachedUIHandler h)
+		{
+			h.HandleUnitViewAttached(this);
+		});
+	}
+
+	protected override void OnComponentsDidPostLoad()
+	{
+		Descriptor.OnComponentsDidPostLoad();
+	}
+
+	protected override void OnApplyPostLoadFixes()
+	{
+		Descriptor.ApplyPostLoadFixes();
+		if (Brain.AutoUseAbility != null && Brain.AutoUseAbility.Caster == null)
+		{
+			Brain.AutoUseAbility = null;
+			PFLog.Default.ErrorWithReport("Removed invalid auto-use-ability");
+		}
+		if (IsMainCharacter && (UISettings.CustomPortraitRaw == null || !UISettings.CustomPortraitRaw.HasPortrait) && UISettings.PortraitBlueprint == null && Progression.MythicLevel > 8)
+		{
+			BlueprintCharacterClass blueprintCharacterClass = Progression.ClassesOrder.LastItem((BlueprintCharacterClass i) => i.IsMythic);
+			object obj;
+			if (blueprintCharacterClass == null)
+			{
+				obj = null;
+			}
+			else
+			{
+				MythicClassArtComponent component = blueprintCharacterClass.GetComponent<MythicClassArtComponent>();
+				obj = ((component != null) ? component.Portraits.OfType<BlueprintPortrait>() : null);
+			}
+			IEnumerable<BlueprintPortrait> enumerable = (IEnumerable<BlueprintPortrait>)obj;
+			if (enumerable != null)
+			{
+				BlueprintPortrait blueprintPortrait = ((Gender == Gender.Female) ? enumerable.FirstOrDefault((BlueprintPortrait i) => i.name.Contains("Female")) : enumerable.FirstOrDefault((BlueprintPortrait i) => i.name.Contains("Male")));
+				blueprintPortrait = blueprintPortrait ?? enumerable.FirstOrDefault();
+				if (blueprintPortrait != null)
+				{
+					UISettings.SetPortrait(blueprintPortrait);
+					PFLog.Upgrader.Log($"Restored mythic portrait of {this}");
+				}
+			}
+		}
+		UnitUpgraderHelper.ApplyUpgraders(this, OriginalBlueprint, fromPlaceholder: false, ref m_AppliedUpgraders);
+		foreach (EntityFact item in Facts.List)
+		{
+			if (item.Blueprint is BlueprintBuff { Stacking: StackingType.Replace } blueprintBuff)
+			{
+				m_BuffsDuplicates[blueprintBuff] = item;
+			}
+		}
+		Facts.RemoveAll((Buff fact) => m_BuffsDuplicates.TryGetValue(fact.Blueprint, out var value) && value != fact);
+		m_BuffsDuplicates.Clear();
+	}
+
+	protected override void OnPreSave()
+	{
+		base.OnPreSave();
+		Descriptor.PreSave();
+		if (View != null)
+		{
+			m_SavedRagdoll = null;
+			m_SavedDismemberment = null;
+			if (View.RigidbodyController != null && View.RigidbodyController.IsControllingRigidbody)
+			{
+				m_SavedRagdoll = new SavedRagdollState();
+				m_SavedRagdoll.SaveRagdollState(View.RigidbodyController);
+			}
+			if (View.DismembermentManager != null && View.DismembermentManager.Dismembered)
+			{
+				m_SavedDismemberment = new SavedDismembermentState();
+				m_SavedDismemberment.SaveDismembermentState(View.DismembermentManager);
+			}
+		}
+	}
+
+	protected override void OnPostLoad()
+	{
+		MarkNotOptimizableInSave();
+		base.OnPostLoad();
+		EnsureFactProcessors();
+		Buffs.UpdateNextEvent();
+		Descriptor.PostLoad(this);
+		CombatState = new UnitCombatState(this);
+		Commands = new UnitCommands(this);
+	}
+
+	protected override void OnTurnOn()
+	{
+		Descriptor.TurnOn();
+		if (base.IsInGame && PreviewOf == null)
+		{
+			foreach (EntityFact item in Facts.List)
+			{
+				if (item.IsActive != item.IsEnabled)
+				{
+					PFLog.Default.ErrorWithReport(item.Blueprint, $"{item} enabled but not active, fixed");
+				}
+				item.UpdateIsActive();
+			}
+		}
+		if (Brain.AutoUseAbility?.Fact != null && !Brain.AutoUseAbility.Fact.Active)
+		{
+			Ability ability = Abilities.Enumerable.FirstOrDefault((Ability a) => a.Blueprint == Brain.AutoUseAbility.Blueprint && a.SourceItem == Brain.AutoUseAbility.SourceItem);
+			if (ability != null)
+			{
+				Brain.AutoUseAbility = ability.Data;
+			}
+		}
+	}
+
+	protected override void OnTurnOff(Reason reason = Reason.Default)
+	{
+		Descriptor.TurnOff();
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		if (m_DroppedLootEntityDataRef != null)
+		{
+			TransferInventoryToDroppedLoot();
+		}
+		EventBus.RaiseEvent(delegate(IUnitHandler h)
+		{
+			h.HandleUnitDestroyed(this);
+		});
+	}
+
+	protected override void OnDispose()
+	{
+		LastHandledDamage = null;
+		CanBeInVisionRange.Clear();
+		EventBus.ClearUnitSubscriptions(this);
+		base.Destroyed = true;
+		if (IsInCombat)
+		{
+			LeaveCombat();
+		}
+		m_Group?.Remove(this);
+		m_Group = null;
+		Descriptor.Dispose();
+		base.OnDispose();
+	}
+
+	public void TransferInventoryToDroppedLoot()
+	{
+		if (m_DroppedLootEntityDataRef == null)
+		{
+			return;
+		}
+		DroppedLoot.EntityData entityData = m_DroppedLootEntityDataRef.Entity;
+		if (entityData == null)
+		{
+			LogChannel.Default.Warning("Invalid DroppedLoot reference  " + m_DroppedLootEntityDataRef.Id + " from Unit " + base.UniqueId);
+			return;
+		}
+		entityData.Loot = new ItemsCollection(entityData);
+		using (ContextData<ItemSlot.IgnoreLock>.Request())
+		{
+			Inventory.Items.Where((ItemEntity i) => i.IsLootable && !i.NeedSkinningForCollect).ToArray().ForEach(delegate(ItemEntity i)
+			{
+				Inventory.Transfer(i, entityData.Loot);
+			});
+		}
+		m_DroppedLootEntityDataRef = null;
+		entityData.DroppedBy = null;
+	}
+
+	public override string ToString()
+	{
+		UnitDescriptor descriptor = Descriptor;
+		string text = ((descriptor == null) ? null : SimpleBlueprintExtendAsObject.Or(descriptor.Blueprint, null)?.name) ?? "-";
+		return "Unit[" + text + "]#" + base.UniqueId;
+	}
+
+	public float GetLookAtAngle(Vector3 point)
+	{
+		point.y = Position.y;
+		if (point == Position)
+		{
+			return DesiredOrientation;
+		}
+		return Quaternion.LookRotation(point - Position).eulerAngles.y;
+	}
+
+	public void LookAt(Vector3 point)
+	{
+		UnitEntityData saddledUnit = this.GetSaddledUnit();
+		if (saddledUnit == null)
+		{
+			DesiredOrientation = GetLookAtAngle(point);
+		}
+		else
+		{
+			saddledUnit.LookAt(point);
+		}
+	}
+
+	public void ForceLookAt(Vector3 point)
+	{
+		Orientation = GetLookAtAngle(point);
+		if (Game.Instance.IsPaused && View != null)
+		{
+			View.transform.rotation = Quaternion.Euler(0f, Orientation, 0f);
+		}
+		UnitEntityData saddledUnit = this.GetSaddledUnit();
+		if (saddledUnit != null)
+		{
+			saddledUnit.ForceLookAt(point);
+		}
+	}
+
+	public void UpdateSlowRotation(float maxAngle)
+	{
+		if (Descriptor.State.CanRotate)
+		{
+			m_Orientation = Mathf.MoveTowardsAngle(m_Orientation, DesiredOrientation, maxAngle);
+		}
+	}
+
+	private float CalculateSpeedModifier()
+	{
+		UnitEntityData saddledUnit = this.GetSaddledUnit();
+		if (saddledUnit != null)
+		{
+			return saddledUnit.CalculateSpeedModifier();
+		}
+		float num = 1f;
+		if ((bool)Game.Instance.LoadedAreaState.Settings.CapitalPartyMode)
+		{
+			return 1f;
+		}
+		if (Descriptor.State.IsInStealth && !Stealth.FullSpeed && !Descriptor.State.HasCondition(UnitCondition.Invisible))
+		{
+			num *= 0.5f;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.Staggered))
+		{
+			num *= 0.5f;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.Slowed))
+		{
+			num *= 0.5f;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.Entangled))
+		{
+			num *= 0.5f;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.DifficultTerrain))
+		{
+			num *= 0.5f;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.UseMobilityToNegateAttackOfOpportunity))
+		{
+			num *= (Descriptor.State.Features.TricksterMobilityFastMovement ? 1.5f : 0.5f);
+		}
+		if (BlueprintRoot.Instance.WeatherSettings.UseSlowdown && Game.Instance.Player.Weather.ActualWeather >= BlueprintRoot.Instance.WeatherSettings.SlowdownBonusBeginsOn)
+		{
+			num *= 0.5f;
+		}
+		return num;
+	}
+
+	public IUnitInteraction SelectClickInteraction(UnitEntityData initiator)
+	{
+		return Get<UnitPartInteractions>()?.SelectClickInteraction(initiator);
+	}
+
+	public void Wake(float time = 0f, bool isForFade = false)
+	{
+		if (isForFade)
+		{
+			FadeAwakeTimer = Mathf.Max(time, FadeAwakeTimer);
+		}
+		else
+		{
+			AwakeTimer = Mathf.Max(time, AwakeTimer);
+		}
+	}
+
+	public void SetPositionWithoutWaking(Vector3 pos)
+	{
+		float awakeTimer = AwakeTimer;
+		Position = pos;
+		AwakeTimer = awakeTimer;
+	}
+
+	public void ForceExitStealth()
+	{
+		if (Descriptor.State.IsInStealth)
+		{
+			Stealth.WantEnterStealth = false;
+			Stealth.Clear();
+			Descriptor.State.IsInStealth = false;
+			EventBus.RaiseEvent(delegate(IUnitStealthHandler h)
+			{
+				h.HandleUnitSwitchStealthCondition(this, inStealth: false);
+			});
+		}
+	}
+
+	[CanBeNull]
+	public ItemEntityWeapon GetFirstWeapon()
+	{
+		if (IsNotUnarmedWeapon(this, Body.PrimaryHand))
+		{
+			return Body.PrimaryHand.MaybeWeapon;
+		}
+		ItemEntityWeapon maybeWeapon = Body.PrimaryHand.MaybeWeapon;
+		if ((maybeWeapon == null || !maybeWeapon.Blueprint.IsTwoHanded) && IsNotUnarmedWeapon(this, Body.SecondaryHand))
+		{
+			return Body.SecondaryHand.MaybeWeapon;
+		}
+		foreach (WeaponSlot additionalLimb in Body.AdditionalLimbs)
+		{
+			if (IsNotUnarmedWeapon(this, additionalLimb))
+			{
+				return additionalLimb.MaybeWeapon;
+			}
+		}
+		return null;
+		static bool IsNotUnarmedWeapon(UnitEntityData unit, WeaponSlot hand)
+		{
+			if (hand.HasWeapon)
+			{
+				if (hand.Weapon.Blueprint.IsUnarmed)
+				{
+					return unit.Descriptor.State.Features.ImprovedUnarmedStrike;
+				}
+				return true;
+			}
+			return false;
+		}
+	}
+
+	public void SetMaster([NotNull] UnitEntityData master, PetType petType)
+	{
+		if (Master != null)
+		{
+			LogChannel.Default.Error($"Trying to make unit companion twice (old = {Master}, new = {master})");
+			return;
+		}
+		master.Ensure<UnitPartPetMaster>().AddPet(this, petType);
+		View.UpdateScaleImmediately();
+		GroupId = master.GroupId;
+		AttackFactions.Clear();
+		Faction.AttackFactions.ForEach(AttackFactions.Add);
+		SwitchFactions(master.Faction);
+		UpdateGroup();
+		Descriptor.SetupSharedInventoryForPet();
+		EventBus.RaiseEvent(delegate(IUnitFactionHandler h)
+		{
+			h.HandleFactionChanged(this);
+		});
+	}
+
+	public void RemoveMaster()
+	{
+		Master?.Get<UnitPartPetMaster>()?.RemovePet(this);
+		Remove<UnitPartPet>();
+		Remove<UnitPartCompanion>();
+		if (Game.Instance.Player.PartyCharacters.Contains(this))
+		{
+			Game.Instance.Player.PartyCharacters.Remove(this);
+		}
+		Game.Instance.Player.InvalidateCharacterLists();
+	}
+
+	[CanBeNull]
+	public UnitEntityData GetPet(PetType type)
+	{
+		return Pets.FirstItem(delegate(EntityPartRef<UnitEntityData, UnitPartPet> i)
+		{
+			UnitPartPet entityPart = i.EntityPart;
+			return entityPart != null && entityPart.Type == type;
+		}).Entity;
+	}
+
+	public void OnAreaBeginUnloading()
+	{
+		if (Descriptor.State.IsFinallyDead && !Descriptor.State.AdditionalFeatures.SuppressedDecomposition && !IsDeadAndHasLoot && !IsPlayerFaction && !Descriptor.State.Features.Immortality && Parts.Get<UnitPartCompanion>() == null)
+		{
+			MarkForDestroy();
+		}
+	}
+
+	public void OnAreaDidLoad()
+	{
+		Buffs.TrySpawnParticleEffects();
+	}
+
+	public void SwitchFactions(BlueprintFaction faction, bool resetAttackFactions = false)
+	{
+		Descriptor.SwitchFactions(faction, resetAttackFactions);
+	}
+
+	public void Resurrect()
+	{
+		Descriptor.Resurrect();
+	}
+
+	public Spellbook DemandSpellbook([NotNull] BlueprintCharacterClass @class)
+	{
+		return Descriptor.DemandSpellbook(@class);
+	}
+
+	public Spellbook DemandSpellbook([NotNull] BlueprintSpellbook spellbook)
+	{
+		return Descriptor.DemandSpellbook(spellbook);
+	}
+
+	[CanBeNull]
+	public Spellbook GetSpellbook([NotNull] BlueprintCharacterClass blueprint)
+	{
+		return Descriptor.GetSpellbook(blueprint);
+	}
+
+	[CanBeNull]
+	public Spellbook GetSpellbook([NotNull] BlueprintSpellbook blueprint)
+	{
+		return Descriptor.GetSpellbook(blueprint);
+	}
+
+	public static implicit operator UnitDescriptor(UnitEntityData unit)
+	{
+		return unit?.Descriptor;
+	}
+
+	public static bool operator ==(UnitEntityData u1, UnitDescriptor u2)
+	{
+		return u1?.Descriptor == u2;
+	}
+
+	public static bool operator !=(UnitEntityData u1, UnitDescriptor u2)
+	{
+		return !(u1 == u2);
+	}
+
+	public override bool Equals(object obj)
+	{
+		return base.Equals(obj);
+	}
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
+
+	private void OnPartAddedOrPostLoad(EntityPart part)
+	{
+		UpdateCachedPart(part, removed: false);
+	}
+
+	void IEntityPartsManagerDelegate.OnPartAdded(EntityPart part)
+	{
+		UpdateCachedPart(part, removed: false);
+		this.PartAddedEvent?.Invoke(part);
+	}
+
+	void IEntityPartsManagerDelegate.OnPartRemoved(EntityPart part)
+	{
+		UpdateCachedPart(part, removed: true);
+		this.PartRemovedEvent?.Invoke(part);
+	}
+
+	void IEntityPartsManagerDelegate.OnPartPostLoad(EntityPart part)
+	{
+		UpdateCachedPart(part, removed: false);
+	}
+
+	void IEntityPartsManagerDelegate.OnPartsManagerPostLoad(EntityPartsManager manager)
+	{
+		UnitPartInteractions.SetupBlueprintInteractions(this);
+		UnitPartRider unitPartRider = Get<UnitPartRider>();
+		ActivatableAbility fact = ActivatableAbilities.GetFact(BlueprintRoot.Instance.SystemMechanics.MountAbility);
+		if (unitPartRider == null && fact != null && fact.IsOn)
+		{
+			using (ContextData<ActivatableAbility.RemoveBuffImmediately>.Request().Setup(fact))
+			{
+				fact.TurnOffImmediately();
+			}
+		}
+		if (unitPartRider != null && unitPartRider.SaddledUnit == null)
+		{
+			unitPartRider.DismountForce();
+			PFLog.Default.ErrorWithReport($"Removed invalid UnitPartRider ({this})");
+		}
+		UnitPartSaddled unitPartSaddled = Get<UnitPartSaddled>();
+		if (unitPartSaddled != null && unitPartSaddled.Rider?.Get<UnitPartRider>()?.SaddledUnit != this)
+		{
+			unitPartSaddled.ClearAndRemoveSelf();
+			PFLog.Default.ErrorWithReport($"Removed invalid UnitPartSaddled ({this})");
+		}
+	}
+
+	private void UpdateCachedPart(EntityPart part, bool removed)
+	{
+		if (!(part is UnitPartRider unitPartRider))
+		{
+			if (part is UnitPartSaddled unitPartSaddled)
+			{
+				SaddledPart = (removed ? null : unitPartSaddled);
+			}
+		}
+		else
+		{
+			RiderPart = (removed ? null : unitPartRider);
+		}
+	}
+
+	public void Stop()
+	{
+		if (!StopState)
+		{
+			StopState = true;
+			Commands.InterruptAll();
+			CombatState.LastTarget = null;
+			CombatState.ManualTarget = null;
+			this.GetSaddledUnit()?.Stop();
+		}
+	}
+
+	public void CancelStop()
+	{
+		StopState = false;
+		this.GetSaddledUnit()?.CancelStop();
+	}
+
+	public void Hold()
+	{
+		if (!HoldState)
+		{
+			HoldState = true;
+			Commands.InterruptMove();
+			this.GetSaddledUnit()?.Hold();
+		}
+	}
+
+	public void CancelHold()
+	{
+		HoldState = false;
+		this.GetSaddledUnit()?.CancelHold();
+	}
+
+	public void TryCancelCommands()
+	{
+		if (!Commands.IsRunning())
+		{
+			HoldState = false;
+			Commands.InterruptAll();
+			CombatState.LastTarget = null;
+			CombatState.ManualTarget = null;
+			View.MovementAgent.Stop();
+		}
+	}
+
+	public bool IsAbleToAct()
+	{
+		UnitState state = Descriptor.State;
+		bool active = state.Prone.Active;
+		state.Prone.Active = false;
+		bool result = (state.CanActInTurnBased || state.CanMove) && !state.HasCondition(UnitCondition.Prone);
+		state.Prone.Active = active;
+		return result;
+	}
+
+	public bool WillTakeTurn()
+	{
+		if (Descriptor.State.HasCondition(UnitCondition.Dazed))
+		{
+			return false;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.Stunned))
+		{
+			return false;
+		}
+		if (Descriptor.State.IsHelpless)
+		{
+			return false;
+		}
+		if (Descriptor.State.Prone.Active && UnitProneController.ShouldBeProne(this))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	public bool HasControlLossEffects()
+	{
+		if (Descriptor.State.HasCondition(UnitCondition.Confusion))
+		{
+			return true;
+		}
+		if (Descriptor.State.HasCondition(UnitCondition.Frightened))
+		{
+			return true;
+		}
+		foreach (Buff buff in Buffs)
+		{
+			foreach (EntityFactComponent component in buff.Components)
+			{
+				BlueprintComponent sourceBlueprintComponent = component.SourceBlueprintComponent;
+				if (sourceBlueprintComponent is ChangeFaction)
+				{
+					return true;
+				}
+				if (sourceBlueprintComponent is AddCondition addCondition)
+				{
+					if (addCondition.Condition == UnitCondition.CantMove)
+					{
+						return true;
+					}
+					if (addCondition.Condition == UnitCondition.CanNotAttack)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public float GetTimeToNextTurn()
+	{
+		UnitCombatState.Cooldowns cooldown = CombatState.Cooldown;
+		return cooldown.Initiative + Math.Max(cooldown.StandardAction, cooldown.MoveAction);
+	}
+
+	public bool HasFullRoundAction()
+	{
+		if (!UsedStandardAction())
+		{
+			return !UsedOneMoveAction();
+		}
+		return false;
+	}
+
+	public bool HasStandardAction()
+	{
+		if (!UsedStandardAction())
+		{
+			return !UsedTwoMoveAction();
+		}
+		return false;
+	}
+
+	public bool HasMoveAction()
+	{
+		if (UsedStandardAction())
+		{
+			return !UsedOneMoveAction();
+		}
+		return !UsedTwoMoveAction();
+	}
+
+	public bool HasSwiftAction()
+	{
+		return CombatState.Cooldown.SwiftAction <= 0f;
+	}
+
+	public bool UsedStandardAction()
+	{
+		if (!(CombatState.Cooldown.StandardAction > 0f))
+		{
+			return IsStandardActionRestricted();
+		}
+		return true;
+	}
+
+	public bool UsedOneMoveAction()
+	{
+		if (!(CombatState.Cooldown.MoveAction > 0f))
+		{
+			return IsMoveActionRestricted();
+		}
+		return true;
+	}
+
+	public bool UsedTwoMoveAction()
+	{
+		return CombatState.Cooldown.MoveAction > (IsMoveActionRestricted() ? 0f : 3f);
+	}
+
+	public bool IsMoveActionRestricted()
+	{
+		if (!IsSurprising() || IsActingSurpriseCommands())
+		{
+			return Descriptor.State.HasCondition(UnitCondition.Staggered);
+		}
+		return true;
+	}
+
+	public bool IsStandardActionRestricted()
+	{
+		if (!Descriptor.State.HasCondition(UnitCondition.Nauseated))
+		{
+			return Descriptor.State.HasCondition(UnitCondition.CantUseStandardActions);
+		}
+		return true;
+	}
+
+	public bool IsSurprising()
+	{
+		return Game.Instance.TurnBasedCombatController.IsSurprising(this);
+	}
+
+	public bool IsActingSurpriseCommands()
+	{
+		return Game.Instance.TurnBasedCombatController.IsActingSurpriseCommands(this);
+	}
+
+	public IEnumerable<UnitCommand> GetAllCommands()
+	{
+		return Commands.Raw.Concat(Commands.Queue);
+	}
+
+	public bool HasOffensiveCommand(Predicate<UnitCommand> pred = null)
+	{
+		return GetAllCommands().Any((UnitCommand command) => command != null && command.IsOffensiveCommand() && (pred == null || pred(command)));
+	}
+
+	public bool HasSurpriseCommand(Predicate<UnitCommand> pred = null)
+	{
+		return GetAllCommands().Any((UnitCommand command) => command != null && command.IsSurpriseCommand() && (pred == null || pred(command)));
+	}
+
+	public bool IsSummoned()
+	{
+		return Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) is Buff;
+	}
+
+	public bool IsSummoned(out UnitEntityData caster)
+	{
+		caster = (Descriptor.GetFact(BlueprintRoot.Instance.SystemMechanics.SummonedUnitBuff) as Buff)?.Context.MaybeCaster;
+		if (caster != null)
+		{
+			return caster != this;
+		}
+		return false;
+	}
+
+	public bool IsUnseen()
+	{
+		return !Game.Instance.UnitGroups.Any((UnitGroup group) => group.IsEnemy(this) && group.Memory.ContainsVisible(this));
+	}
+
+	public bool IsCurrentUnit()
+	{
+		if (CombatController.Rider != null)
+		{
+			if (!(this == CombatController.Rider))
+			{
+				return this == CombatController.Mount;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public void SpendAction(UnitCommand.CommandType type, bool isFullRound, float timeSinceCommandStart)
+	{
+		if (!IsInCombat)
+		{
+			return;
+		}
+		UnitCombatState.Cooldowns cooldown = CombatState.Cooldown;
+		if (CombatController.IsInTurnBasedCombat())
+		{
+			switch (type)
+			{
+			case UnitCommand.CommandType.Move:
+				cooldown.MoveAction += 3f;
+				break;
+			case UnitCommand.CommandType.Standard:
+				cooldown.StandardAction += 6f;
+				if (isFullRound)
+				{
+					cooldown.MoveAction += 3f;
+				}
+				break;
+			case UnitCommand.CommandType.Swift:
+				cooldown.SwiftAction += 6f;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+			case UnitCommand.CommandType.Free:
+				break;
+			}
+		}
+		else
+		{
+			switch (type)
+			{
+			case UnitCommand.CommandType.Move:
+				cooldown.MoveAction = 3f - timeSinceCommandStart;
+				break;
+			case UnitCommand.CommandType.Standard:
+				cooldown.StandardAction = 6f - timeSinceCommandStart;
+				cooldown.MoveAction = 3f;
+				break;
+			case UnitCommand.CommandType.Swift:
+				cooldown.SwiftAction = 6f - timeSinceCommandStart;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+			case UnitCommand.CommandType.Free:
+				break;
+			}
+		}
+	}
+
+	public bool HasFreeTouch()
+	{
+		return Get<UnitPartTouch>()?.IsCastedInThisRound ?? false;
+	}
+
+	public bool PreparedSpellCombat()
+	{
+		UnitPartMagus unitPartMagus = Get<UnitPartMagus>();
+		if (unitPartMagus != null && unitPartMagus.IsCastMagusSpellInThisRound && unitPartMagus.LastCastedMagusSpellTime > unitPartMagus.LastAttackTime)
+		{
+			return unitPartMagus.CanUseSpellCombatInThisRound;
+		}
+		return false;
+	}
+
+	public bool PreparedSpellStrike()
+	{
+		UnitPartMagus unitPartMagus = Get<UnitPartMagus>();
+		if (unitPartMagus != null && unitPartMagus.IsCastMagusSpellInThisRound && unitPartMagus.LastCastedMagusSpellTime > unitPartMagus.LastAttackTime && unitPartMagus.Spellstrike.Active)
+		{
+			if (!(unitPartMagus.EldritchArcherSpell != null))
+			{
+				AbilityData abilityData = Get<UnitPartTouch>()?.Ability.Data;
+				if ((object)abilityData != null)
+				{
+					return unitPartMagus.IsSpellFromMagusSpellList(abilityData);
+				}
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public void AddBuffDuration(BlueprintBuff blueprint, float duration)
+	{
+		if (Descriptor.GetFact(blueprint) is Buff buff)
+		{
+			buff.EndTime += TimeSpan.FromSeconds(duration);
+			Descriptor.Buffs.UpdateNextEvent();
+		}
+	}
+
+	public void SetBuffDuration(BlueprintBuff blueprint, float duration)
+	{
+		if (Descriptor.GetFact(blueprint) is Buff buff)
+		{
+			buff.EndTime = Game.Instance.TimeController.GameTime + TimeSpan.FromSeconds(duration);
+			Descriptor.Buffs.UpdateNextEvent();
+		}
+	}
+
+	public void PrepareRespec()
+	{
+		Brain.AutoUseAbility = null;
+	}
+
+	public void ReplaceCommands(UnitCommands newCmds)
+	{
+		Commands = newCmds;
+	}
+
+	public void MarkNoExtra()
+	{
+		IsExtra = false;
+	}
+
+	public void MarkExtra()
+	{
+		IsExtra = true;
+	}
+
+	public void MarkAsCloneOfMainCharacter()
+	{
+		m_IsCloneOfManeCharacter = true;
+	}
+
+	public void SetStealthData(UnitStealth stealthDta)
+	{
+		Stealth = stealthDta;
+	}
+
+	public void MarkNotOptimizableInSave(bool aliveOnly = true)
+	{
+		if (OptimizationLevel != OptimizationLevel.Never)
+		{
+			OptimizationLevel = (aliveOnly ? OptimizationLevel.AliveOnly : OptimizationLevel.Never);
+		}
+	}
+
+	protected override void OnMarkedForDestroy()
+	{
+		if (Parts.Get<UnitPartCompanion>() != null)
+		{
+			PFLog.Default.Error($"Trying to destroy {this} who is a companion. Do not do that!");
+		}
+	}
+
+	public void RecreateView()
+	{
+		if (!View)
+		{
+			return;
+		}
+		UnitEntityView unitEntityView = CreateView();
+		if (unitEntityView == null)
+		{
+			return;
+		}
+		foreach (Buff buff in Buffs)
+		{
+			buff.ClearParticleEffect();
+		}
+		UnitEntityView view = View;
+		unitEntityView.UniqueId = base.UniqueId;
+		unitEntityView.transform.SetParent(view.transform.parent, worldPositionStays: false);
+		unitEntityView.transform.position = view.transform.position;
+		unitEntityView.transform.rotation = view.transform.rotation;
+		unitEntityView.DisableSizeScaling = true;
+		unitEntityView.Blueprint = Blueprint;
+		unitEntityView.EnableIK = View.EnableIK;
+		AttachToViewOnLoad(unitEntityView);
+		Commands.InterruptAll((UnitCommand cmd) => !(cmd is UnitMoveTo));
+		Game.Instance.UI.SelectionManager?.ForceCreateMarks();
+		UnityEngine.Object.Destroy(view.gameObject);
+	}
+
+	public void TempUnmount()
+	{
+		m_TempUnmountPet = RiderPart.SaddledUnit;
+		RiderPart.DismountForce();
+	}
+
+	public void RecoveryMount()
+	{
+		if (m_TempUnmountPet != null)
+		{
+			Ensure<UnitPartRider>().Mount(m_TempUnmountPet);
+			m_TempUnmountPet = null;
+		}
+	}
+}

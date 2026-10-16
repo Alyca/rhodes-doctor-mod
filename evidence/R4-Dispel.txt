@@ -1,0 +1,20 @@
+# R4 / 王冠回响筛选证据：什么算“可驱散的法术增益”
+# 来源：游戏本体 ContextActionDispelMagic.TryDispelBuff（ilspycmd 反编译）
+
+# private bool TryDispelBuff(Buff buff, ref int previousRollResult) {
+#   ...
+#   if (unit == null || base.Context.MaybeCaster == null
+#     || buff.IsNotDispelable
+#     || buff.HiddenInInspector
+#     || (m_BuffType == BuffType.FromSpells && !buff.IsFromSpell)
+#     || ...
+#     || (OnlyTargetEnemyBuffs && (buff.Context.MaybeCaster == null
+#         || !buff.Context.MaybeCaster.IsEnemy(base.Context.MaybeCaster))))
+#     return false;
+#   ...
+# }
+# 结论：可驱散 = !IsNotDispelable 且 !HiddenInInspector；
+# 法术增益 = IsFromSpell；
+# 敌方 = Context.MaybeCaster != null 且 IsEnemy(caster)。
+# 本轮 IsStealable 即按此四条 + 非减益实现；无施法者的一律不可偷。
+# 另：Daze 原版增益 Buffs/Daze.jbp = d2e35b870e4ac574d9873b36402487e5（AddCondition Dazed）。

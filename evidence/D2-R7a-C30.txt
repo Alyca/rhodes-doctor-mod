@@ -1,0 +1,15 @@
+# D2 / R7a / C30 证据
+# 来源：游戏本体 Assembly-CSharp.dll（ilspycmd 反编译）
+
+## D2 不引发借机攻击
+# UnitCondition 含 ImmuneToAttackOfOpportunity（与 DisableAttacksOfOpportunity 并列的独立条件）。
+# 本轮迅捷突破 Buff 同挂 BreachStrike + AddCondition(ImmuneToAttackOfOpportunity)，
+# 1 轮、命中后随增益移除，作用范围只管本轮。
+
+## R7a 标记驱散作废
+# 终末狙击标记改用 newRound 结算：标记被驱散则提前消失，newRound 不再触发；
+# 正常到期才触发并在结算后移除标记（命中/隐形哑火均移除）。
+
+## C30 免死一次
+# 原 UnitHealthGuard 在增益期内可反复保命；本轮改用自定义 CivilizationDeathGuard
+# （IUnitDeathPreventionHandler + Data.Used），首次保留 1 生命后不再拦截。

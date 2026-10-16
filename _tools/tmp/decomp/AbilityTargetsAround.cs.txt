@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Kingmaker.Blueprints.JsonSystem;
+using Kingmaker.Designers;
+using Kingmaker.ElementsSystem;
+using Kingmaker.EntitySystem.Entities;
+using Kingmaker.UnitLogic.Abilities.Components.Base;
+using Kingmaker.Utility;
+using UnityEngine;
+
+namespace Kingmaker.UnitLogic.Abilities.Components;
+
+[TypeId("757439ef8cc900741bd9b57bf26eb500")]
+public class AbilityTargetsAround : AbilitySelectTarget, IAbilityAoERadiusProvider
+{
+	[SerializeField]
+	private Feet m_Radius;
+
+	[SerializeField]
+	private TargetType m_TargetType;
+
+	[SerializeField]
+	private bool m_IncludeDead;
+
+	[SerializeField]
+	private ConditionsChecker m_Condition;
+
+	[SerializeField]
+	[Tooltip("Feet per second")]
+	private Feet m_SpreadSpeed;
+
+	public Feet AoERadius => m_Radius;
+
+	public TargetType Targets => m_TargetType;
+
+	public override IEnumerable<TargetWrapper> Select(AbilityExecutionContext context, TargetWrapper anchor)
+	{
+		IEnumerable<UnitEntityData> source = GameHelper.GetTargetsAround(anchor.IsUnit ? anchor.Unit.EyePosition : anchor.Point, m_Radius, checkLOS: true, m_IncludeDead);
+		if (context.MaybeCaster == null)
+		{
+			PFLog.Default.Error("Caster is missing");
+			return Enumerable.Empty<TargetWrapper>();
+		}
+		switch (Targets)
+		{
+		case TargetType.Enemy:
+			source = source.Where(context.MaybeCaster.IsEnemy);
+			break;
+		case TargetType.Ally:
+			source = source.Where(context.MaybeCaster.IsAlly);
+			break;
+		case TargetType.Any:
+			if (context.HasMetamagic(Metamagic.Selective) && !m_Condition.HasIsAllyCondition())
+			{
+				source = source.Where(context.MaybeCaster.IsEnemy);
+			}
+			break;
+		default:
+			throw new ArgumentOutOfRangeException();
+		}
+		if (!context.AbilityBlueprint.CanTargetFriends)
+		{
+			source = source.Where((UnitEntityData t) => t.IsPlayerFaction || context.Caster.CanAttack(t));
+		}
+		if (m_Condition.HasConditions)
+		{
+			source = source.Where(delegate(UnitEntityData u)
+			{
+				using (context.GetDataScope(u))
+				{
+					return m_Condition.Check();
+				}
+			}).ToList();
+		}
+		return source.Select((UnitEntityData u) => new TargetWrapper(u));
+	}
+
+	public override Feet GetSpreadSpeed()
+	{
+		return m_SpreadSpeed;
+	}
+
+	public bool WouldTargetUnit(AbilityData ability, Vector3 targetPos, UnitEntityData unit)
+	{
+		return unit.IsUnitInRange(targetPos, AoERadius.Meters);
+	}
+}

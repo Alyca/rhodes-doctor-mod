@@ -1,0 +1,110 @@
+{
+  "AssetId": "eff3b63f744868845a2f511e9929f0de",
+  "SourcePath": "Classes/Paladin/HolyChampion.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$BonusAttacksOfOpportunity$b348c4d7-7011-41a3-918e-6f361907262c",
+      "$AddDamageResistance$5cb1cb45-a4fc-4355-9466-daccbf786e9c",
+      "$AutoMetamagicOnSpellList$dec6c702-4718-43d2-ac5d-c379f20f3170"
+    ],
+    "Components": [
+      {
+        "$type": "c4475440f92900445aefbb18cfd9215e, AddDamageResistancePhysical",
+        "name": "$AddDamageResistance$5cb1cb45-a4fc-4355-9466-daccbf786e9c",
+        "m_Overrides": [],
+        "Value": {
+          "ValueType": "Simple",
+          "Value": 10,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null
+        },
+        "UsePool": false,
+        "Pool": {
+          "ValueType": "Simple",
+          "Value": 12,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null
+        },
+        "Or": false,
+        "BypassedByMaterial": false,
+        "Material": "Adamantite",
+        "BypassedByForm": false,
+        "Form": 0,
+        "BypassedByMagic": false,
+        "MinEnhancementBonus": 1,
+        "BypassedByAlignment": true,
+        "Alignment": "Evil",
+        "BypassedByReality": false,
+        "Reality": "Ghost",
+        "BypassedByWeaponType": false,
+        "m_WeaponType": null,
+        "BypassedByMeleeWeapon": false,
+        "BypassedByEpic": false,
+        "m_CheckedFactMythic": null
+      },
+      {
+        "$type": "b51a712035f3d98459e516a34fda37bf, AutoMetamagic",
+        "name": "$AutoMetamagicOnSpellList$dec6c702-4718-43d2-ac5d-c379f20f3170",
+        "m_Overrides": [],
+        "m_AllowedAbilities": "Any",
+        "Metamagic": "Maximize",
+        "Abilities": [
+          "!bp_caae1dc6fcf7b37408686971ee27db13",
+          "!bp_8d6073201e5395d458b8251386d72df1",
+          "!bp_cc17243b2185f814aa909ac6b6599eaa",
+          "!bp_0c0cf7fcb356d2448b7d57f2c4db3c0c",
+          "!bp_4937473d1cfd7774a979b625fb833b47",
+          "!bp_6670f0f21a1d7f04db2b8b115e8e6abf",
+          "!bp_8337cea04c8afd1428aad69defbfc365"
+        ],
+        "Descriptor": {
+          "m_IntValue": 0
+        },
+        "Once": false,
+        "MaxSpellLevel": 0,
+        "School": "None",
+        "CheckSpellbook": false,
+        "m_Spellbook": null
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "90a02caf-465d-4c9f-a652-02cae6a4dd70",
+      "m_OwnerString": "eff3b63f744868845a2f511e9929f0de",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/HolyChampion_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "9c451421-a04c-479e-969a-beee9b8bd19b",
+      "m_OwnerString": "eff3b63f744868845a2f511e9929f0de",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/HolyChampion_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": null,
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

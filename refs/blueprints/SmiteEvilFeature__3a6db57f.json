@@ -1,0 +1,79 @@
+{
+  "AssetId": "3a6db57fce75b0244a6a5819528ddf26",
+  "SourcePath": "Classes/Paladin/SmiteEvil/SmiteEvilFeature.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+      "$AddAbilityResources$a3f77df7-bc1d-45b5-859c-7eee7b845508"
+    ],
+    "Components": [
+      {
+        "$type": "d79ad4ed064aa4f43ace0e9c238fb9b9, AddFacts",
+        "name": "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+        "m_Overrides": [],
+        "m_Facts": [
+          "!bp_7bb9eb2042e67bf489ccd1374423cdec"
+        ],
+        "Dummy": null,
+        "CasterLevel": 0,
+        "DoNotRestoreMissingFacts": false,
+        "HasDifficultyRequirements": false,
+        "InvertDifficultyRequirements": false,
+        "MinDifficulty": "Story"
+      },
+      {
+        "$type": "fd82ca085bd60c04fb03d1091acc66cb, AddAbilityResources",
+        "name": "$AddAbilityResources$a3f77df7-bc1d-45b5-859c-7eee7b845508",
+        "m_Overrides": [],
+        "UseThisAsResource": false,
+        "m_Resource": "!bp_b4274c5bb0bf2ad4190eb7c44859048b",
+        "Amount": 0,
+        "RestoreAmount": false,
+        "RestoreOnLevelUp": false
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "0a803da5-5ff9-4891-8cc3-a7cf955e2d81",
+      "m_OwnerString": "3a6db57fce75b0244a6a5819528ddf26",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/SmiteEvil/SmiteEvilFeature_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "609044f14605f5a4a9628319fcfab6ec",
+        "stringkey": "0b2cb4d4-48e0-4dd2-8a72-bf82dd224682"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "14b8937cec1233349a9d0d7044323cc2",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": [
+      "!bp_7e5b63faeca24474db0bfd019167dda4"
+    ]
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "AssetId": "e5a6a91529eedc147a5ad18200ffc16c",
+  "SourcePath": "Units/NPC/Unique/Act_5_HeraldOfTheIvoryLabyrinth/FinneanLab/AnimatedWeapons/AnimatedWeaponEnchantmentBuff.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$AddInitiatorAttackWithWeaponTrigger$dbc51be1-c7ae-4a79-a592-8a98cf5dc01c",
+      "$WeaponTypeCriticalEdgeIncreaseStackable$b8f56612-1fd3-4002-ae48-4f729b6ec990",
+      "$BuffEnchantAnyWeapon$a53f6412-b392-4d47-b48b-06ac0f70ccfd",
+      "$BuffEnchantAnyWeapon$915c52d3-17ea-4630-95e7-3980623f5be1",
+      "$ContextCalculateAbilityParams$898618d1-24ff-484d-aef1-6d05b751960f"
+    ],
+    "Components": [
+      {
+        "$type": "bdbdc2afaa197d4479e112a32f9bdab5, AddInitiatorAttackWithWeaponTrigger",
+        "m_Flags": 0,
+        "name": "$AddInitiatorAttackWithWeaponTrigger$dbc51be1-c7ae-4a79-a592-8a98cf5dc01c",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "WaitForAttackResolve": false,
+        "OnlyHit": true,
+        "OnMiss": false,
+        "OnlyOnFullAttack": false,
+        "OnlyOnFirstAttack": false,
+        "OnlyOnFirstHit": false,
+        "CriticalHit": true,
+        "OnAttackOfOpportunity": false,
+        "NotCriticalHit": false,
+        "OnlySneakAttack": false,
+        "NotSneakAttack": false,
+        "m_WeaponType": "!bp_d56c44bc9eb10204c8b386a02c7eed21",
+        "CheckWeaponCategory": false,
+        "Category": "UnarmedStrike",
+        "CheckWeaponGroup": false,
+        "Group": "None",
+        "CheckWeaponRangeType": false,
+        "RangeType": "Melee",
+        "ActionsOnInitiator": false,
+        "ReduceHPToZero": false,
+        "DamageMoreTargetMaxHP": false,
+        "CheckDistance": false,
+        "DistanceLessEqual": {
+          "m_Value": 0.0
+        },
+        "AllNaturalAndUnarmed": false,
+        "DuelistWeapon": false,
+        "NotExtraAttack": false,
+        "OnCharge": false,
+        "IgnoreAutoHit": false,
+        "Action": {
+          "Actions": [
+            {
+              "$type": "5e2f2046f3bd6984c8833bf019c8e8ad, ContextActionSavingThrow",
+              "name": "$ContextActionSavingThrow$01f849fd-1a1d-4b87-8a24-04ba2b3a2bce",
+              "Type": "Fortitude",
+              "FromBuff": false,
+              "m_ConditionalDCIncrease": [],
+              "HasCustomDC": false,
+              "CustomDC": {
+                "ValueType": "Simple",
+                "Value": 0,
+                "ValueRank": "Default",
+                "ValueShared": "Damage",
+                "Property": "None",
+                "m_CustomProperty": null
+              },
+              "Actions": {
+                "Actions": [
+                  {
+                    "$type": "d61949c589ee885458c9439b2aa202b6, ContextActionConditionalSaved",
+                    "name": "$ContextActionConditionalSaved$86f86adb-5d07-41a5-a695-307c1312bdeb",
+                    "Succeed": {
+                      "Actions": []
+                    },
+                    "Failed": {
+                      "Actions": [
+                        {
+                          "$type": "5d13a597de91e4746b804f8233518523, ContextActionApplyBuff",
+                          "name": "$ContextActionApplyBuff$1fadd32e-3c53-4ee8-80f4-db27e35050bb",
+                          "m_Buff": "!bp_0ec36e7596a4928489d2049e1e1c76a7",
+                          "Permanent": false,
+                          "UseDurationSeconds": false,
+                          "DurationValue": {
+                            "Rate": "Rounds",
+                            "DiceType": "D4",
+                            "DiceCountValue": {
+                              "ValueType": "Simple",
+                              "Value": 1,
+                              "ValueRank": "Default",
+                              "ValueShared": "Damage",
+                              "Property": "None",
+                              "m_CustomProperty": null
+                            },
+                            "BonusValue": {
+                              "ValueType": "Simple",
+                              "Value": 0,
+                              "ValueRank": "Default",
+                              "ValueShared": "Damage",
+                              "Property": "None",
+                              "m_CustomProperty": null
+                            },
+                            "m_IsExtendable": true
+                          },
+                          "DurationSeconds": 0.0,
+                          "IsFromSpell": false,
+                          "IsNotDispelable": false,
+                          "ToCaster": false,
+                          "AsChild": true,
+                          "SameDuration": false
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "$type": "ce3d90b3cfa65eb418d4fd6388c1cd3c, WeaponCriticalEdgeIncreaseStackable",
+        "m_Flags": 0,
+        "name": "$WeaponTypeCriticalEdgeIncreaseStackable$b8f56612-1fd3-4002-ae48-4f729b6ec990",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "IncludeCategories": [
+          "Longsword",
+          "Longbow",
+          "DwarvenWaraxe",
+          "Bardiche"
+        ],
+        "ExcludeCategories": [],
+        "IncludeAttackTypes": [],
+        "ExcludeAttackTypes": [],
+        "Value": 2
+      },
+      {
+        "$type": "46d5d055b1ea8b14eb95c5032ade308c, BuffEnchantAnyWeapon",
+        "m_Flags": 0,
+        "name": "$BuffEnchantAnyWeapon$a53f6412-b392-4d47-b48b-06ac0f70ccfd",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_EnchantmentBlueprint": "!bp_f1c0c50108025d546b2554674ea1c006",
+        "Slot": "PrimaryHand"
+      },
+      {
+        "$type": "46d5d055b1ea8b14eb95c5032ade308c, BuffEnchantAnyWeapon",
+        "m_Flags": 0,
+        "name": "$BuffEnchantAnyWeapon$915c52d3-17ea-4630-95e7-3980623f5be1",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "m_EnchantmentBlueprint": "!bp_e1d6f5e3cd3855b43a0cb42f6c747e1c",
+        "Slot": "PrimaryHand"
+      },
+      {
+        "$type": "c1058e0291443ae4390e0b4b94ca93dd, ContextCalculateAbilityParams",
+        "m_Flags": 0,
+        "name": "$ContextCalculateAbilityParams$898618d1-24ff-484d-aef1-6d05b751960f",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "UseKineticistMainStat": false,
+        "StatType": "Strength",
+        "StatTypeFromCustomProperty": false,
+        "m_CustomProperty": null,
+        "ReplaceCasterLevel": false,
+        "CasterLevel": {
+          "ValueType": "Simple",
+          "Value": 0,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null
+        },
+        "ReplaceSpellLevel": false,
+        "SpellLevel": {
+          "ValueType": "Simple",
+          "Value": 0,
+          "ValueRank": "Default",
+          "ValueShared": "Damage",
+          "Property": "None",
+          "m_CustomProperty": null
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "ee472b3a59a8caa48b9d468b7a36fe9c",
+        "stringkey": "855ba6a8-013f-4878-a845-eb6dabe054fe"
+      }
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "2d634f5905aea6b458fd2affe0b696cf",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": 0,
+    "Stacking": "Replace",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": null,
+    "FxOnRemove": null,
+    "ResourceAssetIds": []
+  }
+}

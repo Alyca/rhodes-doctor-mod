@@ -1,0 +1,64 @@
+{
+  "AssetId": "9f13fdd044ccb8a439f27417481cb00e",
+  "SourcePath": "Classes/Paladin/SmiteEvil/AuraOfJusticeFeature.jbp",
+  "Data": {
+    "$type": "cb208b98ceacca84baee15dba53b1979, BlueprintFeature",
+    "PrototypeLink": null,
+    "m_Overrides": [
+      "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+      "$AddAbilityResources$a3f77df7-bc1d-45b5-859c-7eee7b845508"
+    ],
+    "Components": [
+      {
+        "$type": "d79ad4ed064aa4f43ace0e9c238fb9b9, AddFacts",
+        "name": "$AddFacts$e4eb907e-f159-435f-90ea-e134077206d1",
+        "m_Overrides": [],
+        "m_Facts": [
+          "!bp_7a4f0c48829952e47bb1fd1e4e9da83a"
+        ],
+        "Dummy": null,
+        "CasterLevel": 0,
+        "DoNotRestoreMissingFacts": false,
+        "HasDifficultyRequirements": false,
+        "InvertDifficultyRequirements": false,
+        "MinDifficulty": "Story"
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "dd7808c2-bb6d-4138-a568-1a3a92f254c4",
+      "m_OwnerString": "9f13fdd044ccb8a439f27417481cb00e",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/SmiteEvil/AuraOfJusticeFeature_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "9bbaa568-6004-468e-a712-108565d4666c",
+      "m_OwnerString": "9f13fdd044ccb8a439f27417481cb00e",
+      "m_OwnerPropertyPath": "m_Description",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Classes/Paladin/SmiteEvil/AuraOfJusticeFeature_m_Description.json",
+      "Shared": null
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "7f1b2c99decf9f441b7a9281d8ce3733",
+      "fileid": 21300000
+    },
+    "HideInUI": false,
+    "HideInCharacterSheetAndLevelUp": false,
+    "HideNotAvailibleInUI": false,
+    "DlcType": "None",
+    "Groups": [],
+    "Ranks": 1,
+    "ReapplyOnLevelUp": false,
+    "IsClassFeature": true,
+    "IsPrerequisiteFor": null
+  }
+}

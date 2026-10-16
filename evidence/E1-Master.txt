@@ -1,0 +1,28 @@
+# E1 证据：动物伙伴算“有主人”，召唤物不走 Master
+# 来源：游戏本体 Assembly-CSharp.dll（ilspycmd 反编译）
+
+## UnitEntityData.Master（游戏本体）
+# public UnitEntityData Master {
+#   get {
+#     object obj = Get<UnitPartPet>()?.Master;
+#     if (obj == null) {
+#       UnitEntityData entity = PreviewOf.Entity;
+#       if ((object)entity == null) return null;
+#       obj = entity.Master;
+#     }
+#     return (UnitEntityData)obj;
+#   }
+# }
+# 结论：Master 只看 UnitPartPet（宠物：动物伙伴/宠物）。动物伙伴算“有主人”。
+
+## 召唤物走 UnitPartSummonedMonster（游戏本体 RuleSummonUnit.OnTrigger）
+# unitEntityData.Ensure<UnitPartSummonedMonster>().Init(DoNotLinkToCaster ? unitEntityData : Initiator);
+# public class UnitPartSummonedMonster : OldStyleUnitPart {
+#   [JsonProperty] private UnitReference m_Summoner;
+#   public UnitEntityData Summoner => m_Summoner;
+# }
+# 结论：召唤物用 Get<UnitPartSummonedMonster>() != null 判，不用 Master。
+# R6 已按此改：复活排除用 SummonedMonster，活体恢复不再排除召唤物/宠物。
+
+## UnitPartPetMaster（宠物主人侧，仅佐证宠物体系独立）
+# public class UnitPartPetMaster : UnitPart { ... m_Pets / m_ExPets ... }

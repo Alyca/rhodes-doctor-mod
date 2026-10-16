@@ -1,0 +1,161 @@
+{
+  "AssetId": "d2e35b870e4ac574d9873b36402487e5",
+  "SourcePath": "Buffs/Daze.jbp",
+  "Data": {
+    "$type": "618a7e0d54149064ab3ffa5d9057362c, BlueprintBuff",
+    "PrototypeLink": "",
+    "m_Overrides": [
+      "$AddCondition$d4c850d9-7278-4aa1-993a-67f3d85879da",
+      "$SpellDescriptorComponent$7ee648b8-4d79-4786-a729-94ab70a97e59",
+      "$AddFactContextActions$15659e10-24f4-4abf-8e0a-1cd420d591c6",
+      "$CombatStateTrigger$7c79cfe3-4cf3-41ec-bfe7-8aff33fc6f27"
+    ],
+    "Components": [
+      {
+        "$type": "4c36aacebf153574eb39757fc3965edb, AddCondition",
+        "m_Flags": 0,
+        "name": "$AddCondition$d4c850d9-7278-4aa1-993a-67f3d85879da",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Condition": "Dazed",
+        "Exceptions": null
+      },
+      {
+        "$type": "91216784d99a12e428bf782c8a8c7f5c, SpellDescriptorComponent",
+        "m_Flags": 0,
+        "name": "$SpellDescriptorComponent$7ee648b8-4d79-4786-a729-94ab70a97e59",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Descriptor": {
+          "m_IntValue": 16842832
+        }
+      },
+      {
+        "$type": "25d172d2be8f52f468b2050d14d59806, AddFactContextActions",
+        "m_Flags": 0,
+        "name": "$AddFactContextActions$15659e10-24f4-4abf-8e0a-1cd420d591c6",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "Activated": {
+          "Actions": [
+            {
+              "$type": "120df4726e71c854e95f84b87a99a3c5, ContextActionSpawnFx",
+              "name": "$ContextActionSpawnFx$a4f077dc-c217-4430-a0e2-bce2fd7a5750",
+              "PrefabLink": {
+                "AssetId": "28b3cd92c1fdc194d9ee1e378c23be6b"
+              }
+            }
+          ]
+        },
+        "Deactivated": {
+          "Actions": []
+        },
+        "NewRound": {
+          "Actions": []
+        }
+      },
+      {
+        "$type": "dbb7058d31be12446942310a6ab86b83, CombatStateTrigger",
+        "m_Flags": 0,
+        "name": "$CombatStateTrigger$7c79cfe3-4cf3-41ec-bfe7-8aff33fc6f27",
+        "PrototypeLink": {
+          "guid": "",
+          "name": ""
+        },
+        "m_Overrides": [],
+        "CombatStartActions": {
+          "Actions": []
+        },
+        "CombatEndActions": {
+          "Actions": [
+            {
+              "$type": "52d8973f2e470e14c97b74209680491a, Conditional",
+              "name": "$Conditional$d0582c2f-f218-4887-9f65-f89a5a9f4eb5",
+              "Comment": "",
+              "ConditionsChecker": {
+                "Operation": "And",
+                "Conditions": [
+                  {
+                    "$type": "60413a6d9c4dca742bcb441dabdbe47f, ContextConditionDifficultyHigherThan",
+                    "name": "$ContextConditionDifficultyHigherThan$7915b60d-d6a8-4e12-a867-ca36cbdfe82a",
+                    "Not": false,
+                    "Less": true,
+                    "Reverse": false,
+                    "CheckOnlyForMonster": false,
+                    "m_Difficulty": {
+                      "guid": "314181c8e4a54184eb10adcb0f90ecbc",
+                      "fileid": 11400000
+                    }
+                  }
+                ]
+              },
+              "IfTrue": {
+                "Actions": [
+                  {
+                    "$type": "1e0ebe55f7204066b7cdb0eb124b863a, ContextActionRemoveSelf",
+                    "name": "$ContextActionRemoveSelf$1c3a4318-dcfc-4334-8598-a62a378f3a0d"
+                  }
+                ]
+              },
+              "IfFalse": {
+                "Actions": []
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "Comment": "",
+    "m_AllowNonContextActions": false,
+    "m_DisplayName": {
+      "m_Key": "d2e596f4-77eb-4081-9417-e1ea02e828e8",
+      "m_OwnerString": "d2e35b870e4ac574d9873b36402487e5",
+      "m_OwnerPropertyPath": "m_DisplayName",
+      "m_JsonPath": "Strings/Mechanics/Blueprints/Buffs/Daze_m_DisplayName.json",
+      "Shared": null
+    },
+    "m_Description": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": {
+        "assetguid": "fab15c6b608b5dc4da2c1c12cf8bd8da",
+        "stringkey": "e57cd725-6681-4e25-85c0-b18fd92c5ebb"
+      }
+    },
+    "m_DescriptionShort": {
+      "m_Key": "",
+      "m_OwnerString": "",
+      "m_OwnerPropertyPath": "",
+      "m_JsonPath": "",
+      "Shared": null
+    },
+    "m_Icon": {
+      "guid": "60fe3c2dbd23eae45843f2334f960ec5",
+      "fileid": 21300000
+    },
+    "IsClassFeature": false,
+    "m_Flags": 0,
+    "Stacking": "Prolong",
+    "Ranks": 0,
+    "TickEachSecond": false,
+    "Frequency": "Rounds",
+    "FxOnStart": {
+      "AssetId": "396af91a93f6e2b468f5fa1a944fae8a"
+    },
+    "FxOnRemove": null,
+    "ResourceAssetIds": [
+      "396af91a93f6e2b468f5fa1a944fae8a"
+    ]
+  }
+}
