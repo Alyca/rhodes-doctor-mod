@@ -421,8 +421,8 @@
   },
   {
     "Key": "rhodesdoctor.spell.SuppressingShot.desc",
-    "zhCN": "你以精准的火力牵制目标。若目标{g|Encyclopedia:Saving_Throw}意志豁免{/g}失败，其下一次{g|Encyclopedia:Attack}攻击检定{/g}承受 -1 {g|Encyclopedia:Penalty}减值{/g}；若该次攻击的目标是除你以外的其他生物，则该{g|Encyclopedia:Penalty}减值{/g}变为 -2。",
-    "enGB": "You harry the target with suppressing fire. On a failed {g|Encyclopedia:Saving_Throw}Will save{/g}, the target takes a -1 {g|Encyclopedia:Penalty}penalty{/g} on its next {g|Encyclopedia:Attack}attack roll{/g}, or a -2 {g|Encyclopedia:Penalty}penalty{/g} if it attacks any creature other than you."
+    "zhCN": "你以精准的火力牵制目标。其下一次{g|Encyclopedia:Attack}攻击检定{/g}承受 -1 {g|Encyclopedia:Penalty}减值{/g}；若该次攻击的目标是除你以外的其他生物，则该{g|Encyclopedia:Penalty}减值{/g}变为 -2。",
+    "enGB": "You harry the target with suppressing fire. The target takes a -1 {g|Encyclopedia:Penalty}penalty{/g} on its next {g|Encyclopedia:Attack}attack roll{/g}, or a -2 {g|Encyclopedia:Penalty}penalty{/g} if it attacks any creature other than you."
   },
   {
     "Key": "rhodesdoctor.spell.EmergencyExtraction.name",

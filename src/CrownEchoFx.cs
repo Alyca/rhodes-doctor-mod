@@ -7,7 +7,7 @@
 //      纤细优美的五尖冠冕轮廓 + 冠心悬浮白金菱形晶核，周身缠绕着升腾的微尘光晕。
 //   2. 60 尺【全战场粉红微尘涟漪（Pink Dust Waves）】：
 //      三道如水面轻漾的宽幅粉红与白金色宏大涟漪自中心缓出扩散至全场（18.3 米），
-//      伴随 28 团在空间中缓缓漂浮、升腾、律动的粉红微尘星芒群，营造特雷西娅专属的幽邃与神圣感。
+//      伴随 36 缕自黑冠旋出、星系臂般舒展摇曳的拖尾星尘，营造特雷西娅专属的幽邃与神圣感。
 //   3. 敌方【增益消散微尘灵涡】：
 //      范围内每个敌方目标周身绽开柔和的粉红微尘环与向上升腾的光屑，
 //      象征其身上的法术增益化作情感与记忆的粉红微尘，消散于天地间。
@@ -31,7 +31,6 @@ namespace RhodesDoctor
 
     internal const float DefaultRadius = 18.288f; // 60 尺 ≈ 18.3 米
     internal const int MaxEnemiesReact = 10;
-    internal const int DustMoteCount = 28; // 全场漂浮粉红微尘星芒数量
 
     /// <summary>获取 60 尺内活着、可见的敌方单位（用于消散微尘演出，隐形的不标避免透视）。</summary>
     internal static List<UnitEntityData> GetEnemiesInRange(UnitEntityData caster, float range)

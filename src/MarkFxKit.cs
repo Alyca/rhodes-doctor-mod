@@ -168,7 +168,11 @@ namespace RhodesDoctor
       }
     }
 
-    private void OnDestroy() => _tracker?.Forget(Unit, this);
+    /// <summary>
+    /// Unity 生命周期：销毁时从 Tracker 的 _live 字典中移除自身。
+    /// 派生类若需要自定义清理（如销毁材质实例），应 override 并在结尾调用 base.OnDestroy()。
+    /// </summary>
+    protected virtual void OnDestroy() => _tracker?.Forget(Unit, this);
   }
 
   internal static class MarkFxKit
@@ -274,6 +278,7 @@ namespace RhodesDoctor
       BattlefieldSurveyFx.Tracker.Added(buff);
       SuppressingShotFx.Tracker.Added(buff);
       SinPunishmentFx.Tracker.Added(buff);
+      UnstablePlasmaFx.Tracker.Added(buff);
     }
 
     public void HandleBuffDidRemoved(Buff buff)
@@ -283,6 +288,8 @@ namespace RhodesDoctor
       BattlefieldSurveyFx.Tracker.Removed(buff);
       SuppressingShotFx.Tracker.Removed(buff);
       SinPunishmentFx.Tracker.Removed(buff);
+      UnstablePlasmaFx.Tracker.Removed(buff);
     }
   }
 }
+

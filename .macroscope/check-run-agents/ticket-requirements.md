@@ -66,14 +66,16 @@ For every requirement and change:
 - Are exceptions in event handlers wrapped so they don't break subsequent game logic?
 - Are created GameObjects destroyed cleanly on timeout, target death, or buff expiration?
 
-### Phase 3.1: Special Directive for Visual Effect Redesign
+### Phase 3.1: Full Reset Delegation (Unstable Plasma)
 
-The author requested Macroscope to redesign all 3 visual effects:
-1. `src/SuppressingShotFx.cs` (Kroos double-tap bolt tracers with tail fade + 300° rotating halo and snap-in reticle) - ✅ Redesigned by Macroscope & applied.
-2. `src/CrownEchoFx.cs` (Theresa's harmonic ripples with interlocking crests, 36 stardust comet trails, concave-peak Black Crown, unwinding enemy vortex) - ✅ Redesigned by Macroscope & applied.
-3. `src/SinPunishmentFx.cs` (Penance's 3D chamfered gavel rig with solemn pivot cadence, counter-rotating thorn seal, and 3x scale smite with camera flash) - ✅ Redesigned by Macroscope & applied.
+The author has rejected the previous line-based `src/UnstablePlasmaFx.cs` and all prior visual specs for it. The old `docs/fx-rework-prompt-unstable-plasma.md` is void; do not use it to enforce geometry, timing, or `LineRenderer` requirements.
 
-Verify that all three redesigned files adhere to the mathematical and visual specifications in `docs/fx-rework-prompt-3spells.md`, compile cleanly, properly manage GameObjects, and follow safe lifecycle and cleanup patterns.
+This file is a full-reset task delegated entirely to Macroscope. Macroscope owns the new visual design and implementation. Do not post incremental fixes against the old file and do not treat any prior run's visual requirements as binding.
+
+Only verify the non-negotiable boundaries:
+- The new effect must not be a line / wireframe / ribbon-led look (`LineRenderer` / `TrailRenderer` not used as the primary visual).
+- It must remain self-drawn: no vanilla particle prefabs, no `Shader.Find`; use the project's proven mesh/quad + cloned-material path.
+- Preserve `UnstablePlasmaFx.Tracker` and `UnstablePlasmaAnim : MarkFxBase`, zero per-frame GC, the 0.3s `Master` fade, and clean destruction.
 
 ### Phase 4: Reporting Findings
 

@@ -873,17 +873,24 @@ namespace RhodesDoctor.Components
     public void OnEventDidTrigger(RuleAttackRoll evt) { }
   }
 
+  /// <summary>R1：牵制射击下一次攻击消耗状态的每效果存档。</summary>
+  public class SuppressingShotDebuffData
+  {
+    [JsonProperty] public bool Used;
+  }
+
   /// <summary>
   /// R5：牵制射击（设计文档第 81 行）：目标下一次攻击 −1；若本轮攻击你（博士）以外的生物，改为 −2。
-  /// 挂在目标敌人身上（攻击者）。按攻击对象区分罚值，只作用于下一次攻击（结算后移除）。
-  /// 无运行时字段（罚值现算、一次后移除），不违反 R1。
+  /// 挂在目标敌人身上（攻击者）。按攻击对象区分罚值，只作用于下一次攻击（标记 Used，整轮保持压制锁定视觉与图标）。
+  /// 数据存 SuppressingShotDebuffData，不违反 R1。
   /// </summary>
-  public class SuppressingShotDebuff : UnitBuffComponentDelegate,
+  public class SuppressingShotDebuff : UnitBuffComponentDelegate<SuppressingShotDebuffData>,
       IInitiatorRulebookHandler<RuleCalculateAttackBonus>,
       IInitiatorRulebookHandler<RuleAttackRoll>
   {
     public void OnEventAboutToTrigger(RuleCalculateAttackBonus evt)
     {
+      if (Data.Used) return;
       var caster = Context?.MaybeCaster;
       if (caster == null) return;
       // 攻击博士本人：−1；攻击其他生物：−2。
@@ -894,7 +901,11 @@ namespace RhodesDoctor.Components
 
     public void OnEventAboutToTrigger(RuleAttackRoll evt) { }
 
-    public void OnEventDidTrigger(RuleAttackRoll evt) => (Fact as Buff)?.Remove();
+    public void OnEventDidTrigger(RuleAttackRoll evt)
+    {
+      if (Data.Used) return;
+      Data.Used = true;
+    }
   }
 
   /// <summary>R1：炮火延伸落点/DC 的每效果存档（原 Point/SaveDC 写在蓝图字段上，共用且读档清零）。</summary>
