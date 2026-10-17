@@ -74,7 +74,7 @@ This file is a full-reset task delegated entirely to Macroscope. Macroscope owns
 
 Only verify the non-negotiable boundaries:
 - The new effect must not be a line / wireframe / ribbon-led look (`LineRenderer` / `TrailRenderer` not used as the primary visual).
-- It must remain self-drawn: no vanilla particle prefabs, no `Shader.Find`; use the project's proven mesh/quad + cloned-material path.
+- Vanilla particle prefabs are allowed; the preferred direction is the original blood-mist-wrapping-body look (`FxLibrary.PlasmaAura` via `TintedAuraFx`). Do not use `Shader.Find`; mesh/quad accents are optional.
 - Preserve `UnstablePlasmaFx.Tracker` and `UnstablePlasmaAnim : MarkFxBase`, zero per-frame GC, the 0.3s `Master` fade, and clean destruction.
 
 ### Phase 4: Reporting Findings

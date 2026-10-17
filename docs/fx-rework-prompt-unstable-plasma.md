@@ -7,7 +7,7 @@
 
 ## 不可协商的边界（仅此而已）
 - 不要线条 / 线框 / 细带式主视觉（不以 `LineRenderer` / `TrailRenderer` 作为画面主体）。
-- 自绘：不借原版粒子 prefab，不用 `Shader.Find`；沿用项目已验证的网格/面片 + 克隆材质路径。
+- 允许借用原版粒子；优先“血雾缠身”的原版血雾氛围（`FxLibrary.PlasmaAura` 经 `TintedAuraFx` 克隆重染这条已验证路线），不用 `Shader.Find`；网格/面片可作为增强。
 - 保留 `UnstablePlasmaFx.Tracker`、`UnstablePlasmaAnim : MarkFxBase` 的接入契约，零运行时 GC，`Master` 0.3s 淡出，完整销毁。
 
 除此之外，视觉语言与实现方式由 Macroscope 全权决定。
