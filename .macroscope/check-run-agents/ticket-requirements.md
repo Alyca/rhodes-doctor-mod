@@ -150,35 +150,32 @@ The author has tested the previous implementation in game and is **completely un
 The temporary borrowed blood haze aura (FxLibrary.PlasmaAura) tinted dark smoke has been completely removed from src/TintedAuraFx.cs.
 Macroscope is tasked with generating and completing the self-drawn implementation in src/SpecterFormFx.cs as specified in docs/fx-rework-prompt-specter-of-babel.md.
 
-**CRITICAL MANDATE — Lord of Originium & Specter of Babel (源石主宰者与巴别塔恶灵):**
-1. **Color Palette & Anti-Transparency Under Additive Shader**:
-   - In Additive blending, pure black is completely transparent! Originium Obsidian (`OriginiumObsidian`) MUST be paired with dark gold / neural violet edge halos to ensure solid geometric presence.
-   - Contrast `OriginiumGold` (blazing originium gold for agile streams & impulses), `NeuralViolet` (deep mental violet for enduring crystalline walls & gravity ripples), and `CrownPlatinum` (civilization platinum for the overhead crown core).
-   - Solid geometric presence and line width scaled for 45° isometric camera; strictly avoid hollow, paper-thin wireframes.
-2. **Four Animation Components (`src/SpecterFormFx.cs`)**:
-   - **Form Activation Instant (`SpecterActivateAnim : MonoBehaviour`, ~0.8s)**:
-     - Chest and ground originium neural synapses violently radiating outwards.
-     - Overhead spatial rift tearing open as the pre-civilization black crown mental phantasm manifests.
-     - Auto-destroyed upon completion.
-   - **Form Sustained Follow (`SpecterFormAnim : MarkFxBase`)**:
-     - Follows the doctor throughout Agile/Enduring form buff lifetime.
-     - Overhead rotating 3D pre-civilization Black Crown (Civilization's Continuity) phantasm dripping subtle luminous mental particles downwards.
-     - Ground and surrounding pulsing originium neural synapse network:
-       - Agile Form (`IsAgile = true`): Blazing originium gold current streams and swift energy impulses.
-       - Enduring Form (`IsAgile = false`): Deep neural violet crystalline walls and gravity field ripples.
-     - Smooth 0.3s fadeout upon buff expiration or early cancellation.
-   - **Form Deactivation Instant (`SpecterDeactivateAnim : MonoBehaviour`, ~0.8s)**:
-     - Crown disintegrates into a burst of drifting originium astral dust / motes.
-     - Originium synapses retract back into the body.
-     - Auto-destroyed upon completion.
-   - **Aftermath Sustained Follow (`SpecterAftermathAnim : MarkFxBase`)**:
-     - Follows doctor for 2 rounds during `AftermathRestrictBuff`.
-     - Fatigued dim originium afterglow and faint neural tremors (`AftermathDim`), smooth 0.3s fadeout.
+**CRITICAL MANDATE — Author In-Game Playtest Feedback (2026-10-17):**
+The author has tested the initial implementation in game and is **strongly unsatisfied**, stating:
+> "不是很满意，现在搞这种线条都成路径依赖了，实际上还是特别简陋的。你懂吧"
+> (Strongly unsatisfied; this has become a lazy path-dependency on thin wireframe lines, and the actual in-game visual is exceptionally crude and hollow).
+
+**Key Defects & Architectural Redesign Directives:**
+1. **Break the "Wireframe Line" Path-Dependency (坚决打破纯线条/空心线框的路径依赖)**:
+   - Relying on single-pixel `LineRenderer` loops and hollow line outlines (spikes, rings, zig-zag lines) makes the entire effect feel like a cheap 3D wireframe CAD preview rather than an awe-inspiring, solid manifestation of the Lord of Originium.
+   - Thin lines under the 45° isometric camera lack mass, volume, and material presence, appearing flimsy and hollow.
+2. **Transition to Solid Geometry & Volumetric Presence (实体厚度与立体体积感)**:
+   - **Pre-Civilization Black Crown (`SpecterFormAnim`)**:
+     - The Crown of Civilization's Continuity MUST NOT be a thin line circle with line spikes.
+     - It MUST feature **solid polyhedral crystal geometry** (procedural Mesh/Quads or dense layered volumetric facets) representing sharp, imposing, multi-faceted obsidian crystals forming an actual solid crown structure.
+     - Pair obsidian crystal facets with radiant white-gold/platinum edging (`CrownPlatinum`), suspended glowing mental core crystal, and dense dripping mental streamers.
+   - **Enduring Form Solid Crystalline Walls (坚韧形态实体晶壁)**:
+     - The defensive barriers MUST be **solid crystal facets / triangular prismatic mesh faces** (thick crystalline shields/spires), not single-line diamond outlines! They must have real geometric presence and occlusion mass.
+   - **Agile Form Golden Energy Torrents & Synapses (敏捷形态宽幅金流与突触)**:
+     - Synapses and golden streams must use broad fluid ribbons/sheets (with rich `widthCurve` swelling, 0.25f~0.5f wide) rather than single-pixel string lines, giving them the presence of heavy originium neural energy conduits.
+   - **Activation & Deactivation (开启与关闭瞬间)**:
+     - Activation spatial rift and chest burst must have real planar tearing and shockwave volume.
+     - Crown disintegration must eject solid crystal shards and astral dust flakes, not mere single line segments.
 3. **Core Constraints & Delivery**:
    - Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`).
-   - Zero per-frame GC allocation in Update/Tick.
+   - Zero per-frame GC allocation in Update/Tick: allocate all meshes, buffers, and arrays in `Init` / `Build`.
    - Safe lifetime cleanup, robust null checks for caster and view.
-   - Macroscope MUST provide concrete drop-in suggestion replacement code blocks in PR review to complete the 4 components.
+   - **Macroscope MUST provide complete drop-in suggestion replacement code blocks in PR review to completely overhaul all 4 components in `src/SpecterFormFx.cs` with solid volumetric geometry.**
 
 
 ### Phase 4: Reporting Findings
