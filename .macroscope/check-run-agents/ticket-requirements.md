@@ -1,4 +1,4 @@
-﻿---
+---
 title: "PR Requirements & Code Review"
 model: claude-opus-5-5
 reasoning: high
@@ -143,6 +143,42 @@ The author has tested the previous implementation in game and is **completely un
      - ReturnToAbyssRefundAnim: Powerful tidal bore shockwave with thick concentric wave crests and crashing foam wash (~0.8s).
    - All three components must use the same wide fluid band & hydrodynamic swell technique (widthCurve, broad line widths  .25f~0.5f, layered ocean colors).
    - Self-drawn only (no vanilla prefabs, no Shader.Find, reuse MarkFxKit.Mat(color)), zero GC in Update/Tick, and clean lifetime destruction.
+
+
+### Phase 3.5: Dedicated Self-Drawn Specter of Babel / 巴别塔的恶灵（博士 Doctor）
+
+The temporary borrowed blood haze aura (FxLibrary.PlasmaAura) tinted dark smoke has been completely removed from src/TintedAuraFx.cs.
+Macroscope is tasked with generating and completing the self-drawn implementation in src/SpecterFormFx.cs as specified in docs/fx-rework-prompt-specter-of-babel.md.
+
+**CRITICAL MANDATE — Lord of Originium & Specter of Babel (源石主宰者与巴别塔恶灵):**
+1. **Color Palette & Anti-Transparency Under Additive Shader**:
+   - In Additive blending, pure black is completely transparent! Originium Obsidian (`OriginiumObsidian`) MUST be paired with dark gold / neural violet edge halos to ensure solid geometric presence.
+   - Contrast `OriginiumGold` (blazing originium gold for agile streams & impulses), `NeuralViolet` (deep mental violet for enduring crystalline walls & gravity ripples), and `CrownPlatinum` (civilization platinum for the overhead crown core).
+   - Solid geometric presence and line width scaled for 45° isometric camera; strictly avoid hollow, paper-thin wireframes.
+2. **Four Animation Components (`src/SpecterFormFx.cs`)**:
+   - **Form Activation Instant (`SpecterActivateAnim : MonoBehaviour`, ~0.8s)**:
+     - Chest and ground originium neural synapses violently radiating outwards.
+     - Overhead spatial rift tearing open as the pre-civilization black crown mental phantasm manifests.
+     - Auto-destroyed upon completion.
+   - **Form Sustained Follow (`SpecterFormAnim : MarkFxBase`)**:
+     - Follows the doctor throughout Agile/Enduring form buff lifetime.
+     - Overhead rotating 3D pre-civilization Black Crown (Civilization's Continuity) phantasm dripping subtle luminous mental particles downwards.
+     - Ground and surrounding pulsing originium neural synapse network:
+       - Agile Form (`IsAgile = true`): Blazing originium gold current streams and swift energy impulses.
+       - Enduring Form (`IsAgile = false`): Deep neural violet crystalline walls and gravity field ripples.
+     - Smooth 0.3s fadeout upon buff expiration or early cancellation.
+   - **Form Deactivation Instant (`SpecterDeactivateAnim : MonoBehaviour`, ~0.8s)**:
+     - Crown disintegrates into a burst of drifting originium astral dust / motes.
+     - Originium synapses retract back into the body.
+     - Auto-destroyed upon completion.
+   - **Aftermath Sustained Follow (`SpecterAftermathAnim : MarkFxBase`)**:
+     - Follows doctor for 2 rounds during `AftermathRestrictBuff`.
+     - Fatigued dim originium afterglow and faint neural tremors (`AftermathDim`), smooth 0.3s fadeout.
+3. **Core Constraints & Delivery**:
+   - Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`).
+   - Zero per-frame GC allocation in Update/Tick.
+   - Safe lifetime cleanup, robust null checks for caster and view.
+   - Macroscope MUST provide concrete drop-in suggestion replacement code blocks in PR review to complete the 4 components.
 
 
 ### Phase 4: Reporting Findings
