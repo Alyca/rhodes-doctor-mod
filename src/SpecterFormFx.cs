@@ -204,97 +204,382 @@ namespace RhodesDoctor
   }
 
 
-/// <summary>
-  /// 巴别塔恶灵形态开启瞬间动画（SpecterActivateAnim，~0.8s）：
-  ///   · 胸口源石神经突触（正对镜头）与脚下突触网络（贴地，漆黑源石底 + 形态色边缘辉光）猛烈放射激荡 + 地面冲击环；
-  ///   · 头顶虚空裂隙（白金裂缘 + 漆黑源石内芯）撕开，前文明黑冠自裂隙中由 1.6 倍幻影收缩凝聚显现，
-  ///     末段淡出交接常驻的 SpecterFormAnim。
+  /// <summary>
+  /// 巴别塔恶灵实体几何载体：一个动态 Mesh（MeshFilter + MeshRenderer，材质复用 MarkFxKit.Mat）。
+  /// 平直着色、三角不共享顶点：每个棱面独立明暗，晶体棱角分明。
+  /// 顶点 / UV / 顶点色 / 索引全部在构造时按容量预分配；每帧 Begin → Tri… → End 只改写数组并上传，零托管分配。
+  /// 顶点坐标相对宿主 transform（宿主旋转恒为 identity，每帧只摆 position）。
+  /// 注：与 SwordHitFx 命中面片同一份 StreakMaterialPlain（粒子类 shader，不剔背面）。
+  /// </summary>
+  internal sealed class SolidMesh
+  {
+    private readonly Mesh _mesh;
+    private readonly Vector3[] _v;
+    private readonly Vector2[] _uv;
+    private readonly Color32[] _c;
+    private int _n, _prev;
+
+    internal SolidMesh(Transform parent, string name, Material mat, int maxTris)
+    {
+      int cap = Mathf.Clamp(maxTris, 1, 20000) * 3;
+      _v = new Vector3[cap];
+      _uv = new Vector2[cap];
+      _c = new Color32[cap];
+      var idx = new int[cap];
+      for (int i = 0; i < cap; i++) { idx[i] = i; _uv[i] = new Vector2(0.5f, 0.5f); }
+      _mesh = new Mesh { name = name };
+      _mesh.MarkDynamic();
+      _mesh.vertices = _v;
+      _mesh.uv = _uv;
+      _mesh.colors32 = _c;
+      _mesh.triangles = idx;
+      var go = new GameObject(name) { layer = parent.gameObject.layer };
+      go.transform.SetParent(parent, false);
+      go.AddComponent<MeshFilter>().sharedMesh = _mesh;
+      var mr = go.AddComponent<MeshRenderer>();
+      mr.sharedMaterial = mat;
+      mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+      mr.receiveShadows = false;
+    }
+
+    internal void Begin() => _n = 0;
+
+    /// <summary>写一个三角：v 为贴图横向坐标（0/1 = 软边透明，0.5 = 实心）。超容量静默丢弃。</summary>
+    internal void Tri(Vector3 a, Vector3 b, Vector3 c, float va, float vb, float vc, Color32 ca, Color32 cb, Color32 cc)
+    {
+      if (_n + 3 > _v.Length) return;
+      int i = _n;
+      _v[i] = a; _v[i + 1] = b; _v[i + 2] = c;
+      _uv[i].y = va; _uv[i + 1].y = vb; _uv[i + 2].y = vc;
+      _c[i] = ca; _c[i + 1] = cb; _c[i + 2] = cc;
+      _n += 3;
+    }
+
+    internal void Tri(Vector3 a, Vector3 b, Vector3 c, Color32 col) => Tri(a, b, c, 0.5f, 0.5f, 0.5f, col, col, col);
+
+    internal void End()
+    {
+      for (int i = _n; i < _prev; i++) { _v[i] = Vector3.zero; _c[i] = default(Color32); }
+      _prev = _n;
+      _mesh.vertices = _v;
+      _mesh.uv = _uv;
+      _mesh.colors32 = _c;
+      _mesh.RecalculateBounds();
+    }
+
+    internal void Dispose()
+    {
+      if (_mesh != null) UnityEngine.Object.Destroy(_mesh);
+    }
+  }
+
+  /// <summary>
+  /// 巴别塔恶灵四件套共用实体几何：多棱晶体、实心黑冠、宽幅流体带、实心环 / 盘、翻滚碎晶。
+  /// 只写值类型，零 GC。棱面按固定光向明暗着色，漆黑本体（body）与形态色晶光（glow）双层叠加防加法透空。
+  /// </summary>
+  internal static class SpecterGeo
+  {
+    private const float TwoPi = Mathf.PI * 2f;
+    private static readonly Vector3 Light = new Vector3(0.35f, 0.85f, -0.40f).normalized;
+
+    internal static float Out3(float x) { x = 1f - Mathf.Clamp01(x); return 1f - x * x * x; }
+
+    internal static Vector3 ViewFwd(Vector3 right, Vector3 up) => Vector3.Cross(right, up).normalized;
+
+    internal static Color32 C(float bright, float a)
+    {
+      byte g = (byte)(Mathf.Clamp01(bright) * 255f);
+      return new Color32(g, g, g, (byte)(Mathf.Clamp01(a) * 255f));
+    }
+
+    /// <summary>实心棱面：明暗 = 法线·光向（取绝对值，双面一致），同时写入漆黑本体与形态色晶光。</summary>
+    internal static void Facet(SolidMesh body, SolidMesh glow, Vector3 p0, Vector3 p1, Vector3 p2, float a, float glowA)
+    {
+      var n = Vector3.Cross(p1 - p0, p2 - p0);
+      float m = n.magnitude;
+      float lit = m > 1e-7f ? Mathf.Abs(Vector3.Dot(n, Light)) / m : 0f;
+      if (body != null && a > 0.003f) body.Tri(p0, p1, p2, C(0.30f + 0.70f * lit, a));
+      if (glow != null && glowA > 0.003f) glow.Tri(p0, p1, p2, C(0.12f + 0.88f * lit * lit, glowA));
+    }
+
+    /// <summary>晶脊高光：沿棱线、正对镜头的柔边亮带（只作实体棱面的描边点缀）。</summary>
+    internal static void Ridge(SolidMesh m, Vector3 p0, Vector3 p1, float w, Vector3 viewFwd, float a)
+    {
+      if (m == null || a <= 0.003f || w <= 0f) return;
+      var s = Vector3.Cross(p1 - p0, viewFwd);
+      float sm = s.magnitude;
+      if (sm < 1e-6f) return;
+      s *= w * 0.5f / sm;
+      var c = C(1f, a);
+      m.Tri(p0 - s, p0 + s, p1 + s, 0f, 1f, 1f, c, c, c);
+      m.Tri(p0 - s, p1 + s, p1 - s, 0f, 1f, 0f, c, c, c);
+    }
+
+    /// <summary>
+    /// 多棱晶体（双锥柱）：底环 0.72·rad → 腰环 rad（0.58 h）→ 尖顶 h，底部短尖 0.16 h。
+    /// sides 面数（3 = 三棱晶壁、4 = 菱晶），hint 为任意参考横向（内部正交化）。
+    /// </summary>
+    internal static void Crystal(SolidMesh body, SolidMesh glow, SolidMesh edge, Vector3 b, Vector3 ax, Vector3 hint,
+      float rad, float h, int sides, float phase, float a, float glowA, float ridgeW, Vector3 viewFwd)
+    {
+      if (h < 1e-3f || rad < 1e-4f || (a <= 0.003f && glowA <= 0.003f)) return;
+      var t1 = hint - ax * Vector3.Dot(hint, ax);
+      if (t1.sqrMagnitude < 1e-6f) t1 = Vector3.Cross(ax, Mathf.Abs(ax.y) < 0.9f ? Vector3.up : Vector3.forward);
+      t1.Normalize();
+      var t2 = Vector3.Cross(ax, t1);
+      var apex = b + ax * h;
+      var tail = b - ax * (h * 0.16f);
+      var mid = b + ax * (h * 0.58f);
+      float step = TwoPi / sides;
+      for (int i = 0; i < sides; i++)
+      {
+        float a0 = phase + i * step, a1 = a0 + step;
+        var d0 = t1 * Mathf.Cos(a0) + t2 * Mathf.Sin(a0);
+        var d1 = t1 * Mathf.Cos(a1) + t2 * Mathf.Sin(a1);
+        var lo0 = b + d0 * (rad * 0.72f);
+        var lo1 = b + d1 * (rad * 0.72f);
+        var hi0 = mid + d0 * rad;
+        var hi1 = mid + d1 * rad;
+        Facet(body, glow, lo0, lo1, hi1, a, glowA);
+        Facet(body, glow, lo0, hi1, hi0, a, glowA);
+        Facet(body, glow, hi0, hi1, apex, a, glowA);
+        Facet(body, glow, tail, lo1, lo0, a, glowA);
+        if (edge != null && ridgeW > 0f)
+        {
+          Ridge(edge, hi0, apex, ridgeW, viewFwd, a);
+          Ridge(edge, lo0, hi0, ridgeW * 0.6f, viewFwd, 0.7f * a);
+        }
+      }
+    }
+
+    /// <summary>实心八面晶（核心晶 / 精神晶屑），stretch 为竖向拉长。</summary>
+    internal static void Octa(SolidMesh body, SolidMesh glow, Vector3 c, float r, float stretch, Quaternion q, float a, float glowA)
+    {
+      if (r < 1e-4f) return;
+      var px = q * new Vector3(r, 0f, 0f);
+      var py = q * new Vector3(0f, r * stretch, 0f);
+      var pz = q * new Vector3(0f, 0f, r);
+      Vector3 x0 = c + px, x1 = c - px, y0 = c + py, y1 = c - py, z0 = c + pz, z1 = c - pz;
+      Facet(body, glow, y0, x0, z0, a, glowA);
+      Facet(body, glow, y0, z0, x1, a, glowA);
+      Facet(body, glow, y0, x1, z1, a, glowA);
+      Facet(body, glow, y0, z1, x0, a, glowA);
+      Facet(body, glow, y1, z0, x0, a, glowA);
+      Facet(body, glow, y1, x1, z0, a, glowA);
+      Facet(body, glow, y1, z1, x1, a, glowA);
+      Facet(body, glow, y1, x0, z1, a, glowA);
+    }
+
+    /// <summary>实体碎晶：拉长四面体（瓦解 / 裂隙迸射）。</summary>
+    internal static void Shard(SolidMesh body, SolidMesh glow, Vector3 c, float r, Quaternion q, float a, float glowA)
+    {
+      if (r < 1e-4f) return;
+      var p0 = c + q * new Vector3(1.8f * r, 0f, 0f);
+      var p1 = c + q * new Vector3(-0.9f * r, 0.9f * r, 0f);
+      var p2 = c + q * new Vector3(-0.9f * r, -0.5f * r, 0.8f * r);
+      var p3 = c + q * new Vector3(-0.9f * r, -0.5f * r, -0.8f * r);
+      Facet(body, glow, p0, p1, p2, a, glowA);
+      Facet(body, glow, p0, p2, p3, a, glowA);
+      Facet(body, glow, p0, p3, p1, a, glowA);
+      Facet(body, glow, p1, p3, p2, a, glowA);
+    }
+
+    /// <summary>实心环带（e1/e2 张成平面；squash 压扁 e2 向；jag 奇偶锯齿；soft = 内外缘柔边）。</summary>
+    internal static void Annulus(SolidMesh m, Vector3 c, Vector3 e1, Vector3 e2, float r0, float r1, int segs,
+      float phase, float jag, float squash, float a, bool soft)
+    {
+      if (m == null || a <= 0.003f || r1 <= r0) return;
+      var col = C(1f, a);
+      float vi = soft ? 0f : 0.5f, vo = soft ? 1f : 0.5f;
+      float step = TwoPi / segs;
+      for (int i = 0; i < segs; i++)
+      {
+        int j = i + 1;
+        float a0 = phase + i * step, a1 = phase + j * step;
+        float k0 = 1f + jag * ((i & 1) == 0 ? 1f : -0.6f);
+        float k1 = 1f + jag * ((j & 1) == 0 ? 1f : -0.6f);
+        var d0 = e1 * Mathf.Cos(a0) + e2 * (Mathf.Sin(a0) * squash);
+        var d1 = e1 * Mathf.Cos(a1) + e2 * (Mathf.Sin(a1) * squash);
+        var in0 = c + d0 * (r0 * k0); var in1 = c + d1 * (r0 * k1);
+        var out0 = c + d0 * (r1 * k0); var out1 = c + d1 * (r1 * k1);
+        m.Tri(in0, out0, out1, vi, vo, vo, col, col, col);
+        m.Tri(in0, out1, in1, vi, vo, vi, col, col, col);
+      }
+    }
+
+    /// <summary>实心盘（三角扇）：rimV = 0 → 外缘柔化成光晕，0.5 → 硬边实体面。</summary>
+    internal static void Fan(SolidMesh m, Vector3 c, Vector3 e1, Vector3 e2, float r, int segs, float phase,
+      float jag, float squash, float a, float rimV)
+    {
+      if (m == null || a <= 0.003f || r <= 0f) return;
+      var col = C(1f, a);
+      float step = TwoPi / segs;
+      for (int i = 0; i < segs; i++)
+      {
+        int j = i + 1;
+        float a0 = phase + i * step, a1 = phase + j * step;
+        float k0 = 1f + jag * ((i & 1) == 0 ? 1f : -0.6f);
+        float k1 = 1f + jag * ((j & 1) == 0 ? 1f : -0.6f);
+        var p0 = c + (e1 * Mathf.Cos(a0) + e2 * (Mathf.Sin(a0) * squash)) * (r * k0);
+        var p1 = c + (e1 * Mathf.Cos(a1) + e2 * (Mathf.Sin(a1) * squash)) * (r * k1);
+        m.Tri(c, p0, p1, 0.5f, rimV, rimV, col, col, col);
+      }
+    }
+
+    /// <summary>正对镜头的菱形星芒晶片。</summary>
+    internal static void Diamond(SolidMesh m, Vector3 c, Vector3 e1, Vector3 e2, float w, float h, float a)
+    {
+      if (m == null || a <= 0.003f) return;
+      var col = C(1f, a);
+      Vector3 pl = c - e1 * w, pr = c + e1 * w, pt = c + e2 * h, pb = c - e2 * h;
+      m.Tri(pl, pt, pr, 0f, 0.5f, 1f, col, col, col);
+      m.Tri(pl, pr, pb, 0f, 1f, 0.5f, col, col, col);
+    }
+
+    /// <summary>
+    /// 宽幅流体带：pts[0..n) 为中心线，nrm 为带面法线（贴地 Vector3.up / 立体 viewFwd）。
+    /// taper = 根粗梢细（突触导管），否则两端尖、中段鼓胀（widthCurve 式）；swell/swellU = 沿带奔流的能量鼓包。
+    /// </summary>
+    internal static void Ribbon(SolidMesh m, Vector3[] pts, int n, Vector3 nrm, float w, bool taper, float a,
+      float swell = 0f, float swellU = -1f)
+    {
+      if (m == null || n < 2 || a <= 0.003f) return;
+      Vector3 pl = Vector3.zero, pr = Vector3.zero;
+      Color32 pc = default(Color32);
+      for (int i = 0; i < n; i++)
+      {
+        float u = i / (float)(n - 1);
+        var t = pts[Mathf.Min(i + 1, n - 1)] - pts[Mathf.Max(i - 1, 0)];
+        var s = Vector3.Cross(t, nrm);
+        float sm = s.magnitude;
+        float prof = taper ? 1f - 0.78f * u : Mathf.Sin(Mathf.PI * Mathf.Lerp(0.06f, 0.94f, u));
+        if (swellU >= 0f) { float d = (u - swellU) / 0.09f; prof *= 1f + swell * Mathf.Exp(-d * d); }
+        s = sm > 1e-6f ? s * (w * 0.5f * prof / sm) : Vector3.zero;
+        var l = pts[i] - s;
+        var r = pts[i] + s;
+        var col = C(1f, a * (taper ? 1f - 0.55f * u * u : Mathf.Lerp(0.35f, 1f, Mathf.Clamp01(prof))));
+        if (i > 0)
+        {
+          m.Tri(pl, pr, r, 0f, 1f, 1f, pc, pc, col);
+          m.Tri(pl, r, l, 0f, 1f, 0f, pc, col, col);
+        }
+        pl = l; pr = r; pc = col;
+      }
+    }
+
+    /// <summary>
+    /// 前文明黑冠（文明的存续）：14 段实心多棱黑曜冠箍（外壁 / 顶面 / 内壁 / 底面）+ 7 大 7 小四棱黑曜晶尖
+    /// + 白金冠缘与晶脊 + 悬浮白金八面核心晶。q = 冠体姿态（自旋 + 进动倾斜）；burst = 瓦解外抛量（世界单位）。
+    /// </summary>
+    internal static void Crown(SolidMesh body, SolidMesh glow, SolidMesh edge, Vector3 c, float r, float spike,
+      Quaternion q, float a, float glowA, float burst, Vector3 viewFwd, float gemSpin)
+    {
+      const int Seg = 14;
+      float rin = r * 0.84f, yb = -r * 0.11f, yt = r * 0.13f;
+      float step = TwoPi / Seg;
+      var up = q * Vector3.up;
+      float lean = 0.30f + 1.5f * burst / Mathf.Max(r, 0.01f);
+      for (int i = 0; i < Seg; i++)
+      {
+        float a0 = i * step, a1 = a0 + step, am = a0 + step * 0.5f;
+        var o0 = q * new Vector3(Mathf.Cos(a0), 0f, Mathf.Sin(a0));
+        var o1 = q * new Vector3(Mathf.Cos(a1), 0f, Mathf.Sin(a1));
+        var om = q * new Vector3(Mathf.Cos(am), 0f, Mathf.Sin(am));
+        var tg = q * new Vector3(-Mathf.Sin(am), 0f, Mathf.Cos(am));
+        var k = c + om * burst + up * (burst * 0.3f);
+        var ot0 = k + o0 * r + up * yt; var ot1 = k + o1 * r + up * yt;
+        var ob0 = k + o0 * r + up * yb; var ob1 = k + o1 * r + up * yb;
+        var it0 = k + o0 * rin + up * yt; var it1 = k + o1 * rin + up * yt;
+        var ib0 = k + o0 * rin + up * yb; var ib1 = k + o1 * rin + up * yb;
+        Facet(body, glow, ob0, ob1, ot1, a, glowA);          // 外壁
+        Facet(body, glow, ob0, ot1, ot0, a, glowA);
+        Facet(body, glow, ot0, ot1, it1, a, glowA * 0.6f);   // 顶面
+        Facet(body, glow, ot0, it1, it0, a, glowA * 0.6f);
+        Facet(body, null, it0, it1, ib1, a, 0f);             // 内壁
+        Facet(body, null, it0, ib1, ib0, a, 0f);
+        Facet(body, null, ib0, ib1, ob1, a, 0f);             // 底面
+        Facet(body, null, ib0, ob1, ob0, a, 0f);
+        Ridge(edge, ot0, ot1, r * 0.07f, viewFwd, a);        // 白金冠缘
+        Ridge(edge, ob0, ob1, r * 0.04f, viewFwd, 0.6f * a);
+
+        bool big = (i & 1) == 0;
+        float sh = spike * (big ? 1f : 0.55f);
+        var ax = (up + om * lean).normalized;
+        var bp = k + om * (r * 0.92f + burst * 0.8f) + up * (yt * 0.5f);
+        Crystal(body, glow, edge, bp, ax, tg, r * (big ? 0.17f : 0.11f), sh, 4, 0.785f, a, glowA, r * 0.05f, viewFwd);
+      }
+      Octa(edge, glow, c + up * (Mathf.Max(spike, r * 0.3f) * 0.55f), r * 0.2f, 1.6f,
+        q * Quaternion.Euler(0f, gemSpin, 0f), a, glowA);
+    }
+  }
+
+  /// <summary>
+  /// 巴别塔恶灵形态开启瞬间动画（SpecterActivateAnim，~0.8s）——实体几何版：
+  ///   · 胸口：正对镜头的实心冲击波板 + 白金闪核 + 8 根四棱黑曜晶刺猛烈放射激荡；
+  ///   · 脚下：宽幅贴地突触导管（漆黑底 + 形态色奔流鼓胀）+ 漆黑厚壁冲击环外扩；
+  ///   · 头顶：锯齿虚空裂隙实心撕开（漆黑裂体 + 形态色裂内辉光 + 白金裂缘），迸出翻滚黑曜碎晶；
+  ///     前文明黑冠（实心冠箍 + 晶尖 + 核心晶）自裂隙中由 1.6 倍幻影收缩凝聚，末段淡出交接 SpecterFormAnim。
   /// </summary>
   public class SpecterActivateAnim : MonoBehaviour
   {
     private const float Dur = 0.80f;
-    private const int ChestN = 8, ChestPts = 6, GroundN = 8, GroundPts = 8;
-    private const int Spikes = 7, CrownPts = Spikes * 2, BandPts = 48, RiftPts = 28;
+    private const int ChestN = 8, GroundN = 8, GroundPts = 8, DebrisN = 10;
     private static readonly Color Ob = SpecterFormFx.OriginiumObsidian, Au = SpecterFormFx.OriginiumGold,
       Vi = SpecterFormFx.NeuralViolet, Pt = SpecterFormFx.CrownPlatinum;
 
     private float _t, _h = 2f, _r = 0.8f;
     private UnitEntityData _caster;
     private bool _isAgile;
-    private Color _acc;
-    private LineRenderer _flash, _shock, _riftEdge, _riftCore, _crownBody, _crownEdge, _bandEdge;
-    private readonly LineRenderer[] _chest = new LineRenderer[ChestN];
+    private SolidMesh _body, _glow, _edge;
+    private readonly Vector3[] _pts = new Vector3[GroundPts];
     private readonly float[] _chestAng = new float[ChestN];
     private readonly float[] _chestLen = new float[ChestN];
-    private readonly float[] _chestJit = new float[ChestN * ChestPts];
-    private readonly LineRenderer[] _gBody = new LineRenderer[GroundN];
-    private readonly LineRenderer[] _gEdge = new LineRenderer[GroundN];
     private readonly float[] _gAng = new float[GroundN];
     private readonly float[] _gLen = new float[GroundN];
     private readonly float[] _gJit = new float[GroundN * GroundPts];
+    private readonly Vector3[] _debDir = new Vector3[DebrisN];
+    private readonly Vector3[] _debAxis = new Vector3[DebrisN];
+    private readonly float[] _debSpin = new float[DebrisN];
 
     internal bool Init(UnitEntityData caster, bool isAgile)
     {
       if (caster?.View == null) return false;
-      var mOb = Mat(Ob); var mAu = Mat(Au); var mVi = Mat(Vi); var mPt = Mat(Pt);
-      if (mOb == null || mAu == null || mVi == null || mPt == null)
+      var mOb = Mat(Ob); var mAcc = Mat(isAgile ? Au : Vi); var mPt = Mat(Pt);
+      if (mOb == null || mAcc == null || mPt == null)
       {
         Main.Mod.Logger.Error("[RhodesDoctor] 巴别塔恶灵开启特效放弃：StreakMaterialPlain 无可用材质。");
         return false;
       }
       _caster = caster;
       _isAgile = isAgile;
-      _acc = isAgile ? Au : Vi;
-      var mAcc = isAgile ? mAu : mVi;
       _h = ModelHeight(caster);
       _r = Mathf.Clamp(caster.View.Corpulence * 1.6f, 0.7f, 3.0f);
-      transform.position = caster.Position;
+      transform.SetPositionAndRotation(caster.Position, Quaternion.identity);
+      _body = new SolidMesh(transform, "RD_SP_ActBody", mOb, 900);
+      _glow = new SolidMesh(transform, "RD_SP_ActGlow", mAcc, 1100);
+      _edge = new SolidMesh(transform, "RD_SP_ActEdge", mPt, 800);
 
-      var taper = AnimationCurve.Linear(0f, 1f, 1f, 0.25f);
       for (int i = 0; i < ChestN; i++)
       {
-        var lr = Line(transform, "RD_SP_ActChest", (i & 1) == 0 ? mAcc : mPt, ChestPts, false, 0.11f);
-        lr.widthCurve = taper;
-        _chest[i] = lr;
         _chestAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / ChestN;
         _chestLen[i] = UnityEngine.Random.Range(0.55f, 0.95f);
-        for (int p = 0; p < ChestPts; p++)
-          _chestJit[i * ChestPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.2f, 0.2f);
       }
       for (int i = 0; i < GroundN; i++)
       {
-        _gBody[i] = Flat(transform, "RD_SP_ActSynBody", mOb, GroundPts, false, 0.22f);
-        _gEdge[i] = Flat(transform, "RD_SP_ActSynEdge", mAcc, GroundPts, false, 0.09f);
-        _gBody[i].widthCurve = taper;
-        _gEdge[i].widthCurve = taper;
         _gAng[i] = (i + UnityEngine.Random.Range(-0.35f, 0.35f)) * Mathf.PI * 2f / GroundN;
         _gLen[i] = UnityEngine.Random.Range(1.5f, 2.3f);
         for (int p = 0; p < GroundPts; p++)
           _gJit[i * GroundPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.15f, 0.15f);
       }
-      _flash     = Line(transform, "RD_SP_ActFlash", mPt, 32, true, 0.12f);
-      _shock     = Flat(transform, "RD_SP_ActShock", mAcc, RingSeg, true, 0.18f);
-      _riftEdge  = Line(transform, "RD_SP_ActRiftEdge", mPt, RiftPts, true, 0.08f);
-      _riftCore  = Line(transform, "RD_SP_ActRiftCore", mOb, 2, false, 0.24f);
-      _crownBody = Line(transform, "RD_SP_ActCrownBody", mOb, CrownPts, true, 0.16f);
-      _crownEdge = Line(transform, "RD_SP_ActCrownEdge", mPt, CrownPts, true, 0.08f);
-      _bandEdge  = Line(transform, "RD_SP_ActBandEdge", mAcc, BandPts, true, 0.07f);
-      return true;
-    }
-
-    private static float Out3(float x) { x = 1f - Mathf.Clamp01(x); return 1f - x * x * x; }
-
-    /// <summary>立体锯齿冠：偶数点为冠箍、奇数点为冠尖（水平自旋）。</summary>
-    private static void Crown(LineRenderer lr, Vector3 c, float r, float h, float spin)
-    {
-      int n = lr.positionCount;
-      for (int i = 0; i < n; i++)
+      for (int i = 0; i < DebrisN; i++)
       {
-        float a = spin + i * Mathf.PI * 2f / n;
-        bool tip = (i & 1) == 1;
-        float rr = tip ? r * 1.1f : r;
-        lr.SetPosition(i, c + new Vector3(Mathf.Cos(a) * rr, tip ? h : 0f, Mathf.Sin(a) * rr));
+        var d = UnityEngine.Random.onUnitSphere;
+        d.y = Mathf.Abs(d.y) * 0.6f + 0.15f;
+        _debDir[i] = d.normalized * UnityEngine.Random.Range(0.7f, 1.5f);
+        _debAxis[i] = UnityEngine.Random.onUnitSphere;
+        _debSpin[i] = UnityEngine.Random.Range(240f, 720f);
       }
+      return true;
     }
 
     private void Update()
@@ -307,88 +592,85 @@ namespace RhodesDoctor
       }
       try
       {
+        transform.SetPositionAndRotation(_caster.Position, Quaternion.identity);
         CamBasis(out var right, out var up);
-        var feet = _caster.Position;
-        var chest = feet + Vector3.up * (_h * 0.55f);
-        transform.position = feet;
+        var fwd = SpecterGeo.ViewFwd(right, up);
+        var chest = Vector3.up * (_h * 0.55f);
         float jitHz = _isAgile ? 70f : 38f;   // 敏捷激荡更急促
+        _body.Begin(); _glow.Begin(); _edge.Begin();
 
-        // ① 胸口神经突触：0.18 s 猛烈放射、高频激荡，随后 0.55 s 消散
-        float burst = Out3(_t / 0.18f);
+        // ① 胸口：实心冲击波板 + 白金闪核 + 四棱黑曜晶刺放射
+        float burst = SpecterGeo.Out3(_t / 0.18f);
         float burstA = Mathf.Clamp01(1f - (_t - 0.15f) / 0.55f);
+        float fk = Mathf.Clamp01(_t / 0.30f);
+        float pr = Mathf.Lerp(0.10f, _r * 1.1f, SpecterGeo.Out3(fk));
+        float pw = Mathf.Lerp(0.30f, 0.06f, fk);
+        SpecterGeo.Annulus(_glow, chest, right, up, Mathf.Max(0f, pr - pw), pr + pw * 0.5f, 40, 0f, 0.06f, 1f, 0.9f * (1f - fk), true);
+        SpecterGeo.Fan(_edge, chest, right, up, Mathf.Lerp(0.45f, 0.08f, fk), 24, 0f, 0f, 1f, 1f - fk, 0f);
         for (int i = 0; i < ChestN; i++)
         {
-          var lr = _chest[i];
           float a = _chestAng[i];
           var d = right * Mathf.Cos(a) + up * Mathf.Sin(a);
-          var n = up * Mathf.Cos(a) - right * Mathf.Sin(a);
           float len = _chestLen[i] * _r * 1.3f * burst * (1f + 0.1f * Mathf.Sin(_t * jitHz + i * 1.7f));
-          for (int p = 0; p < ChestPts; p++)
-          {
-            float u = p / (float)(ChestPts - 1);
-            lr.SetPosition(p, chest + d * (len * u) + n * (_chestJit[i * ChestPts + p] * len));
-          }
-          SetA(lr, (i & 1) == 0 ? _acc : Pt, burstA);
+          SpecterGeo.Crystal(_body, _glow, _edge, chest + d * 0.12f, d, fwd, 0.09f + 0.05f * _chestLen[i], len,
+            4, 0.785f, burstA, 0.55f * burstA, 0.035f, fwd);
         }
-        float fk = Mathf.Clamp01(_t / 0.25f);
-        BillCircle(_flash, chest, Mathf.Lerp(0.08f, 0.6f, Out3(fk)), right, up);
-        _flash.widthMultiplier = Mathf.Lerp(0.16f, 0.05f, fk);
-        SetA(_flash, Pt, 1f - fk);
 
-        // ② 脚下源石神经突触网：贴地放射（漆黑源石底 + 形态色辉光）+ 冲击环
-        float gGrow = Out3((_t - 0.03f) / 0.28f);
+        // ② 脚下：宽幅贴地突触导管 + 漆黑厚壁冲击环
+        float gGrow = SpecterGeo.Out3((_t - 0.03f) / 0.28f);
         float gA = Mathf.Clamp01(1f - (_t - 0.35f) / 0.45f);
         for (int i = 0; i < GroundN; i++)
         {
-          float a = _gAng[i];
-          float ca = Mathf.Cos(a), sa = Mathf.Sin(a);
+          float ca = Mathf.Cos(_gAng[i]), sa = Mathf.Sin(_gAng[i]);
           float len = _gLen[i] * _r * gGrow;
           for (int p = 0; p < GroundPts; p++)
           {
             float u = p / (float)(GroundPts - 1);
             float j = _gJit[i * GroundPts + p] * len;
-            var pos = feet + new Vector3(ca * len * u - sa * j, 0.05f, sa * len * u + ca * j);
-            _gBody[i].SetPosition(p, pos);
-            _gEdge[i].SetPosition(p, pos);
+            _pts[p] = new Vector3(ca * len * u - sa * j, 0.05f, sa * len * u + ca * j);
           }
-          SetA(_gBody[i], Ob, gA);
-          SetA(_gEdge[i], _acc, gA * (0.7f + 0.3f * Mathf.Sin(_t * jitHz * 0.6f + i * 2.3f)));
+          SpecterGeo.Ribbon(_body, _pts, GroundPts, Vector3.up, 0.50f, true, 0.9f * gA);
+          SpecterGeo.Ribbon(_glow, _pts, GroundPts, Vector3.up, 0.28f, true,
+            gA * (0.7f + 0.3f * Mathf.Sin(_t * jitHz * 0.6f + i * 2.3f)), 1.2f, gGrow * 0.9f);
         }
         float sk = Mathf.Clamp01(_t / 0.45f);
-        Circle(_shock, feet, Mathf.Lerp(_r * 0.3f, _r * 2.4f, Out3(sk)), 0.05f);
-        _shock.widthMultiplier = Mathf.Lerp(0.20f, 0.05f, sk);
-        SetA(_shock, _acc, (1f - sk) * (1f - sk));
+        float sr = Mathf.Lerp(_r * 0.3f, _r * 2.4f, SpecterGeo.Out3(sk));
+        float sw = Mathf.Lerp(0.55f, 0.12f, sk);
+        var g = Vector3.up * 0.04f;
+        SpecterGeo.Annulus(_body, g, Vector3.right, Vector3.forward, Mathf.Max(0f, sr - sw * 1.6f), sr, 48, 0f, 0.05f, 1f, 0.9f * (1f - sk), false);
+        SpecterGeo.Annulus(_glow, g + Vector3.up * 0.005f, Vector3.right, Vector3.forward, Mathf.Max(0f, sr - sw), sr + sw * 0.4f,
+          48, 0f, 0.05f, 1f, (1f - sk) * (1f - sk), true);
 
-        // ③ 头顶虚空撕裂：锯齿裂隙张开（白金裂缘 + 漆黑源石内芯），0.45 s 后合拢
-        var top = feet + Vector3.up * (_h + 0.5f);
-        float open = Out3((_t - 0.05f) / 0.25f);
+        // ③ 头顶虚空裂隙：锯齿实心裂体撕开（0.45 s 后合拢）+ 迸射翻滚碎晶
+        var top = Vector3.up * (_h + 0.5f);
+        float open = SpecterGeo.Out3((_t - 0.05f) / 0.25f);
         float close = Mathf.Clamp01((_t - 0.45f) / 0.30f);
         float riftA = open * (1f - close);
-        float rw = Mathf.Clamp(_r * 0.65f, 0.5f, 1.2f) * (0.35f + 0.65f * open);
-        float rh = 0.34f * open * (1f - close);
-        for (int i = 0; i < RiftPts; i++)
+        float rw = Mathf.Clamp(_r * 0.75f, 0.55f, 1.3f) * (0.35f + 0.65f * open);
+        float sq = 0.38f * open * (1f - close) + 0.02f;
+        float jag = 0.22f + 0.05f * Mathf.Sin(_t * 40f);
+        SpecterGeo.Fan(_body, top, right, up, rw, 28, 0f, jag, sq, riftA, 0.5f);
+        SpecterGeo.Fan(_glow, top, right, up, rw * 0.8f, 28, 0f, jag, sq * 0.7f, 0.8f * riftA, 0f);
+        SpecterGeo.Annulus(_edge, top, right, up, rw, rw * 1.12f + 0.05f, 28, 0f, jag, sq, riftA, true);
+        if (_t > 0.08f)
         {
-          float a = i * Mathf.PI * 2f / RiftPts;
-          float tear = 1f + 0.3f * Mathf.Sin(_t * 40f + i * 2.3f);
-          _riftEdge.SetPosition(i, top + right * (Mathf.Cos(a) * rw) + up * (Mathf.Sin(a) * rh * tear));
+          float dk = Mathf.Clamp01((_t - 0.08f) / 0.6f);
+          for (int i = 0; i < DebrisN; i++)
+          {
+            var pos = top + _debDir[i] * (1.1f * SpecterGeo.Out3(dk)) + Vector3.down * (0.6f * dk * dk);
+            var rot = Quaternion.AngleAxis(_t * _debSpin[i], _debAxis[i]);
+            SpecterGeo.Shard(_body, _glow, pos, 0.07f + 0.03f * (i % 3), rot, 1f - dk, 0.6f * (1f - dk));
+          }
         }
-        _riftCore.SetPosition(0, top - right * (rw * 0.85f));
-        _riftCore.SetPosition(1, top + right * (rw * 0.85f));
-        _riftCore.widthMultiplier = 0.24f * riftA + 0.01f;
-        SetA(_riftEdge, Pt, riftA);
-        SetA(_riftCore, Ob, riftA);
 
-        // ④ 黑冠显现：自裂隙中由 1.6 倍幻影收缩凝聚为常驻尺寸，末段淡出交接 SpecterFormAnim
-        float m = Out3((_t - 0.20f) / 0.40f);
+        // ④ 黑冠显现：实心冠体自裂隙中由 1.6 倍幻影收缩凝聚，末段淡出交接 SpecterFormAnim
+        float m = SpecterGeo.Out3((_t - 0.20f) / 0.40f);
         float cr = Mathf.Clamp(_r * 0.42f, 0.32f, 0.8f) * Mathf.Lerp(1.6f, 1f, m);
-        float spin = _t * 2.4f;
-        Crown(_crownBody, top, cr, cr * 0.85f * m, spin);
-        Crown(_crownEdge, top, cr, cr * 0.85f * m, spin);
-        Circle(_bandEdge, top, cr * 1.05f, 0f);
         float crownA = m * Mathf.Clamp01(1f - (_t - 0.62f) / 0.18f);
-        SetA(_crownBody, Ob, crownA);
-        SetA(_crownEdge, Pt, crownA);
-        SetA(_bandEdge, _acc, 0.9f * crownA);
+        var q = Quaternion.Euler(0f, _t * 140f, 0f);
+        SpecterGeo.Crown(_body, _glow, _edge, top, cr, cr * 1.05f * m, q, crownA, 0.5f * crownA, 0f, fwd, _t * 200f);
+
+        _body.End(); _glow.End(); _edge.End();
       }
       catch (Exception ex)
       {
@@ -396,289 +678,237 @@ namespace RhodesDoctor
         Destroy(gameObject);
       }
     }
+
+    private void OnDestroy()
+    {
+      _body?.Dispose(); _glow?.Dispose(); _edge?.Dispose();
+    }
   }
 
-/// <summary>
-  /// 巴别塔恶灵常驻跟随动画（SpecterFormAnim，继承 MarkFxBase）：
-  ///   · 头顶倾斜进动 + 自旋的前文明黑冠（漆黑源石冠体 × 白金冠缘 × 形态色冠箍 × 白金光冕），向下垂落微光精神粒子；
-  ///   · 脚下源石神经突触网（漆黑源石底 + 形态色辉光）脉动，能量脉冲沿突触奔流；
-  ///     - 敏捷（IsAgile = true）：炽烈源石金螺旋光流束 + 迅捷白金脉冲；
-  ///     - 坚韧（IsAgile = false）：精神紫源石晶壁 + 向内坍缩的重力场波纹 + 缓沉脉冲；
+  /// <summary>
+  /// 巴别塔恶灵常驻跟随动画（SpecterFormAnim，继承 MarkFxBase）——实体几何版：
+  ///   · 头顶：前文明黑冠（文明的存续）= 实心多棱黑曜冠箍 + 7 大 7 小四棱黑曜晶尖 + 白金冠缘与晶脊
+  ///     + 悬浮白金八面核心晶；倾斜进动 + 自旋 + 悬浮起伏；冠缘垂落实体精神晶屑与宽幅流光；
+  ///   · 脚下：漆黑源石地壳盘 + 形态色柔边光环 + 7 条宽幅贴地突触导管（漆黑底 0.46 + 形态色奔流 0.26，
+  ///     能量鼓包沿导管奔流 + 白金脉冲亮核）；
+  ///     - 敏捷（IsAgile = true）：3 束宽幅（0.40）炽烈源石金螺旋能量洪流 + 白金流芯，能量向外迅捷奔流；
+  ///     - 坚韧（IsAgile = false）：6 簇实体三棱精神紫晶壁（主晶 + 两枚外倾伴生晶）+ 向内坍缩的实心重力波环；
   ///   · 入场 EaseOut3，结束/驱散由 MarkFxBase.Master 0.3 s 平滑淡出。
   /// </summary>
   public class SpecterFormAnim : MarkFxBase
   {
     public bool IsAgile;
 
-    private const int Spikes = 7, CrownPts = Spikes * 2, BandPts = 48, GemPts = 20, DripN = 10;
-    private const int SynN = 6, SynPts = 9, StreamN = 3, StreamPts = 22, ShardN = 6, RippleN = 3;
-    private const float Tilt = 0.14f;
+    private const int DripN = 12, DripPts = 5, SynN = 7, SynPts = 10, StreamN = 3, StreamPts = 24, SpireN = 6, RippleN = 3;
     private static readonly Color Ob = SpecterFormFx.OriginiumObsidian, Au = SpecterFormFx.OriginiumGold,
       Vi = SpecterFormFx.NeuralViolet, Pt = SpecterFormFx.CrownPlatinum;
 
-    private Color _acc;
-    private LineRenderer _bandBody, _bandEdge, _crownBody, _crownEdge, _halo, _gem;
-    private readonly LineRenderer[] _drip = new LineRenderer[DripN];
+    private SolidMesh _body, _glow, _edge;
+    private readonly Vector3[] _pts = new Vector3[StreamPts];   // 共用中心线缓冲（≥ 各带最大点数）
+    private readonly Vector3[] _pulsePts = new Vector3[3];
     private readonly float[] _dripAng = new float[DripN];
     private readonly float[] _dripPhase = new float[DripN];
     private readonly float[] _dripSpeed = new float[DripN];
-    private readonly LineRenderer[] _synBody = new LineRenderer[SynN];
-    private readonly LineRenderer[] _synEdge = new LineRenderer[SynN];
-    private readonly LineRenderer[] _pulse = new LineRenderer[SynN];
     private readonly float[] _synAng = new float[SynN];
     private readonly float[] _synLen = new float[SynN];
     private readonly float[] _synJit = new float[SynN * SynPts];
     private readonly float[] _pulsePhase = new float[SynN];
     private readonly float[] _pulseSpeed = new float[SynN];
-    private readonly LineRenderer[] _stream = new LineRenderer[StreamN];
-    private readonly LineRenderer[] _shardBody = new LineRenderer[ShardN];
-    private readonly LineRenderer[] _shardEdge = new LineRenderer[ShardN];
-    private readonly LineRenderer[] _ripple = new LineRenderer[RippleN];
+    private readonly float[] _spireAng = new float[SpireN];
+    private readonly float[] _spireScale = new float[SpireN];
 
     protected override bool Build(Buff buff)
     {
-      var mOb = Mat(Ob); var mAu = Mat(Au); var mVi = Mat(Vi); var mPt = Mat(Pt);
-      if (mOb == null || mAu == null || mVi == null || mPt == null)
+      var mOb = Mat(Ob); var mAcc = Mat(IsAgile ? Au : Vi); var mPt = Mat(Pt);
+      if (mOb == null || mAcc == null || mPt == null)
       {
         Main.Mod.Logger.Error("[RhodesDoctor] 巴别塔恶灵·形态常驻放弃：StreakMaterialPlain 无可用材质。");
         return false;
       }
-      _acc = IsAgile ? Au : Vi;
-      var mAcc = IsAgile ? mAu : mVi;
-
-      // 头顶黑冠：漆黑源石冠体一律配白金/形态色边缘辉光（加法材质防透空）
-      _bandBody  = Line(transform, "RD_SP_BandBody", mOb, BandPts, true, 0.16f);
-      _bandEdge  = Line(transform, "RD_SP_BandEdge", mAcc, BandPts, true, 0.06f);
-      _crownBody = Line(transform, "RD_SP_CrownBody", mOb, CrownPts, true, 0.15f);
-      _crownEdge = Line(transform, "RD_SP_CrownEdge", mPt, CrownPts, true, 0.07f);
-      _halo      = Line(transform, "RD_SP_Halo", mPt, BandPts, true, 0.05f);
-      _gem       = Line(transform, "RD_SP_Gem", mAcc, GemPts, true, 0.07f);
+      _body = new SolidMesh(transform, "RD_SP_FormBody", mOb, 900);
+      _glow = new SolidMesh(transform, "RD_SP_FormGlow", mAcc, 1500);
+      _edge = new SolidMesh(transform, "RD_SP_FormEdge", mPt, 900);
       for (int i = 0; i < DripN; i++)
       {
-        _drip[i] = Line(transform, "RD_SP_Drip", (i & 1) == 0 ? mPt : mAcc, 2, false, 0.05f);
         _dripAng[i] = i * Mathf.PI * 2f / DripN + UnityEngine.Random.Range(-0.25f, 0.25f);
         _dripPhase[i] = UnityEngine.Random.value;
         _dripSpeed[i] = UnityEngine.Random.Range(0.55f, 0.95f);
       }
-
-      // 脚下神经突触网 + 奔流脉冲
-      var taper = AnimationCurve.Linear(0f, 1f, 1f, 0.3f);
       float speed = IsAgile ? 1.7f : 0.55f;
       for (int i = 0; i < SynN; i++)
       {
-        _synBody[i] = Flat(transform, "RD_SP_SynBody", mOb, SynPts, false, 0.20f);
-        _synEdge[i] = Flat(transform, "RD_SP_SynEdge", mAcc, SynPts, false, 0.08f);
-        _synBody[i].widthCurve = taper;
-        _synEdge[i].widthCurve = taper;
         _synAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / SynN;
         _synLen[i] = UnityEngine.Random.Range(1.3f, 1.9f);
         for (int p = 0; p < SynPts; p++)
           _synJit[i * SynPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.16f, 0.16f);
-        _pulse[i] = Flat(transform, "RD_SP_Pulse", IsAgile ? mPt : mAcc, 2, false, IsAgile ? 0.13f : 0.15f);
         _pulsePhase[i] = UnityEngine.Random.value;
         _pulseSpeed[i] = speed * UnityEngine.Random.Range(0.8f, 1.25f);
       }
-
-      if (IsAgile)
+      for (int i = 0; i < SpireN; i++)
       {
-        var streamCurve = new AnimationCurve(new Keyframe(0f, 0.25f), new Keyframe(0.45f, 1f), new Keyframe(1f, 0.15f));
-        for (int s = 0; s < StreamN; s++)
-        {
-          _stream[s] = Line(transform, "RD_SP_Stream", mAu, StreamPts, false, 0.12f);
-          _stream[s].widthCurve = streamCurve;
-        }
-      }
-      else
-      {
-        for (int i = 0; i < ShardN; i++)
-        {
-          _shardBody[i] = Line(transform, "RD_SP_ShardBody", mOb, 4, true, 0.18f);
-          _shardEdge[i] = Line(transform, "RD_SP_ShardEdge", mVi, 4, true, 0.07f);
-        }
-        for (int i = 0; i < RippleN; i++)
-          _ripple[i] = Flat(transform, "RD_SP_Gravity", mVi, RingSeg, true, 0.09f);
+        _spireAng[i] = (i + UnityEngine.Random.Range(-0.15f, 0.15f)) * Mathf.PI * 2f / SpireN;
+        _spireScale[i] = UnityEngine.Random.Range(0.85f, 1.15f);
       }
       return true;
     }
 
-    private static float Out3(float x) { x = 1f - Mathf.Clamp01(x); return 1f - x * x * x; }
-
-    /// <summary>倾斜进动的水平环（冠箍 / 光冕）。</summary>
-    private static void Ring3(LineRenderer lr, Vector3 c, float r, float spin, float tiltPh, float yOff)
-    {
-      int n = lr.positionCount;
-      for (int i = 0; i < n; i++)
-      {
-        float a = spin + i * Mathf.PI * 2f / n;
-        float y = yOff + Mathf.Sin(a - tiltPh) * r * Tilt;
-        lr.SetPosition(i, c + new Vector3(Mathf.Cos(a) * r, y, Mathf.Sin(a) * r));
-      }
-    }
-
-    /// <summary>立体锯齿冠（偶数点冠箍、奇数点冠尖），随冠箍同步倾斜进动。</summary>
-    private static void Crown(LineRenderer lr, Vector3 c, float r, float h, float spin, float tiltPh)
-    {
-      int n = lr.positionCount;
-      for (int i = 0; i < n; i++)
-      {
-        float a = spin + i * Mathf.PI * 2f / n;
-        bool tip = (i & 1) == 1;
-        float rr = tip ? r * 1.1f : r;
-        float y = (tip ? h : 0f) + Mathf.Sin(a - tiltPh) * r * Tilt;
-        lr.SetPosition(i, c + new Vector3(Mathf.Cos(a) * rr, y, Mathf.Sin(a) * rr));
-      }
-    }
-
-    private Vector3 SynNode(Vector3 feet, float ca, float sa, float len, int i, int p)
-    {
-      float u = p / (float)(SynPts - 1);
-      float j = _synJit[i * SynPts + p] * len;
-      return feet + new Vector3(ca * len * u - sa * j, 0.05f, sa * len * u + ca * j);
-    }
-
-    private Vector3 SynAt(Vector3 feet, float ca, float sa, float len, int i, float u)
+    /// <summary>当前 _pts 突触中心线上 u∈[0,1] 处的点（脉冲亮核定位）。</summary>
+    private Vector3 SynAt(float u)
     {
       float f = Mathf.Clamp01(u) * (SynPts - 1);
       int p = Mathf.Min((int)f, SynPts - 2);
-      return Vector3.Lerp(SynNode(feet, ca, sa, len, i, p), SynNode(feet, ca, sa, len, i, p + 1), f - p);
+      return Vector3.Lerp(_pts[p], _pts[p + 1], f - p) + Vector3.up * 0.01f;
     }
 
     protected override void Tick(float dt)
     {
-      var feet = Unit.Position;
+      transform.SetPositionAndRotation(Unit.Position, Quaternion.identity);
+      CamBasis(out var right, out var up);
+      var fwd = SpecterGeo.ViewFwd(right, up);
       float ink = 1f - Mathf.Clamp01(T / 0.35f);
       float appear = (1f - ink * ink * ink) * Master;               // EaseOut3 入场 × 0.3 s 淡出
-      float R = Radius;
-      CamBasis(out var right, out var up);
-
-      // ── 头顶前文明黑冠：倾斜进动 + 自旋 ──
-      float cr = Mathf.Clamp(R * 0.42f, 0.32f, 0.8f) * Mathf.Lerp(0.6f, 1f, appear);
-      float ch = cr * 0.85f;
-      var cc = feet + Vector3.up * (Height + 0.5f + 0.06f * Mathf.Sin(T * 1.6f));
-      float spin = T * 0.9f, tiltPh = T * 0.7f;
+      float R = Radius, H = Height;
       float beat = 0.75f + 0.25f * Mathf.Sin(T * 2.4f);
-      Ring3(_bandBody, cc, cr, spin, tiltPh, 0f);
-      Ring3(_bandEdge, cc, cr * 1.05f, spin, tiltPh, 0f);
-      Crown(_crownBody, cc, cr, ch, spin, tiltPh);
-      Crown(_crownEdge, cc, cr, ch, spin, tiltPh);
-      Ring3(_halo, cc, cr * 0.72f, -spin * 1.6f, tiltPh, ch * 1.15f);
-      BillCircle(_gem, cc + Vector3.up * (ch * 0.45f), cr * 0.2f * (0.9f + 0.1f * Mathf.Sin(T * 5f)), right, up, T * 2f);
-      SetA(_bandBody, Ob, appear);
-      SetA(_bandEdge, _acc, 0.9f * appear);
-      SetA(_crownBody, Ob, appear);
-      SetA(_crownEdge, Pt, beat * appear);
-      SetA(_halo, Pt, 0.55f * beat * appear);
-      SetA(_gem, _acc, beat * appear);
+      _body.Begin(); _glow.Begin(); _edge.Begin();
 
-      // ── 垂落微光精神粒子：自冠箍下缘加速下坠，拖尾随下坠拉长 ──
-      float dropLen = Height * 0.65f;
+      // ── 头顶前文明黑冠：实心冠体，倾斜进动 + 自旋 + 悬浮起伏 ──
+      float cr = Mathf.Clamp(R * 0.42f, 0.32f, 0.8f) * Mathf.Lerp(0.6f, 1f, appear);
+      var cc = Vector3.up * (H + 0.5f + 0.06f * Mathf.Sin(T * 1.6f));
+      var q = Quaternion.Euler(8f * Mathf.Sin(T * 0.7f), T * 52f, 8f * Mathf.Cos(T * 0.7f));
+      SpecterGeo.Crown(_body, _glow, _edge, cc, cr, cr * 1.05f, q, appear, 0.42f * beat * appear, 0f, fwd, T * 90f);
+
+      // ── 垂落精神晶屑：实体八面晶片加速下坠，拖曳宽幅流光 ──
+      float dropLen = H * 0.7f;
       for (int i = 0; i < DripN; i++)
       {
         float k = Mathf.Repeat(T * _dripSpeed[i] + _dripPhase[i], 1f);
-        float a = _dripAng[i] + spin;
+        float ang = _dripAng[i] + T * 0.9f;
         float fall = dropLen * (0.25f * k + 0.75f * k * k);
-        var head = cc + new Vector3(Mathf.Cos(a) * cr * 0.95f, -fall, Mathf.Sin(a) * cr * 0.95f);
-        var lr = _drip[i];
-        lr.SetPosition(0, head);
-        lr.SetPosition(1, head + Vector3.up * (0.10f + 0.14f * k));
-        SetA(lr, (i & 1) == 0 ? Pt : _acc, 0.85f * Mathf.Sin(k * Mathf.PI) * appear);
+        var head = cc + new Vector3(Mathf.Cos(ang) * cr * 0.95f, -(fall + cr * 0.12f), Mathf.Sin(ang) * cr * 0.95f);
+        float fa = Mathf.Sin(k * Mathf.PI) * appear;
+        float tail = 0.18f + 0.30f * k;
+        for (int p = 0; p < DripPts; p++)
+          _pts[p] = head + Vector3.up * (tail * (1f - p / (float)(DripPts - 1)));
+        SpecterGeo.Ribbon(_glow, _pts, DripPts, fwd, 0.13f, false, 0.8f * fa);
+        var fq = Quaternion.Euler(0f, T * 180f + i * 30f, 0f);
+        if ((i & 1) == 0) SpecterGeo.Octa(_edge, _glow, head, 0.045f, 1.8f, fq, fa, 0.5f * fa);
+        else SpecterGeo.Octa(_glow, null, head, 0.045f, 1.8f, fq, fa, 0f);
       }
 
-      // ── 脚下源石神经突触网：脉动 + 沿突触奔流的能量脉冲 ──
-      float grow = Out3(T / 0.45f);
+      // ── 脚下：漆黑源石地壳盘 + 形态色柔边光环 ──
+      float grow = SpecterGeo.Out3(T / 0.45f);
+      float gr = R * grow;
+      var g = Vector3.up * 0.03f;
+      SpecterGeo.Annulus(_body, g, Vector3.right, Vector3.forward, gr * 0.30f, gr * 1.02f, 48, T * 0.15f, 0.04f, 1f, 0.85f * appear, false);
+      SpecterGeo.Annulus(_glow, g + Vector3.up * 0.005f, Vector3.right, Vector3.forward, gr * 0.92f, gr * 1.12f, 48, T * 0.15f, 0.04f, 1f,
+        (0.5f + 0.3f * beat) * appear, true);
+
+      // ── 宽幅源石神经突触导管：漆黑底 + 形态色奔流（能量鼓包沿导管奔流）+ 白金脉冲亮核 ──
       float throbHz = IsAgile ? 7f : 2.5f;
-      float pulseLen = IsAgile ? 0.22f : 0.14f;
-      var lift = Vector3.up * 0.02f;
       for (int i = 0; i < SynN; i++)
       {
-        float a = _synAng[i];
-        float ca = Mathf.Cos(a), sa = Mathf.Sin(a);
+        float ca = Mathf.Cos(_synAng[i]), sa = Mathf.Sin(_synAng[i]);
         float len = R * _synLen[i] * grow * (0.94f + 0.06f * Mathf.Sin(T * throbHz * 0.8f + i));
         for (int p = 0; p < SynPts; p++)
         {
-          var pos = SynNode(feet, ca, sa, len, i, p);
-          _synBody[i].SetPosition(p, pos);
-          _synEdge[i].SetPosition(p, pos);
+          float u = p / (float)(SynPts - 1);
+          float j = _synJit[i * SynPts + p] * len;
+          _pts[p] = new Vector3(ca * len * u - sa * j, 0.045f, sa * len * u + ca * j);
         }
-        SetA(_synBody[i], Ob, appear);
-        SetA(_synEdge[i], _acc, (0.6f + 0.4f * Mathf.Sin(T * throbHz - i * 1.1f)) * appear);
-
-        float u0 = Mathf.Repeat(T * _pulseSpeed[i] + _pulsePhase[i], 1f);
-        _pulse[i].SetPosition(0, SynAt(feet, ca, sa, len, i, u0) + lift);
-        _pulse[i].SetPosition(1, SynAt(feet, ca, sa, len, i, u0 + pulseLen) + lift);
-        SetA(_pulse[i], IsAgile ? Pt : _acc, Mathf.Sin(u0 * Mathf.PI) * appear);
+        float pu = Mathf.Repeat(T * _pulseSpeed[i] + _pulsePhase[i], 1f);
+        if (!IsAgile) pu = 1f - pu;   // 坚韧：能量向内缓沉回流
+        float flick = 0.6f + 0.4f * Mathf.Sin(T * throbHz - i * 1.1f);
+        SpecterGeo.Ribbon(_body, _pts, SynPts, Vector3.up, 0.46f, true, 0.9f * appear);
+        SpecterGeo.Ribbon(_glow, _pts, SynPts, Vector3.up, 0.26f, true, flick * appear, 1.4f, pu);
+        _pulsePts[0] = SynAt(pu - 0.06f);
+        _pulsePts[1] = SynAt(pu);
+        _pulsePts[2] = SynAt(pu + 0.06f);
+        SpecterGeo.Ribbon(_edge, _pulsePts, 3, Vector3.up, 0.30f, false, 0.9f * Mathf.Sin(pu * Mathf.PI) * appear);
       }
 
       if (IsAgile)
       {
-        // ── 敏捷：环身螺旋上冲的炽烈源石金光流束 ──
+        // ── 敏捷：环身螺旋上冲的宽幅炽烈源石金能量洪流 + 白金流芯 ──
         for (int s = 0; s < StreamN; s++)
         {
-          var lr = _stream[s];
           float ph = s * Mathf.PI * 2f / StreamN + T * 4.2f;
           for (int p = 0; p < StreamPts; p++)
           {
             float u = p / (float)(StreamPts - 1);
-            float a = ph + u * 3.8f;
-            float r = R * (0.78f - 0.28f * u) + 0.05f * Mathf.Sin(T * 11f + u * 12f + s);
-            lr.SetPosition(p, feet + new Vector3(Mathf.Cos(a) * r, u * Height * 1.02f, Mathf.Sin(a) * r));
+            float ang = ph + u * 3.8f;
+            float rr = R * (0.80f - 0.30f * u) + 0.05f * Mathf.Sin(T * 11f + u * 12f + s);
+            _pts[p] = new Vector3(Mathf.Cos(ang) * rr, u * H * 1.05f, Mathf.Sin(ang) * rr);
           }
-          SetA(lr, Au, (0.65f + 0.35f * Mathf.Sin(T * 9f + s * 2.1f)) * appear);
+          float sa = (0.65f + 0.35f * Mathf.Sin(T * 9f + s * 2.1f)) * appear;
+          float su = Mathf.Repeat(T * 1.6f + s / (float)StreamN, 1f);
+          SpecterGeo.Ribbon(_glow, _pts, StreamPts, fwd, 0.40f, false, 0.85f * sa, 0.8f, su);
+          SpecterGeo.Ribbon(_edge, _pts, StreamPts, fwd, 0.12f, false, 0.7f * sa, 1.2f, su);
         }
       }
       else
       {
-        // ── 坚韧：环身矗立的精神紫源石晶壁 + 向内坍缩的重力场波纹 ──
-        float half = Mathf.Clamp(R * 0.22f, 0.14f, 0.4f);
-        for (int i = 0; i < ShardN; i++)
+        // ── 坚韧：环身矗立的实体三棱精神紫晶壁簇 + 向内坍缩的实心重力波环 ──
+        float rad = Mathf.Clamp(R * 0.17f, 0.12f, 0.32f);
+        for (int i = 0; i < SpireN; i++)
         {
-          float a = i * Mathf.PI * 2f / ShardN + T * 0.22f;
-          float ca = Mathf.Cos(a), sa = Mathf.Sin(a);
-          float rise = Out3((T - i * 0.05f) / 0.5f);
-          float h = Height * (0.5f + 0.08f * Mathf.Sin(T * 1.3f + i * 1.7f)) * rise;
-          var b = feet + new Vector3(ca * R * 1.1f, 0.04f, sa * R * 1.1f);
-          var tan = new Vector3(-sa * half, 0f, ca * half);
-          var p1 = b + tan + Vector3.up * (h * 0.42f);
-          var p2 = b + Vector3.up * h;
-          var p3 = b - tan + Vector3.up * (h * 0.42f);
-          var body = _shardBody[i];
-          var edge = _shardEdge[i];
-          body.SetPosition(0, b); body.SetPosition(1, p1); body.SetPosition(2, p2); body.SetPosition(3, p3);
-          edge.SetPosition(0, b); edge.SetPosition(1, p1); edge.SetPosition(2, p2); edge.SetPosition(3, p3);
-          SetA(body, Ob, appear);
-          SetA(edge, Vi, (0.7f + 0.3f * Mathf.Sin(T * 2f + i * 1.3f)) * appear);
+          float ang = _spireAng[i] + T * 0.22f;
+          var od = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang));
+          var tg = new Vector3(-od.z, 0f, od.x);
+          float rise = SpecterGeo.Out3((T - i * 0.05f) / 0.5f);
+          float h = H * 0.55f * _spireScale[i] * (1f + 0.06f * Mathf.Sin(T * 1.3f + i * 1.7f)) * rise;
+          var b = od * (R * 1.1f) + Vector3.up * 0.02f;
+          float shine = (0.45f + 0.25f * Mathf.Sin(T * 2f + i * 1.3f)) * appear;
+          SpecterGeo.Crystal(_body, _glow, _edge, b, (Vector3.up + od * 0.12f).normalized, tg, rad, h, 3, 0.5f,
+            appear, shine, 0.05f, fwd);
+          SpecterGeo.Crystal(_body, _glow, _edge, b + tg * (rad * 1.3f), (Vector3.up + od * 0.45f + tg * 0.25f).normalized, od,
+            rad * 0.6f, h * 0.5f, 3, 0f, appear, shine, 0.035f, fwd);
+          SpecterGeo.Crystal(_body, _glow, _edge, b - tg * (rad * 1.3f), (Vector3.up + od * 0.45f - tg * 0.25f).normalized, od,
+            rad * 0.6f, h * 0.42f, 3, 0.4f, appear, shine, 0.035f, fwd);
         }
         for (int i = 0; i < RippleN; i++)
         {
           float k = Mathf.Repeat(T * 0.45f + i / (float)RippleN, 1f);
-          Circle(_ripple[i], feet, Mathf.Lerp(R * 1.7f, R * 0.25f, k * k), 0.04f);
-          SetA(_ripple[i], Vi, 0.8f * Mathf.Sin(k * Mathf.PI) * appear);
+          float rr = Mathf.Lerp(R * 1.8f, R * 0.25f, k * k);
+          float bw = Mathf.Lerp(0.42f, 0.12f, k);
+          SpecterGeo.Annulus(_glow, Vector3.up * (0.035f + 0.004f * i), Vector3.right, Vector3.forward,
+            rr - bw * 0.5f, rr + bw * 0.5f, 48, 0f, 0f, 1f, 0.7f * Mathf.Sin(k * Mathf.PI) * appear, true);
         }
       }
+
+      _body.End(); _glow.End(); _edge.End();
+    }
+
+    protected override void OnDestroy()
+    {
+      _body?.Dispose(); _glow?.Dispose(); _edge?.Dispose();
+      base.OnDestroy();
     }
   }
 
-/// <summary>
-  /// 巴别塔恶灵形态结束/关闭瞬间动画（SpecterDeactivateAnim，~0.8s）：
-  ///   · 黑冠外胀崩散、冠尖塌陷、加速自旋后消失，化为初速外抛 + 阻尼 + 微重力缓落的源石星芒光尘；
-  ///   · 脚下源石突触 EaseInQuad 回旋收缩至脚心，胸口精神紫内收环坍缩，白金核心一闪敛入体内。
+  /// <summary>
+  /// 巴别塔恶灵形态结束/关闭瞬间动画（SpecterDeactivateAnim，~0.8s）——实体几何版：
+  ///   · 实心黑冠震颤、冠箍碎段外抛、晶尖外倾塌陷、加速自旋后消散；
+  ///   · 迸射翻滚的黑曜四面体实体碎晶（源石金 / 精神紫晶光，初速 + 阻尼 + 重力）与白金菱形星芒光屑；
+  ///   · 宽幅贴地突触导管 EaseInQuad 回旋收缩、能量鼓包回流脚心；胸口实心精神紫内收环坍缩 → 白金八面核心一闪敛入体内。
   /// </summary>
   public class SpecterDeactivateAnim : MonoBehaviour
   {
     private const float Dur = 0.80f;
-    private const int Spikes = 7, CrownPts = Spikes * 2, MoteN = 20, SynN = 6, SynPts = 7;
+    private const int ShardN = 24, DustN = 28, SynN = 6, SynPts = 7;
     private static readonly Color Ob = SpecterFormFx.OriginiumObsidian, Au = SpecterFormFx.OriginiumGold,
       Vi = SpecterFormFx.NeuralViolet, Pt = SpecterFormFx.CrownPlatinum;
 
     private float _t, _h = 2f, _r = 0.8f, _cr = 0.5f;
     private UnitEntityData _caster;
-    private LineRenderer _crownBody, _crownEdge, _implode, _core;
-    private readonly LineRenderer[] _mote = new LineRenderer[MoteN];
-    private readonly Vector3[] _motePos = new Vector3[MoteN];
-    private readonly Vector3[] _moteVel = new Vector3[MoteN];
-    private readonly Color[] _moteCol = new Color[MoteN];
-    private readonly LineRenderer[] _synBody = new LineRenderer[SynN];
-    private readonly LineRenderer[] _synEdge = new LineRenderer[SynN];
+    private SolidMesh _body, _violet, _gold, _edge;
+    private readonly Vector3[] _pts = new Vector3[SynPts];
+    private readonly Vector3[] _shardPos = new Vector3[ShardN];
+    private readonly Vector3[] _shardVel = new Vector3[ShardN];
+    private readonly Vector3[] _shardAxis = new Vector3[ShardN];
+    private readonly float[] _shardSpin = new float[ShardN];
+    private readonly float[] _shardSize = new float[ShardN];
+    private readonly Vector3[] _dustPos = new Vector3[DustN];
+    private readonly Vector3[] _dustVel = new Vector3[DustN];
     private readonly float[] _synAng = new float[SynN];
     private readonly float[] _synLen = new float[SynN];
     private readonly float[] _synJit = new float[SynN * SynPts];
@@ -696,52 +926,37 @@ namespace RhodesDoctor
       _h = ModelHeight(caster);
       _r = Mathf.Clamp(caster.View.Corpulence * 1.6f, 0.7f, 3.0f);
       _cr = Mathf.Clamp(_r * 0.42f, 0.32f, 0.8f);
-      var feet = caster.Position;
-      transform.position = feet;
-      var crownC = feet + Vector3.up * (_h + 0.5f);
+      transform.SetPositionAndRotation(caster.Position, Quaternion.identity);
+      _body = new SolidMesh(transform, "RD_SP_DeBody", mOb, 700);
+      _violet = new SolidMesh(transform, "RD_SP_DeViolet", mVi, 700);
+      _gold = new SolidMesh(transform, "RD_SP_DeGold", mAu, 300);
+      _edge = new SolidMesh(transform, "RD_SP_DeEdge", mPt, 600);
 
-      _crownBody = Line(transform, "RD_SP_DeCrownBody", mOb, CrownPts, true, 0.16f);
-      _crownEdge = Line(transform, "RD_SP_DeCrownEdge", mPt, CrownPts, true, 0.08f);
-      _implode   = Line(transform, "RD_SP_DeImplode", mVi, 40, true, 0.10f);
-      _core      = Line(transform, "RD_SP_DeCore", mPt, 20, true, 0.10f);
-      for (int i = 0; i < MoteN; i++)
+      var crownC = Vector3.up * (_h + 0.5f);
+      for (int i = 0; i < ShardN; i++)
       {
-        int c = i % 3;
-        _moteCol[i] = c == 0 ? Pt : c == 1 ? Au : Vi;
-        _mote[i] = Line(transform, "RD_SP_DeMote", c == 0 ? mPt : c == 1 ? mAu : mVi, 2, false, 0.09f);
-        float a = i * Mathf.PI * 2f / MoteN + UnityEngine.Random.Range(-0.2f, 0.2f);
-        float ca = Mathf.Cos(a), sa = Mathf.Sin(a);
-        _motePos[i] = crownC + new Vector3(ca * _cr, UnityEngine.Random.Range(0f, _cr * 0.85f), sa * _cr);
-        _moteVel[i] = new Vector3(ca, 0f, sa) * UnityEngine.Random.Range(0.9f, 2.1f)
-          + Vector3.up * UnityEngine.Random.Range(0.3f, 1.4f);
+        float a = i * Mathf.PI * 2f / ShardN + UnityEngine.Random.Range(-0.15f, 0.15f);
+        var od = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a));
+        _shardPos[i] = crownC + od * _cr + Vector3.up * UnityEngine.Random.Range(0f, _cr * 0.9f);
+        _shardVel[i] = od * UnityEngine.Random.Range(1.0f, 2.4f) + Vector3.up * UnityEngine.Random.Range(0.4f, 1.6f);
+        _shardAxis[i] = UnityEngine.Random.onUnitSphere;
+        _shardSpin[i] = UnityEngine.Random.Range(300f, 900f);
+        _shardSize[i] = _cr * UnityEngine.Random.Range(0.10f, 0.20f);
       }
-      var taper = AnimationCurve.Linear(0f, 1f, 1f, 0.25f);
+      for (int i = 0; i < DustN; i++)
+      {
+        var d = UnityEngine.Random.onUnitSphere;
+        _dustPos[i] = crownC + d * (_cr * 0.6f);
+        _dustVel[i] = d * UnityEngine.Random.Range(0.6f, 2.2f) + Vector3.up * 0.4f;
+      }
       for (int i = 0; i < SynN; i++)
       {
-        _synBody[i] = Flat(transform, "RD_SP_DeSynBody", mOb, SynPts, false, 0.20f);
-        _synEdge[i] = Flat(transform, "RD_SP_DeSynEdge", (i & 1) == 0 ? mAu : mVi, SynPts, false, 0.08f);
-        _synBody[i].widthCurve = taper;
-        _synEdge[i].widthCurve = taper;
         _synAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / SynN;
         _synLen[i] = UnityEngine.Random.Range(1.3f, 1.9f);
         for (int p = 0; p < SynPts; p++)
           _synJit[i * SynPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.16f, 0.16f);
       }
       return true;
-    }
-
-    private static float Out3(float x) { x = 1f - Mathf.Clamp01(x); return 1f - x * x * x; }
-
-    private static void Crown(LineRenderer lr, Vector3 c, float r, float h, float spin)
-    {
-      int n = lr.positionCount;
-      for (int i = 0; i < n; i++)
-      {
-        float a = spin + i * Mathf.PI * 2f / n;
-        bool tip = (i & 1) == 1;
-        float rr = tip ? r * 1.1f : r;
-        lr.SetPosition(i, c + new Vector3(Mathf.Cos(a) * rr, tip ? h : 0f, Mathf.Sin(a) * rr));
-      }
     }
 
     private void Update()
@@ -755,41 +970,49 @@ namespace RhodesDoctor
       }
       try
       {
-        float k = _t / Dur;
+        transform.SetPositionAndRotation(_caster.Position, Quaternion.identity);
         CamBasis(out var right, out var up);
-        var feet = _caster.Position;
-        var chest = feet + Vector3.up * (_h * 0.55f);
-        var crownC = feet + Vector3.up * (_h + 0.5f);
-        transform.position = feet;
+        var fwd = SpecterGeo.ViewFwd(right, up);
+        float k = _t / Dur;
+        var chest = Vector3.up * (_h * 0.55f);
+        var crownC = Vector3.up * (_h + 0.5f);
+        _body.Begin(); _violet.Begin(); _gold.Begin(); _edge.Begin();
 
-        // ① 黑冠瓦解：0.3 s 内外胀崩散、冠尖塌陷、加速自旋
+        // ① 黑冠瓦解：0.3 s 内震颤、冠箍碎段外抛、晶尖外倾塌陷、加速自旋
         float sk = Mathf.Clamp01(_t / 0.30f);
-        float cr = _cr * (1f + 0.35f * Out3(sk));
-        float spin = 0.9f * _t + 6f * sk * sk;
-        float spikeH = _cr * 0.85f * (1f - sk);
-        Crown(_crownBody, crownC, cr, spikeH, spin);
-        Crown(_crownEdge, crownC, cr, spikeH, spin);
-        SetA(_crownBody, Ob, 1f - sk);
-        SetA(_crownEdge, Pt, (1f - sk) * (0.75f + 0.25f * Mathf.Sin(_t * 60f)));
+        float crownA = 1f - sk;
+        var q = Quaternion.Euler(6f * Mathf.Sin(_t * 50f) * crownA, (0.9f * _t + 6f * sk * sk) * Mathf.Rad2Deg, 0f);
+        var shake = Vector3.right * (0.03f * Mathf.Sin(_t * 70f) * crownA);
+        SpecterGeo.Crown(_body, _violet, _edge, crownC + shake, _cr * (1f + 0.25f * SpecterGeo.Out3(sk)),
+          _cr * 1.05f * (1f - 0.7f * sk), q, crownA, 0.5f * crownA, 0.45f * _cr * sk, fwd, _t * 600f);
 
-        // ② 源石星芒光尘：初速外抛 + 阻尼 + 微重力缓落，拖尾随速度伸缩
-        float drag = Mathf.Max(0f, 1f - 2.4f * dt);
-        float moteA = Mathf.Pow(1f - k, 1.5f);
-        float moteW = Mathf.Lerp(0.10f, 0.03f, k);
-        for (int i = 0; i < MoteN; i++)
+        // ② 实体碎晶：黑曜四面体外抛 + 阻尼 + 重力 + 翻滚（金 / 紫晶光交错）
+        float drag = Mathf.Max(0f, 1f - 2.2f * dt);
+        float shardA = Mathf.Clamp01(_t / 0.08f) * Mathf.Pow(1f - k, 1.4f);
+        for (int i = 0; i < ShardN; i++)
         {
-          var v = _moteVel[i] * drag;
-          v.y -= 0.9f * dt;
-          _moteVel[i] = v;
-          _motePos[i] += v * dt;
-          var lr = _mote[i];
-          lr.SetPosition(0, _motePos[i]);
-          lr.SetPosition(1, _motePos[i] - v * 0.07f + Vector3.up * 0.03f);
-          lr.widthMultiplier = moteW;
-          SetA(lr, _moteCol[i], moteA * (0.6f + 0.4f * Mathf.Sin(_t * 30f + i * 1.9f)));
+          var v = _shardVel[i] * drag;
+          v.y -= 2.2f * dt;
+          _shardVel[i] = v;
+          _shardPos[i] += v * dt;
+          var rot = Quaternion.AngleAxis(_t * _shardSpin[i], _shardAxis[i]);
+          SpecterGeo.Shard(_body, (i & 1) == 0 ? _gold : _violet, _shardPos[i], _shardSize[i] * (1f - 0.4f * k),
+            rot, shardA, 0.65f * shardA);
         }
 
-        // ③ 源石突触收缩：EaseInQuad 回旋敛入脚心
+        // ③ 星芒光屑：白金菱形晶片飘散闪烁
+        for (int i = 0; i < DustN; i++)
+        {
+          var v = _dustVel[i] * drag;
+          v.y -= 0.6f * dt;
+          _dustVel[i] = v;
+          _dustPos[i] += v * dt;
+          float tw = 0.55f + 0.45f * Mathf.Sin(_t * 30f + i * 1.9f);
+          float s = 0.05f * (1f - 0.5f * k);
+          SpecterGeo.Diamond(_edge, _dustPos[i], right, up, s, s * 1.8f, shardA * tw);
+        }
+
+        // ④ 宽幅突触导管：EaseInQuad 回旋收缩，能量鼓包回流脚心
         float rk = Mathf.Clamp01(_t / 0.6f);
         float retract = 1f - rk * rk;
         for (int i = 0; i < SynN; i++)
@@ -801,21 +1024,24 @@ namespace RhodesDoctor
           {
             float u = p / (float)(SynPts - 1);
             float j = _synJit[i * SynPts + p] * len;
-            var pos = feet + new Vector3(ca * len * u - sa * j, 0.05f, sa * len * u + ca * j);
-            _synBody[i].SetPosition(p, pos);
-            _synEdge[i].SetPosition(p, pos);
+            _pts[p] = new Vector3(ca * len * u - sa * j, 0.05f, sa * len * u + ca * j);
           }
-          SetA(_synBody[i], Ob, retract);
-          SetA(_synEdge[i], (i & 1) == 0 ? Au : Vi, retract * (0.7f + 0.3f * Mathf.Sin(_t * 40f + i)));
+          SpecterGeo.Ribbon(_body, _pts, SynPts, Vector3.up, 0.44f, true, 0.9f * retract);
+          SpecterGeo.Ribbon((i & 1) == 0 ? _gold : _violet, _pts, SynPts, Vector3.up, 0.24f, true,
+            retract * (0.7f + 0.3f * Mathf.Sin(_t * 40f + i)), 1.3f, 1f - rk);
         }
 
-        // ④ 胸口内收环坍缩 → 白金核心一闪敛入体内
-        BillCircle(_implode, chest, Mathf.Lerp(_r * 1.2f, 0.06f, rk * rk), right, up, -_t * 3f);
-        SetA(_implode, Vi, 0.85f * (1f - rk * rk * rk));
+        // ⑤ 胸口实心内收环坍缩 → 白金八面核心一闪敛入体内
+        float ir = Mathf.Lerp(_r * 1.2f, 0.06f, rk * rk);
+        float iw = Mathf.Lerp(0.36f, 0.05f, rk);
+        SpecterGeo.Annulus(_violet, chest, right, up, Mathf.Max(0f, ir - iw), ir + iw * 0.3f, 40, -_t * 3f, 0.08f, 1f,
+          0.85f * (1f - rk * rk * rk), true);
         float ck = Mathf.Clamp01((_t - 0.45f) / 0.35f);
         float coreA = Mathf.Sin(ck * Mathf.PI);
-        BillCircle(_core, chest, 0.08f + 0.14f * coreA, right, up);
-        SetA(_core, Pt, coreA);
+        SpecterGeo.Fan(_edge, chest, right, up, 0.10f + 0.28f * coreA, 24, 0f, 0f, 1f, coreA, 0f);
+        SpecterGeo.Octa(_edge, _gold, chest, 0.06f + 0.08f * coreA, 1.5f, Quaternion.Euler(0f, _t * 400f, 0f), coreA, 0.6f * coreA);
+
+        _body.End(); _violet.End(); _gold.End(); _edge.End();
       }
       catch (Exception ex)
       {
@@ -823,105 +1049,139 @@ namespace RhodesDoctor
         Destroy(gameObject);
       }
     }
+
+    private void OnDestroy()
+    {
+      _body?.Dispose(); _violet?.Dispose(); _gold?.Dispose(); _edge?.Dispose();
+    }
   }
 
-/// <summary>
-  /// 恶灵余波常驻跟随动画（SpecterAftermathAnim，继承 MarkFxBase，随 AftermathRestrictBuff 跟随 2 轮）：
-  ///   · 疲惫的缓慢喘息：脚下漆黑源石环 × AftermathDim 边缘余光、胸口暗沉光晕；
-  ///   · 微弱神经余颤：断续闪现（Perlin 门控）、高频细颤的贴地突触残片；
-  ///   · 缓缓沉落的暗沉余烬；0.3 s Master 平滑淡出。
+  /// <summary>
+  /// 恶灵余波常驻跟随动画（SpecterAftermathAnim，继承 MarkFxBase，随 AftermathRestrictBuff 跟随 2 轮）——实体几何版：
+  ///   · 疲惫喘息：脚下实心锯齿漆黑余烬地壳 × AftermathDim 柔边余光环 × 极淡精神紫勾边（防加法透空）；
+  ///   · 熄灭的源石晶残桩：低矮外倾、半埋于地的黑曜三棱残晶，暗沉晶光；胸口柔边暗沉光盘；
+  ///   · 微弱神经余颤：宽幅贴地残缺突触，Perlin 门控断续抽搐；缓缓沉落的暗沉菱形余烬晶片；0.3 s Master 淡出。
   /// </summary>
   public class SpecterAftermathAnim : MarkFxBase
   {
-    private const int TremorN = 4, TremorPts = 6, EmberN = 6;
-    private static readonly Color D = SpecterFormFx.AftermathDim, Ob = SpecterFormFx.OriginiumObsidian;
+    private const int TremorN = 5, TremorPts = 6, FragN = 6, EmberN = 8;
+    private static readonly Color D = SpecterFormFx.AftermathDim, Ob = SpecterFormFx.OriginiumObsidian,
+      Vi = SpecterFormFx.NeuralViolet;
 
-    private LineRenderer _groundBody, _groundEdge, _aura;
-    private readonly LineRenderer[] _tremor = new LineRenderer[TremorN];
-    private readonly float[] _tremAng = new float[TremorN];
-    private readonly float[] _tremSeed = new float[TremorN];
-    private readonly float[] _tremJit = new float[TremorN * TremorPts];
-    private readonly LineRenderer[] _ember = new LineRenderer[EmberN];
-    private readonly float[] _emberAng = new float[EmberN];
-    private readonly float[] _emberPhase = new float[EmberN];
+    private SolidMesh _body, _dim, _rim;
+    private readonly Vector3[] _pts = new Vector3[TremorPts];
+    private readonly float[] _trAng = new float[TremorN];
+    private readonly float[] _trSeed = new float[TremorN];
+    private readonly float[] _trJit = new float[TremorN * TremorPts];
+    private readonly float[] _frAng = new float[FragN];
+    private readonly float[] _frDist = new float[FragN];
+    private readonly float[] _frTilt = new float[FragN];
+    private readonly float[] _frSize = new float[FragN];
+    private readonly float[] _emAng = new float[EmberN];
+    private readonly float[] _emPhase = new float[EmberN];
 
     protected override bool Build(Buff buff)
     {
-      var mD = Mat(D); var mOb = Mat(Ob);
-      if (mD == null || mOb == null)
+      var mD = Mat(D); var mOb = Mat(Ob); var mVi = Mat(Vi);
+      if (mD == null || mOb == null || mVi == null)
       {
         Main.Mod.Logger.Error("[RhodesDoctor] 巴别塔恶灵·余波放弃：StreakMaterialPlain 无可用材质。");
         return false;
       }
-      _groundBody = Flat(transform, "RD_SP_AfGroundBody", mOb, RingSeg, true, 0.22f);
-      _groundEdge = Flat(transform, "RD_SP_AfGroundEdge", mD, RingSeg, true, 0.08f);
-      _aura       = Line(transform, "RD_SP_AfAura", mD, 40, true, 0.10f);
+      _body = new SolidMesh(transform, "RD_SP_AfBody", mOb, 300);
+      _dim = new SolidMesh(transform, "RD_SP_AfDim", mD, 400);
+      _rim = new SolidMesh(transform, "RD_SP_AfRim", mVi, 150);
       for (int i = 0; i < TremorN; i++)
       {
-        _tremor[i] = Flat(transform, "RD_SP_AfTremor", mD, TremorPts, false, 0.07f);
-        _tremAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / TremorN;
-        _tremSeed[i] = UnityEngine.Random.Range(0f, 100f);
+        _trAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / TremorN;
+        _trSeed[i] = UnityEngine.Random.Range(0f, 100f);
         for (int p = 0; p < TremorPts; p++)
-          _tremJit[i * TremorPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.08f, 0.08f);
+          _trJit[i * TremorPts + p] = p == 0 ? 0f : UnityEngine.Random.Range(-0.08f, 0.08f);
+      }
+      for (int i = 0; i < FragN; i++)
+      {
+        _frAng[i] = (i + UnityEngine.Random.Range(-0.3f, 0.3f)) * Mathf.PI * 2f / FragN;
+        _frDist[i] = UnityEngine.Random.Range(0.55f, 0.95f);
+        _frTilt[i] = UnityEngine.Random.Range(0.5f, 1.4f);
+        _frSize[i] = UnityEngine.Random.Range(0.7f, 1.2f);
       }
       for (int i = 0; i < EmberN; i++)
       {
-        _ember[i] = Line(transform, "RD_SP_AfEmber", mD, 2, false, 0.06f);
-        _emberAng[i] = i * Mathf.PI * 2f / EmberN + UnityEngine.Random.Range(-0.3f, 0.3f);
-        _emberPhase[i] = UnityEngine.Random.value;
+        _emAng[i] = i * Mathf.PI * 2f / EmberN + UnityEngine.Random.Range(-0.3f, 0.3f);
+        _emPhase[i] = UnityEngine.Random.value;
       }
       return true;
     }
 
     protected override void Tick(float dt)
     {
-      var feet = Unit.Position;
+      transform.SetPositionAndRotation(Unit.Position, Quaternion.identity);
+      CamBasis(out var right, out var up);
+      var fwd = SpecterGeo.ViewFwd(right, up);
       float ink = 1f - Mathf.Clamp01(T / 0.4f);
       float appear = (1f - ink * ink * ink) * Master;
       float breath = 0.5f + 0.5f * Mathf.Sin(T * 1.4f);   // 疲惫的缓慢喘息
-      float R = Radius;
+      float R = Radius, H = Height;
+      _body.Begin(); _dim.Begin(); _rim.Begin();
 
-      // 脚下暗沉余光环（漆黑源石底 + 暗沉边缘辉光）
-      Circle(_groundBody, feet, R * (0.9f + 0.05f * breath), 0.04f);
-      Circle(_groundEdge, feet, R * (0.95f + 0.05f * breath), 0.05f);
-      SetA(_groundBody, Ob, appear);
-      SetA(_groundEdge, D, (0.4f + 0.3f * breath) * appear);
+      // 脚下：实心锯齿漆黑余烬地壳 + 暗沉柔边余光环 + 极淡精神紫勾边
+      var g = Vector3.up * 0.03f;
+      float gr = R * (0.95f + 0.05f * breath);
+      SpecterGeo.Annulus(_body, g, Vector3.right, Vector3.forward, gr * 0.35f, gr, 48, 0f, 0.05f, 1f, 0.85f * appear, false);
+      SpecterGeo.Annulus(_dim, g + Vector3.up * 0.005f, Vector3.right, Vector3.forward, gr * 0.82f, gr * 1.06f, 48, 0f, 0.05f, 1f,
+        (0.45f + 0.3f * breath) * appear, true);
+      SpecterGeo.Annulus(_rim, g + Vector3.up * 0.008f, Vector3.right, Vector3.forward, gr * 1.04f, gr * 1.10f, 48, 0f, 0.05f, 1f,
+        (0.12f + 0.08f * breath) * appear, true);
 
-      // 胸口暗沉光晕
-      CamBasis(out var right, out var up);
-      var chest = feet + Vector3.up * (Height * 0.5f);
-      BillCircle(_aura, chest, R * 0.6f * (0.94f + 0.06f * breath), right, up, T * 0.3f);
-      SetA(_aura, D, (0.25f + 0.2f * breath) * appear);
+      // 熄灭的源石晶残桩：低矮外倾、半埋于地的黑曜三棱残晶
+      float fragR = Mathf.Clamp(R * 0.09f, 0.07f, 0.2f);
+      for (int i = 0; i < FragN; i++)
+      {
+        var od = new Vector3(Mathf.Cos(_frAng[i]), 0f, Mathf.Sin(_frAng[i]));
+        var b = od * (R * _frDist[i]);
+        var ax = (Vector3.up + od * _frTilt[i]).normalized;
+        float h = H * 0.22f * _frSize[i] * (0.97f + 0.03f * breath);
+        SpecterGeo.Crystal(_body, _dim, null, b, ax, od, fragR * _frSize[i], h, 3, 0.3f * i,
+          0.9f * appear, (0.25f + 0.2f * breath) * appear, 0f, fwd);
+      }
 
-      // 微弱神经余颤：Perlin 门控断续闪现 + 高频细颤
+      // 胸口：柔边暗沉光盘
+      SpecterGeo.Fan(_dim, Vector3.up * (H * 0.5f), right, up, R * 0.55f * (0.94f + 0.06f * breath), 24, T * 0.3f, 0f, 1f,
+        (0.22f + 0.15f * breath) * appear, 0f);
+
+      // 微弱神经余颤：宽幅贴地残缺突触，Perlin 门控断续抽搐 + 高频细颤
       for (int i = 0; i < TremorN; i++)
       {
-        float on = Mathf.Clamp01((Mathf.PerlinNoise(T * 2.5f, _tremSeed[i]) - 0.45f) * 4f);
-        float a = _tremAng[i];
-        float ca = Mathf.Cos(a), sa = Mathf.Sin(a);
+        float on = Mathf.Clamp01((Mathf.PerlinNoise(T * 2.5f, _trSeed[i]) - 0.45f) * 4f);
+        if (on <= 0.01f) continue;
+        float ca = Mathf.Cos(_trAng[i]), sa = Mathf.Sin(_trAng[i]);
         float shake = 0.035f * Mathf.Sin(T * 47f + i * 3.1f);
-        var lr = _tremor[i];
         for (int p = 0; p < TremorPts; p++)
         {
           float u = p / (float)(TremorPts - 1);
           float rr = R * (0.3f + 0.65f * u);
-          float j = _tremJit[i * TremorPts + p] + shake * u;
-          lr.SetPosition(p, feet + new Vector3(ca * rr - sa * j, 0.06f, sa * rr + ca * j));
+          float j = _trJit[i * TremorPts + p] + shake * u;
+          _pts[p] = new Vector3(ca * rr - sa * j, 0.05f, sa * rr + ca * j);
         }
-        SetA(lr, D, 0.75f * on * appear);
+        SpecterGeo.Ribbon(_dim, _pts, TremorPts, Vector3.up, 0.26f, true, 0.7f * on * appear);
       }
 
-      // 缓缓沉落的暗沉余烬
+      // 缓缓沉落的暗沉菱形余烬晶片
       for (int i = 0; i < EmberN; i++)
       {
-        float k = Mathf.Repeat(T * 0.35f + _emberPhase[i], 1f);
-        float a = _emberAng[i] + T * 0.2f;
-        var pos = feet + new Vector3(Mathf.Cos(a) * R * 0.55f, Height * (0.9f - 0.8f * k), Mathf.Sin(a) * R * 0.55f);
-        var lr = _ember[i];
-        lr.SetPosition(0, pos);
-        lr.SetPosition(1, pos + Vector3.up * 0.1f);
-        SetA(lr, D, 0.55f * Mathf.Sin(k * Mathf.PI) * appear);
+        float k = Mathf.Repeat(T * 0.35f + _emPhase[i], 1f);
+        float a = _emAng[i] + T * 0.2f;
+        var pos = new Vector3(Mathf.Cos(a) * R * 0.55f, H * (0.9f - 0.8f * k), Mathf.Sin(a) * R * 0.55f);
+        SpecterGeo.Diamond(_dim, pos, right, up, 0.04f, 0.08f, 0.6f * Mathf.Sin(k * Mathf.PI) * appear);
       }
+
+      _body.End(); _dim.End(); _rim.End();
+    }
+
+    protected override void OnDestroy()
+    {
+      _body?.Dispose(); _dim?.Dispose(); _rim?.Dispose();
+      base.OnDestroy();
     }
   }
 }
