@@ -247,68 +247,9 @@ namespace RhodesDoctor
         Label = "永恒的注视·银紫注视",
       },
 
-      // ── 巴别塔的恶灵：六个形态增益的"身上冒黑烟"（作者 2026-10-11）──
-      // 这六个是**职业能力**（不是法术），原先完全没有视觉；做法与法术光环完全同源：
-      // 借原版**血雾**（`PlasmaAura`，身体型常驻雾）→ 重染**黑烟色**，挂到形态持有者身上，
-      // 形态增益一消失（结束恶灵 / 20 级压制 / 资源耗尽自动结束）黑烟即灭。
-      // 三段共 6 个增益（敏捷/体质 × V1/V2/V3）都要登记——V2/V3 是各自独立的蓝图，不共用。
-      // ⚠ 调"烟"的浓淡：`Tint` 越往黑走烟越黑（屏幕色 ≈ tint 的 2~3 次幂，见 dev-notes §7.11.5），
-      //   `Lift` 给一点点是为了别变成一块纯黑（0.10 左右就能看出"烟"的层次）；`Opacity` 可整体压淡。
-      // ⚠ 想换素材只改这 6 行的 `Link`：备选 `Buffs/ShadowFX`（`b6b3ca16af1fc8c47bb055d94c3a1d54`，未验证是否常驻）。
-      new Entry
-      {
-        BuffGuid = Norm(Guids.AgileBuffV1),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.26f, 0.24f, 0.30f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（敏捷形态·一段）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.EnduringBuffV1),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.26f, 0.24f, 0.30f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（体质形态·一段）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.AgileBuffV2),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.22f, 0.20f, 0.28f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（敏捷形态·二段）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.EnduringBuffV2),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.22f, 0.20f, 0.28f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（体质形态·二段）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.AgileBuffV3),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.18f, 0.16f, 0.26f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（敏捷形态·三段）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.EnduringBuffV3),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.18f, 0.16f, 0.26f, 1f),
-        Lift = 0.10f,
-        KeepLights = true,
-        Label = "巴别塔的恶灵·黑烟（体质形态·三段）",
-      },
+      // ── 巴别塔的恶灵：六个形态增益（敏捷/坚韧 × V1/V2/V3）──
+      // 原先借用原版血雾 PlasmaAura 重染黑烟方案已彻底废除。
+      // 现已全面重构为专属自绘前文明黑冠精神虚影与源石神经突触网络特效（SpecterFormFx.cs）。
     };
 
     private static readonly Dictionary<(Kingmaker.EntitySystem.Entities.UnitEntityData, int), GameObject> Live = new();
