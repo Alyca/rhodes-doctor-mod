@@ -64,7 +64,7 @@ namespace RhodesDoctor
     private const int ThornN = 14;
 
     private SinGavelRig _gavel;
-    private LineRenderer _sealOuter, _sealInner, _sealSquare, _thornA, _thornB, _tapRing;
+    private LineRenderer _block, _blockTop, _sealOuter, _sealInner, _sealSquare, _thornA, _thornB, _tapRing;
     private readonly LineRenderer[] _ticks = new LineRenderer[4];
 
     protected override bool Build(Buff buff)
@@ -75,7 +75,9 @@ namespace RhodesDoctor
       var mD = Mat(SinPunishmentFx.DeepGold);
       if (mG == null || mW == null || mR == null || mD == null) return false;
 
-      _gavel = new SinGavelRig(transform, "RD_SP_Gavel", mG, mW, mD, 1f);
+      _gavel    = new SinGavelRig(transform, "RD_SP_Gavel", mG, mW, mD, 1f);
+      _block    = Line(transform, "RD_SP_Block",    mD, 4, true,  0.045f); // 鸣砧：正对镜头的梯形木台
+      _blockTop = Line(transform, "RD_SP_BlockTop", mW, 2, false, 0.030f); // 顶面受击高光线
 
       _sealOuter  = Flat(transform, "RD_SP_SealOut", mG, RingSeg,    true, 0.050f);
       _sealInner  = Flat(transform, "RD_SP_SealIn",  mW, RingSeg,    true, 0.030f);
@@ -96,11 +98,26 @@ namespace RhodesDoctor
       float settle = SinFxMath.EaseOut3(Mathf.Clamp01(T / 0.45f)); // 入场：法槌自上方压下、印章盖下
       Cadence(T, out float lift, out float tap);
 
-      // ════ 1. 头顶审判法槌：以柄端为支点，缓抬蓄势 → 急落 → 余震 ════
-      float theta = 0.30f + 0.22f * lift;
+      // ════ 1. 头顶审判法槌 + 木质鸣砧：以柄为支点抬槌头 → 敲击砧面 → 余震弹起 ════
+      // θ = π/2 时木柄水平、槌头朝下顶面贴着击打面，与反噬同一个姿态；|lift| 保证只能向上弹起
+      var top = Unit.Position + Vector3.up * (Height + 0.45f + 0.6f * (1f - settle));
+      var strike = top + right * 0.20f;                                    // 击打点 = 槌头朝下的底面
+      float theta = Mathf.PI * 0.5f + 0.85f * Mathf.Abs(lift);
+      var grip = strike + up * SinGavelRig.HeadHalfLen - right * SinGavelRig.GripToHead;
       var v = -right * Mathf.Sin(theta) + up * Mathf.Cos(theta);
-      var grip = Unit.Position + Vector3.up * (Height + 1.25f + 0.6f * (1f - settle) - 0.05f * tap);
       _gavel.Draw(grip - v * SinGavelRig.GripToHead, theta, 1f, right, up, appear, tap);
+
+      // 鸣砧：正对镜头的梯形木台，受击瞬间顶面微震
+      var bc = strike - up * (0.02f + 0.015f * tap);
+      const float bt = 0.13f, bw = 0.17f, bh = 0.07f;
+      _block.SetPosition(0, bc - right * bt);
+      _block.SetPosition(1, bc + right * bt);
+      _block.SetPosition(2, bc + right * bw - up * bh);
+      _block.SetPosition(3, bc - right * bw - up * bh);
+      _blockTop.SetPosition(0, bc - right * (bt * 0.8f) + up * 0.012f);
+      _blockTop.SetPosition(1, bc + right * (bt * 0.8f) + up * 0.012f);
+      SetA(_block, SinPunishmentFx.DeepGold, appear * 0.95f);
+      SetA(_blockTop, SinPunishmentFx.RadiantWhite, appear * (0.35f + 0.65f * tap));
 
       // ════ 2. 脚下律法荆棘印章 ════
       var g = Unit.Position;

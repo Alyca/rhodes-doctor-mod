@@ -132,7 +132,7 @@ namespace RhodesDoctor
     // 复用的渐变缓冲（避免每帧分配）
     private readonly Gradient _grad = new();
     private readonly GradientColorKey[] _ck = new GradientColorKey[2];
-    private readonly GradientAlphaKey[] _ak = new GradientAlphaKey[6];
+    private readonly GradientAlphaKey[] _ak = new GradientAlphaKey[8]; // Unity Gradient 透明度键上限
 
     internal bool Init(UnitEntityData caster, Vector3 center, float radius, List<UnitEntityData> enemies)
     {
@@ -445,7 +445,10 @@ namespace RhodesDoctor
       return Color.Lerp(CrownEchoFx.SoftWhite, CrownEchoFx.PinkDust, Smooth(h - 2f));
     }
 
-    /// <summary>闭合环的"流动亮度"：6 个透明度关键帧按两个周期的正弦分布，flow 推动亮斑沿环流转（首尾无缝）。</summary>
+    /// <summary>
+    /// 闭合环的"单弧流光"：8 个透明度关键帧（Unity Gradient 上限）拟合一个周期平方衰减，
+    /// 形成一抹首尾渐隐、背侧近乎透明的光澜（绝非死板实线圆，flow 推动流光沿环流转，首尾无缝）。
+    /// </summary>
     private void SoftLoop(LineRenderer lr, Color c, float a, float flow)
     {
       _ck[0] = new GradientColorKey(c, 0f);
@@ -453,7 +456,8 @@ namespace RhodesDoctor
       for (int k = 0; k < _ak.Length; k++)
       {
         float x = k / (float)(_ak.Length - 1);
-        float m = 0.55f + 0.45f * Mathf.Sin((x * 2f + flow) * Mathf.PI * 2f);
+        float s = 0.5f + 0.5f * Mathf.Sin((x + flow) * Mathf.PI * 2f);
+        float m = 0.06f + 0.94f * s * s;
         _ak[k] = new GradientAlphaKey(Mathf.Clamp01(a * m), x);
       }
       _grad.SetKeys(_ck, _ak);
