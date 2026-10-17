@@ -1094,10 +1094,12 @@ namespace RhodesDoctor.Components
         new DiceFormula(2, DiceType.D6))).Result;
       Owner.Descriptor.Damage = System.Math.Max(0, Owner.Descriptor.Damage - roll);
       Data.HealsThisRound++;
+      ReturnToAbyssFx.PlayHeal(evt.Target, Owner);
       if (Data.RefundedThisRound == 0 && evt.IsCriticalConfirmed)
       {
         RefundSpecterRound();
         Data.RefundedThisRound++;
+        ReturnToAbyssFx.PlayRefund(Owner);
       }
     }
 
@@ -1108,6 +1110,7 @@ namespace RhodesDoctor.Components
       if (evt.Target == null || !evt.Target.Descriptor.State.IsDead) return;
       RefundSpecterRound();
       Data.RefundedThisRound++;
+      ReturnToAbyssFx.PlayRefund(Owner);
     }
 
     private void RefundSpecterRound()

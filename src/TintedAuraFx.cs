@@ -123,16 +123,7 @@ namespace RhodesDoctor
         Opacity = 0.5f,
         Label = "涌潮悲歌·淡蓝护罩",
       },
-      // 归溟（自增益，Guids.ReturnToAbyssBuff）：原版**血雾**（身体型） → **蓝色**（作者 10-10：要蓝色）。
-      new Entry
-      {
-        BuffGuid = Norm(Guids.ReturnToAbyssBuff),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.30f, 0.60f, 1.45f, 1f),
-        Lift = 0.25f,
-        KeepLights = true,
-        Label = "归溟·蓝色缠身",
-      },
+      // 归溟（自增益，Guids.ReturnToAbyssBuff）：已彻底废除借用原版血雾粒子，全面重构为专属自绘大洋流与潮汐特效（ReturnToAbyssFx）。
       // 画中世界（重构后，10-10 深夜）：**放逐载体**挂在施法者身上（`Guids.PaintedWorldBanishBuff`）
       // → 紫环，表示"画境进行中"；**返回后麻痹**挂在目标身上（`Guids.PaintedWorldParalysisBuff`）→ 同样的紫环。
       new Entry
