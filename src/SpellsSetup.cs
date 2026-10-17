@@ -1028,39 +1028,25 @@ namespace RhodesDoctor
 
         // ─── v0.4.0 好做批 ───
 
-        // 影霄·拔刀：强韧部分通过。失败即死（ContextActionKill，放逐术同款）；
-        // 成功仍受 10d6 + 圣武士等级伤害。免疫即死者走 Kill 规则天然不受影响，视为豁免成功。
+        // 影霄·拔刀（9 环·阿米娅·升变/魔王）：
+        // 专属自绘特效（ShadowBladeFx）：
+        // 1. 命中时播放拔刀切裂线与黑红结晶崩散（ContextActionShadowBladeSlashFx）；
+        // 2. 强韧豁免失败即死：播放空间坍缩与碎裂消亡特效（ContextActionShadowBladeKillFx）并 Kill；
+        // 3. 强韧豁免成功受 10d6+CL 伤害：播放重击顿挫与残痕余辉特效（ContextActionShadowBladeHitFx）并造成法术伤害。
         case "ShadowBladeDraw":
         {
-          // 视觉（作者 2026-10-10：原来借"指骨术"的死亡爆发不行，要"红剑砍人"）：
-          // 复用剑雨那套**武器模型**（巨剑网格）——但只落**一把**、落在目标身上、重染**血红**，
-          // 配一条自绘红色光尾（`GoldenStreak` 用的是同一份 Tint）。挂在"点击目标"动作上（同剑雨）。
-          var blade = FxLibrary.SwordRainBlade;
-          if (blade != null)
-            ability.AdditionalAbilityEffectRunActionOnClickedTarget(ActionsBuilder.New()
-              .Add<ContextActionSpawnFxRing>(a =>
-              {
-                a.PrefabLink = blade;
-                a.Count = 1;                  // 只一把
-                a.FitLongestMeters = 6.0f;    // 米：剑的长度（作者 10-10：放大几倍）
-                a.Pitch = 180f;               // 剑尖朝下，自上方劈落
-                a.OffsetUp = 1.2f;            // 米：抬高落点，让剑插在地上
-                a.FallFromMeters = 7f;        // 米：从多高处落下
-                a.FallSeconds = 0.35f;        // 秒：伤害是施法瞬间结算的，落剑紧跟其后
-                a.Tint = ShadowBladeRed;      // 血红
-                a.Lift = 0.55f;
-                a.Lifetime = 1.5f;            // 秒：落地后留存
-                a.GoldenStreak = true;
-                a.StreakSeconds = 0.25f;
-                a.StreakWidth = 0.12f;
-              }));
+          effects.Add<ContextActionShadowBladeSlashFx>();
           effects.SavingThrow(SavingThrowType.Fortitude, onResult: ActionsBuilder.New()
             .ConditionalSaved(
-              failed: ActionsBuilder.New().Kill(),
-              succeed: ActionsBuilder.New().DealDamage(
-                DamageTypes.Energy(DamageEnergyType.Magic), // 未定型伤害走 Magic 能量（程序集确认有该类型）
-                ContextDice.Value(DiceType.D6, 10, ContextValues.Rank()),
-                halfIfSaved: false)));
+              failed: ActionsBuilder.New()
+                .Add<ContextActionShadowBladeKillFx>()
+                .Kill(),
+              succeed: ActionsBuilder.New()
+                .Add<ContextActionShadowBladeHitFx>()
+                .DealDamage(
+                  DamageTypes.Energy(DamageEnergyType.Magic), // 未定型伤害走 Magic 能量（程序集确认有该类型）
+                  ContextDice.Value(DiceType.D6, 10, ContextValues.Rank()),
+                  halfIfSaved: false)));
           break;
         }
 
@@ -2144,11 +2130,6 @@ namespace RhodesDoctor
     /// </summary>
     private static readonly UnityEngine.Color BlackSnakeBlack = new UnityEngine.Color(0.30f, 0.10f, 0.38f, 1f);
 
-    /// <summary>
-    /// 影霄·拔刀的红剑重染色：**血红**（作者 2026-10-10：要"红剑砍人"）。
-    /// 与剑雨共用同一把巨剑模型，只换颜色。
-    /// </summary>
-    private static readonly UnityEngine.Color ShadowBladeRed = new UnityEngine.Color(1.00f, 0.16f, 0.16f, 1f);
 
     private static BlueprintBuffReference _hasteAccel;
     private static BlueprintBuffReference HasteAccel()

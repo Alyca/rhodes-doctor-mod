@@ -77,6 +77,17 @@ Only verify the non-negotiable boundaries:
 - It must remain self-drawn: no vanilla particle prefabs, no `Shader.Find`; use the project's proven mesh/quad + cloned-material path.
 - Preserve `UnstablePlasmaFx.Tracker` and `UnstablePlasmaAnim : MarkFxBase`, zero per-frame GC, the 0.3s `Master` fade, and clean destruction.
 
+### Phase 3.2: Dedicated Self-Drawn Shadow Blade Draw (影霄·拔刀)
+
+The borrowed vanilla Sword Rain blade (giant 6m sword drop) has been completely removed from `src/SpellsSetup.cs`.
+Macroscope is tasked with reviewing and completing the self-drawn implementation in `src/ShadowBladeFx.cs` as specified in `docs/fx-rework-prompt-shadow-blade.md`.
+
+Verify and output drop-in replacement code for:
+- **Slash Tear & Crystal Burst (`ShadowBladeSlashAnim`)**: Pure black and crimson dual-layer spatial tear lines with explosive obsidian and crimson shard ejection, initial velocity dispersion, and gravity decay.
+- **Fortitude Failed Death Annihilation (`ShadowBladeKillAnim`)**: Implosion followed by complete disintegrating shatter with void/crystal remnants.
+- **Fortitude Saved Heavy Hit & Scar (`ShadowBladeHitAnim`)**: Impact judder / freeze-frame stop with a lingering, trembling dark red scar and afterglow pulsation (0.5s~0.8s).
+- **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
+
 ### Phase 4: Reporting Findings
 
 When you confirm a mismatch, bug, or missing requirement, post an inline PR review comment at the specific file and line using `github_pr_review` (via `modify_pr`).

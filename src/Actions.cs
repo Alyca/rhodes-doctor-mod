@@ -1949,4 +1949,51 @@ namespace RhodesDoctor.Components
         CrownEchoFx.Play(caster, caster.Position, CrownEchoFx.DefaultRadius);
     }
   }
+
+  /// <summary>
+  /// 影霄·拔刀（9 环·阿米娅）：播放专属自绘空间断裂斩击与黑红晶体崩散特效。
+  /// </summary>
+  public class ContextActionShadowBladeSlashFx : ContextAction
+  {
+    public override string GetCaption() => "影霄·拔刀·自绘空间斩裂特效";
+
+    public override void RunAction()
+    {
+      var caster = Context?.MaybeCaster;
+      var target = Target?.Unit;
+      if (target != null)
+        ShadowBladeFx.PlaySlash(caster, target);
+    }
+  }
+
+  /// <summary>
+  /// 影霄·拔刀（9 环·阿米娅）：强韧失败即死时播放碎裂消亡特效。
+  /// </summary>
+  public class ContextActionShadowBladeKillFx : ContextAction
+  {
+    public override string GetCaption() => "影霄·拔刀·即死碎裂消亡特效";
+
+    public override void RunAction()
+    {
+      var target = Target?.Unit;
+      if (target != null)
+        ShadowBladeFx.PlayKill(target);
+    }
+  }
+
+  /// <summary>
+  /// 影霄·拔刀（9 环·阿米娅）：强韧成功承受伤害时播放重击顿挫与残痕余辉特效。
+  /// </summary>
+  public class ContextActionShadowBladeHitFx : ContextAction
+  {
+    public override string GetCaption() => "影霄·拔刀·重击余辉特效";
+
+    public override void RunAction()
+    {
+      var target = Target?.Unit;
+      if (target != null)
+        ShadowBladeFx.PlayHit(target);
+    }
+  }
 }
+
