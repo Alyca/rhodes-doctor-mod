@@ -1,24 +1,18 @@
-// 不稳定血浆（2 环·华法琳）专属自绘 3D 程序化视觉特效（纯视觉，不影响结算）。
+// 不稳定血浆（2 环·华法琳）专属视觉特效（纯视觉，不影响结算）。
 //
-// 视觉体系（Sanguine Resonance Matrix — 以 Mesh/Quad/Facet 为主体的血魔共振矩阵）：
-//   1. 【轨道血晶碎片（Orbital Blood Shards）】：
-//      六枚菱形 Mesh 面片以双层轨道环绕目标胸腔（120° 相位，内三外三反向），
-//      各碎片自旋并随心搏闪烁微张，营造晶格悬浮的血魔仪式感。
-//   2. 【中央脉动核心（Central Pulse Core）】：
-//      一枚 20 面体低聚球 Mesh 悬浮于胸口，以真实心搏节律（lub-dub 二段式）收缩膨胀，
-//      表面顶点随时间微扰动，呈现不稳定血浆"将溢未溢"的张力。
-//   3. 【地面共振符印（Ground Resonance Sigil）】：
-//      脚底一枚 24 瓣放射状 Mesh 圆盘，中心向外渐隐，随心搏微幅呼吸并缓慢自旋，
-//      呈现试剂沉淀的仪式刻痕。
-//   4. 【升腾血浆微尘（Ascending Plasma Wisps）】：
-//      八枚正对相机的 Billboard Quad Mesh 自足底螺旋攀升，各自相位错开，
-//      以正弦波沿高度淡入淡出，营造血能蒸腾的氛围。
+// 主视觉：**原版血雾光环**（BloodHazeBuff / FxLibrary.PlasmaAura）经 TintedAuraFx 验证的
+// clone-and-retint 路径生成，重染成华法琳血魔的动脉猩红。这是持续的、跟随单位的身体型光环。
+//
+// 次要增强（非主体，可选）：
+//   · 【中央脉动核心】：一枚小型 20 面体 Mesh 悬浮于胸口，以心搏节律收缩膨胀。
+//   · 【地面共振符印】：脚底一枚浅色放射状 Mesh 圆盘，随心搏微幅呼吸。
 //
 // 实现要点：
-//   · 主体可视元素均为 Mesh（MeshFilter + MeshRenderer），不以 LineRenderer / TrailRenderer 为主。
-//   · 所有 Mesh 在 Build 时一次性生成并缓存，Tick 中仅调整 Transform / Color，零运行时 GC。
+//   · 主视觉借原版血雾粒子（FxTint.SpawnAttached），保持项目验证过的克隆重染路径。
+//   · 次要增强为自绘 Mesh，Build 时一次性生成并缓存，Tick 中仅调整 Transform / Color，零运行时 GC。
 //   · 材质通过 MarkFxKit.Mat（→ SwordStreakFx.StreakMaterialPlain）克隆，不使用 Shader.Find。
 //   · 继承 MarkFxBase，由 Tracker 自动管理生成、跟随与 0.3 s 淡出。
+//   · OnDestroy 正确 override 基类以调用 Tracker.Forget，避免 _live 字典残留。
 using System;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Buffs;
@@ -32,8 +26,6 @@ namespace RhodesDoctor
     // 华法琳血魔试剂调色盘
     internal static readonly Color ArterialBlood = new Color(0.92f, 0.08f, 0.16f, 1f); // 动脉猩红
     internal static readonly Color AdrenalineRed = new Color(1.00f, 0.25f, 0.30f, 1f); // 脉冲鲜红
-    internal static readonly Color ReagentAmber  = new Color(1.00f, 0.80f, 0.32f, 1f); // 试剂流金
-    internal static readonly Color CrystalWhite  = new Color(1.00f, 0.94f, 0.96f, 1f); // 晶核高亮
     internal static readonly Color ShadowBlood   = new Color(0.50f, 0.05f, 0.10f, 1f); // 深色血雾
 
     /// <summary>
@@ -48,37 +40,32 @@ namespace RhodesDoctor
 
   /// <summary>
   /// 不稳定血浆常驻动画控制组件（跟随增益同生同灭，纯视觉）：
+  /// 主视觉为原版血雾光环（PlasmaAura）经 clone-and-retint 生成；
+  /// 次要增强为小型自绘 Mesh（中央核心 + 地面符印）。
   /// 继承 MarkFxBase，由 Tracker 自动管理生成、单位跟随与 0.3s 平滑淡出。
   /// </summary>
   public class UnstablePlasmaAnim : MarkFxBase
   {
-    // ── 几何体常量配置 ──
-    private const int ShardCount = 6;         // 轨道血晶数量（双层各 3）
-    private const int WispCount = 8;          // 升腾微尘数量
-    private const int IcoSubdiv = 1;          // 二十面体细分级数（0 = 20 面，1 = 80 面）
-    private const int SigilPetals = 24;       // 地面符印瓣数
+    // ── 主视觉：原版血雾光环克隆体 ──
+    private GameObject _plasmaAura;
 
-    // ── Mesh 渲染组件 ──
-    private readonly MeshRenderer[] _shardRenderers = new MeshRenderer[ShardCount];
-    private readonly Transform[] _shardTransforms = new Transform[ShardCount];
+    // ── 次要增强：自绘 Mesh 配置 ──
+    private const int IcoSubdiv = 0;          // 二十面体细分级数（0 = 20 面）
+    private const int SigilPetals = 16;       // 地面符印瓣数（简化）
+
+    // ── 次要增强：Mesh 渲染组件 ──
     private MeshRenderer _coreRenderer;
     private Transform _coreTransform;
     private MeshRenderer _sigilRenderer;
     private Transform _sigilTransform;
-    private readonly MeshRenderer[] _wispRenderers = new MeshRenderer[WispCount];
-    private readonly Transform[] _wispTransforms = new Transform[WispCount];
 
     // ── 材质实例（每个渲染器需独立实例以支持独立 alpha 调节）──
-    private readonly Material[] _shardMats = new Material[ShardCount];
     private Material _coreMat;
     private Material _sigilMat;
-    private readonly Material[] _wispMats = new Material[WispCount];
 
     // ── 静态 Mesh 缓存（所有实例共用，只生成一次）──
-    private static Mesh _shardMesh;
     private static Mesh _coreMesh;
     private static Mesh _sigilMesh;
-    private static Mesh _wispMesh;
 
     // ── 动画状态 ──
     private float _beat;                       // 心搏包络 0~1
@@ -86,57 +73,67 @@ namespace RhodesDoctor
 
     protected override bool Build(Buff buff)
     {
-      // 获取材质模板
-      var matBlood = Mat(UnstablePlasmaFx.ArterialBlood);
-      var matPulse = Mat(UnstablePlasmaFx.AdrenalineRed);
-      var matAmber = Mat(UnstablePlasmaFx.ReagentAmber);
-      var matWhite = Mat(UnstablePlasmaFx.CrystalWhite);
-      var matDark  = Mat(UnstablePlasmaFx.ShadowBlood);
-      if (matBlood == null || matPulse == null || matAmber == null || matWhite == null || matDark == null)
+      var view = Unit?.View;
+      if (view == null)
       {
-        Main.Mod.Logger.Error("[RhodesDoctor] 不稳定血浆放弃：StreakMaterialPlain 无可用材质。");
+        Main.Mod.Logger.Error("[RhodesDoctor] 不稳定血浆放弃：单位 View 为空。");
+        return false;
+      }
+
+      // ── 主视觉：原版血雾光环（BloodHazeBuff）clone-and-retint ──
+      // 使用 TintedAuraFx 验证过的路径：FxTint.SpawnAttached + FxLibrary.PlasmaAura
+      var plasmaLink = FxLibrary.PlasmaAura;
+      if (plasmaLink == null || !plasmaLink.Exists())
+      {
+        Main.Mod.Logger.Warning("[RhodesDoctor] 不稳定血浆：PlasmaAura 素材不可用，仅使用自绘增强。");
+      }
+      else
+      {
+        // 重染成华法琳的动脉猩红，保留灯光
+        _plasmaAura = FxTint.SpawnAttached(
+          plasmaLink,
+          view.transform,
+          UnstablePlasmaFx.ArterialBlood,
+          lift: 0.15f,        // 低 lift 保留血雾的层次感
+          keepLights: true,
+          alphaScale: 1.0f);
+
+        if (_plasmaAura != null)
+        {
+          Dbg.Log("[RhodesDoctor] 不稳定血浆·血雾光环已生成。");
+        }
+      }
+
+      // ── 次要增强：自绘 Mesh（中央核心 + 地面符印）──
+      var matPulse = Mat(UnstablePlasmaFx.AdrenalineRed);
+      var matDark  = Mat(UnstablePlasmaFx.ShadowBlood);
+      if (matPulse == null || matDark == null)
+      {
+        // 材质不可用时，只要主视觉成功就返回 true
+        if (_plasmaAura != null) return true;
+        Main.Mod.Logger.Error("[RhodesDoctor] 不稳定血浆放弃：材质不可用且主视觉也失败。");
         return false;
       }
 
       EnsureMeshes();
       int layer = transform.gameObject.layer;
 
-      // 1. 轨道血晶碎片（6 枚：内层 3 枚血红，外层 3 枚流金）
-      for (int i = 0; i < ShardCount; i++)
-      {
-        var mat = i < 3 ? matBlood : matAmber;
-        _shardMats[i] = new Material(mat) { name = "RD_UP_ShardMat_" + i };
-        var go = CreateMeshObject("RD_UP_Shard_" + i, _shardMesh, _shardMats[i], layer);
-        go.transform.SetParent(transform, false);
-        _shardRenderers[i] = go.GetComponent<MeshRenderer>();
-        _shardTransforms[i] = go.transform;
-      }
-
-      // 2. 中央脉动核心（二十面体）
+      // 中央脉动核心（小型二十面体，作为点缀）
       _coreMat = new Material(matPulse) { name = "RD_UP_CoreMat" };
       var coreGo = CreateMeshObject("RD_UP_Core", _coreMesh, _coreMat, layer);
       coreGo.transform.SetParent(transform, false);
       _coreRenderer = coreGo.GetComponent<MeshRenderer>();
       _coreTransform = coreGo.transform;
 
-      // 3. 地面共振符印
+      // 地面共振符印（简化版）
       _sigilMat = new Material(matDark) { name = "RD_UP_SigilMat" };
       var sigilGo = CreateMeshObject("RD_UP_Sigil", _sigilMesh, _sigilMat, layer);
       sigilGo.transform.SetParent(transform, false);
       _sigilRenderer = sigilGo.GetComponent<MeshRenderer>();
       _sigilTransform = sigilGo.transform;
 
-      // 4. 升腾血浆微尘（8 枚 billboard quad）
-      for (int i = 0; i < WispCount; i++)
-      {
-        _wispMats[i] = new Material(matWhite) { name = "RD_UP_WispMat_" + i };
-        var go = CreateMeshObject("RD_UP_Wisp_" + i, _wispMesh, _wispMats[i], layer);
-        go.transform.SetParent(transform, false);
-        _wispRenderers[i] = go.GetComponent<MeshRenderer>();
-        _wispTransforms[i] = go.transform;
-      }
-
-      return true;
+      // 主视觉或次要增强至少有一个成功即可
+      return _plasmaAura != null || _coreRenderer != null;
     }
 
     protected override void Tick(float dt)
@@ -148,17 +145,14 @@ namespace RhodesDoctor
       // 更新心搏包络
       UpdateCardiacBeat();
 
-      // 模块 1：轨道血晶碎片
-      UpdateShards(root, alpha);
+      // 主视觉：原版血雾的 alpha 跟随 Master 淡出
+      UpdatePlasmaAura(alpha);
 
-      // 模块 2：中央脉动核心
-      UpdateCore(root, alpha);
+      // 次要增强：中央脉动核心
+      if (_coreTransform != null) UpdateCore(root, alpha);
 
-      // 模块 3：地面共振符印
-      UpdateSigil(root, alpha);
-
-      // 模块 4：升腾血浆微尘
-      UpdateWisps(root, alpha);
+      // 次要增强：地面共振符印
+      if (_sigilTransform != null) UpdateSigil(root, alpha);
     }
 
     /// <summary>心搏节律（lub-dub）：S1 收缩 → S2 重搏 → 舒张</summary>
@@ -190,59 +184,22 @@ namespace RhodesDoctor
       }
     }
 
-    /// <summary>轨道血晶碎片：双层反向环绕 + 自旋 + 心搏闪烁</summary>
-    private void UpdateShards(Vector3 root, float alpha)
+    /// <summary>主视觉：原版血雾光环的 alpha 跟随 Master 平滑淡出</summary>
+    private void UpdatePlasmaAura(float alpha)
     {
-      float chestY = Height * 0.55f;
-      float innerR = Radius * 0.65f;
-      float outerR = Radius * 1.15f;
-      const float innerSpeed = 1.2f;
-      const float outerSpeed = -0.9f;
-      float baseScale = Mathf.Clamp(Height * 0.055f, 0.08f, 0.18f);
-
-      for (int i = 0; i < ShardCount; i++)
-      {
-        bool inner = i < 3;
-        int idx = inner ? i : (i - 3);
-        float phase = idx * (Mathf.PI * 2f / 3f);
-        float orbitR = inner ? innerR : outerR;
-        float speed = inner ? innerSpeed : outerSpeed;
-        float orbitA = phase + T * speed;
-
-        // 轨道位置
-        float bob = Mathf.Sin(T * 2.2f + i * 1.1f) * (Height * 0.04f);
-        var pos = root + new Vector3(
-          Mathf.Cos(orbitA) * orbitR,
-          chestY + bob + (inner ? 0f : Height * 0.08f),
-          Mathf.Sin(orbitA) * orbitR);
-
-        // 自旋：绕自身轴旋转 + 随公转切向倾斜
-        float spin = T * 3.5f + i * 0.8f;
-        float tilt = 0.25f + 0.15f * Mathf.Sin(T * 1.5f + i);
-        var rot = Quaternion.Euler(tilt * 57.3f, spin * 57.3f, Mathf.Sin(T * 2f + i) * 15f);
-
-        // 心搏微张
-        float pulse = 1f + 0.25f * _beat;
-        float scale = baseScale * pulse * (inner ? 1f : 1.15f);
-
-        _shardTransforms[i].position = pos;
-        _shardTransforms[i].rotation = rot;
-        _shardTransforms[i].localScale = new Vector3(scale, scale * 1.6f, scale * 0.3f);
-
-        // Alpha 与心搏联动闪烁
-        float shimmer = 0.75f + 0.25f * _beat + 0.1f * Mathf.Sin(T * 8f + i * 2f);
-        SetMaterialAlpha(_shardMats[i], alpha * shimmer);
-      }
+      if (_plasmaAura == null) return;
+      // 使用 FxTint.SetAlpha 让整个克隆体的所有材质颜色属性跟随 Master 淡出
+      FxTint.SetAlpha(_plasmaAura, alpha);
     }
 
-    /// <summary>中央脉动核心：心搏收缩膨胀 + 表面微扰</summary>
+    /// <summary>次要增强：中央脉动核心（心搏收缩膨胀 + 表面微扰）</summary>
     private void UpdateCore(Vector3 root, float alpha)
     {
       float chestY = Height * 0.55f;
       var pos = root + Vector3.up * chestY;
 
-      // 基础大小随心搏收缩膨胀
-      float baseR = Mathf.Clamp(Height * 0.08f, 0.10f, 0.22f);
+      // 基础大小随心搏收缩膨胀（比原版小，作为点缀）
+      float baseR = Mathf.Clamp(Height * 0.05f, 0.06f, 0.14f);
       float pulse = 1f + 0.35f * _beat;
       // 表面微扰（通过非均匀缩放模拟）
       float jitterX = 1f + 0.08f * Mathf.Sin(T * 7.3f);
@@ -257,18 +214,18 @@ namespace RhodesDoctor
       _coreTransform.rotation = rot;
       _coreTransform.localScale = scale;
 
-      // Alpha：心搏高峰更亮
-      float intensity = 0.70f + 0.30f * _beat;
+      // Alpha：心搏高峰更亮（比主视觉稍暗，作为点缀）
+      float intensity = 0.50f + 0.30f * _beat;
       SetMaterialAlpha(_coreMat, alpha * intensity);
     }
 
-    /// <summary>地面共振符印：心搏呼吸 + 缓慢自旋</summary>
+    /// <summary>次要增强：地面共振符印（心搏呼吸 + 缓慢自旋）</summary>
     private void UpdateSigil(Vector3 root, float alpha)
     {
       var pos = root + Vector3.up * 0.03f;
 
       // 心搏呼吸微胀
-      float baseR = Radius * 1.05f;
+      float baseR = Radius * 0.8f;  // 比原版小，作为点缀
       float pulse = 1f + 0.08f * _beat;
       var scale = new Vector3(baseR * pulse, 1f, baseR * pulse);
 
@@ -280,52 +237,8 @@ namespace RhodesDoctor
       _sigilTransform.localScale = scale;
 
       // Alpha：基础较暗 + 心搏微亮
-      float intensity = 0.40f + 0.25f * _beat;
+      float intensity = 0.30f + 0.20f * _beat;
       SetMaterialAlpha(_sigilMat, alpha * intensity);
-    }
-
-    /// <summary>升腾血浆微尘：螺旋攀升 + 正弦淡入淡出 + Billboard</summary>
-    private void UpdateWisps(Vector3 root, float alpha)
-    {
-      float maxH = Height * 1.15f;
-      float spiralR = Radius * 0.55f;
-      const float riseSpeed = 0.35f;
-      const float spiralTurns = 1.5f;
-      float wispSize = Mathf.Clamp(Height * 0.025f, 0.03f, 0.08f);
-
-      // Billboard 朝向相机
-      var cam = Camera.main;
-      Quaternion billboardRot = cam != null
-        ? Quaternion.LookRotation(cam.transform.forward, cam.transform.up)
-        : Quaternion.identity;
-
-      for (int i = 0; i < WispCount; i++)
-      {
-        float phase = i * (1f / WispCount);
-        // 循环上升：归一化高度 0~1
-        float normH = Mathf.Repeat(T * riseSpeed + phase, 1f);
-        float y = normH * maxH;
-
-        // 螺旋轨迹
-        float angle = phase * Mathf.PI * 2f + normH * spiralTurns * Mathf.PI * 2f;
-        // 螺旋半径：底部宽 → 腰部收 → 顶部散
-        float r = spiralR * (0.7f + 0.4f * Mathf.Sin(normH * Mathf.PI));
-        var pos = root + new Vector3(Mathf.Cos(angle) * r, y, Mathf.Sin(angle) * r);
-
-        // 淡入淡出：底部与顶部淡，中段亮
-        float fadeIn = Mathf.SmoothStep(0f, 1f, normH * 5f);
-        float fadeOut = Mathf.SmoothStep(0f, 1f, (1f - normH) * 4f);
-        float wispAlpha = fadeIn * fadeOut * (0.5f + 0.5f * _beat);
-
-        // 大小微扰
-        float sizeVar = wispSize * (0.8f + 0.4f * Mathf.Sin(T * 6f + i * 3f));
-
-        _wispTransforms[i].position = pos;
-        _wispTransforms[i].rotation = billboardRot;
-        _wispTransforms[i].localScale = Vector3.one * sizeVar;
-
-        SetMaterialAlpha(_wispMats[i], alpha * wispAlpha);
-      }
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -365,55 +278,8 @@ namespace RhodesDoctor
     /// <summary>确保静态 Mesh 缓存已生成（只执行一次）</summary>
     private static void EnsureMeshes()
     {
-      if (_shardMesh == null) _shardMesh = BuildShardMesh();
       if (_coreMesh == null) _coreMesh = BuildIcosahedronMesh(IcoSubdiv);
       if (_sigilMesh == null) _sigilMesh = BuildSigilMesh(SigilPetals);
-      if (_wispMesh == null) _wispMesh = BuildQuadMesh();
-    }
-
-    /// <summary>菱形碎片 Mesh（双面，XY 平面，中心在原点）</summary>
-    private static Mesh BuildShardMesh()
-    {
-      var mesh = new Mesh { name = "RD_UP_ShardMesh" };
-      // 菱形四顶点：上、右、下、左
-      var verts = new Vector3[]
-      {
-        new Vector3(0f, 0.5f, 0f),   // 上
-        new Vector3(0.5f, 0f, 0f),   // 右
-        new Vector3(0f, -0.5f, 0f),  // 下
-        new Vector3(-0.5f, 0f, 0f),  // 左
-        // 背面（重复顶点以支持双面渲染）
-        new Vector3(0f, 0.5f, 0f),
-        new Vector3(0.5f, 0f, 0f),
-        new Vector3(0f, -0.5f, 0f),
-        new Vector3(-0.5f, 0f, 0f),
-      };
-      var tris = new int[]
-      {
-        // 正面
-        0, 1, 2,
-        0, 2, 3,
-        // 背面（反绕）
-        6, 5, 4,
-        7, 6, 4,
-      };
-      var uvs = new Vector2[]
-      {
-        new Vector2(0.5f, 1f),
-        new Vector2(1f, 0.5f),
-        new Vector2(0.5f, 0f),
-        new Vector2(0f, 0.5f),
-        new Vector2(0.5f, 1f),
-        new Vector2(1f, 0.5f),
-        new Vector2(0.5f, 0f),
-        new Vector2(0f, 0.5f),
-      };
-      mesh.vertices = verts;
-      mesh.triangles = tris;
-      mesh.uv = uvs;
-      mesh.RecalculateNormals();
-      mesh.RecalculateBounds();
-      return mesh;
     }
 
     /// <summary>二十面体 Mesh（可选细分）</summary>
@@ -536,44 +402,32 @@ namespace RhodesDoctor
       return mesh;
     }
 
-    /// <summary>Billboard Quad Mesh（XY 平面，中心在原点）</summary>
-    private static Mesh BuildQuadMesh()
+    // ────────────────────────────────────────────────────────────────
+    // 清理：正确 override 基类 OnDestroy，确保 Tracker.Forget 被调用
+    // ────────────────────────────────────────────────────────────────
+    protected override void OnDestroy()
     {
-      var mesh = new Mesh { name = "RD_UP_QuadMesh" };
-      var verts = new Vector3[]
+      // 销毁主视觉（原版血雾克隆体）
+      if (_plasmaAura != null)
       {
-        new Vector3(-0.5f, -0.5f, 0f),
-        new Vector3( 0.5f, -0.5f, 0f),
-        new Vector3( 0.5f,  0.5f, 0f),
-        new Vector3(-0.5f,  0.5f, 0f),
-      };
-      var uvs = new Vector2[]
-      {
-        new Vector2(0f, 0f),
-        new Vector2(1f, 0f),
-        new Vector2(1f, 1f),
-        new Vector2(0f, 1f),
-      };
-      var tris = new int[] { 0, 1, 2, 0, 2, 3 };
-      mesh.vertices = verts;
-      mesh.triangles = tris;
-      mesh.uv = uvs;
-      mesh.RecalculateNormals();
-      mesh.RecalculateBounds();
-      return mesh;
-    }
+        Destroy(_plasmaAura);
+        _plasmaAura = null;
+      }
 
-    // ────────────────────────────────────────────────────────────────
-    // 清理：销毁材质实例（Mesh 是静态缓存，不销毁）
-    // ────────────────────────────────────────────────────────────────
-    private void OnDestroy()
-    {
-      for (int i = 0; i < ShardCount; i++)
-        if (_shardMats[i] != null) Destroy(_shardMats[i]);
-      if (_coreMat != null) Destroy(_coreMat);
-      if (_sigilMat != null) Destroy(_sigilMat);
-      for (int i = 0; i < WispCount; i++)
-        if (_wispMats[i] != null) Destroy(_wispMats[i]);
+      // 销毁次要增强的材质实例（Mesh 是静态缓存，不销毁）
+      if (_coreMat != null)
+      {
+        Destroy(_coreMat);
+        _coreMat = null;
+      }
+      if (_sigilMat != null)
+      {
+        Destroy(_sigilMat);
+        _sigilMat = null;
+      }
+
+      // 调用基类清理，确保从 Tracker._live 字典中移除自身
+      base.OnDestroy();
     }
   }
 }
