@@ -11,6 +11,7 @@
          1) 命令行：dotnet build -p:WrathPath="C:\Games\Pathfinder Wrath of the Righteous"
          2) 环境变量 WOTR_PATH 指向游戏目录 -->
     <WrathPath Condition="'$(WrathPath)'==''">$(WOTR_PATH)</WrathPath>
+    <WrathPath Condition="'$(WrathPath)'=='' and Exists('d:\steam\steamapps\common\Pathfinder Second Adventure')">d:\steam\steamapps\common\Pathfinder Second Adventure</WrathPath>
     <WrathManaged>$(WrathPath)\Wrath_Data\Managed</WrathManaged>
     <!-- 游戏开启 mod 支持后会自动生成公开化程序集（可访问 internal 成员），优先引用 -->
     <Publicized>$(WrathManaged)\publicized_assemblies</Publicized>

@@ -73,16 +73,7 @@ namespace RhodesDoctor
         KeepLights = true,
         Label = "反重力·缓慢光环",
       },
-      // 不稳定血浆（增益，Guids.Buff(13)）：原版血雾 → 血色（作者 10-10：再鲜红一点）。
-      new Entry
-      {
-        BuffGuid = Norm(Guids.Buff(13)),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(1.00f, 0.15f, 0.15f, 1f),
-        Lift = 0.20f,
-        KeepLights = true,
-        Label = "不稳定血浆·血色光环",
-      },
+      // 不稳定血浆（增益，Guids.Buff(13)）：已解耦为纯自绘 3D 程序化特效（UnstablePlasmaFx.cs），不再借用原版血雾 PlasmaAura。
       // 迅捷突破（加速效果，Guids.HasteAccelBuff，C34）：原版加速术拖尾 → **风笛的橙**（作者 10-10）。
       // ⚠ 该加速增益由**迅捷突破与永恒的注视共用**（C34/C36）——所以永恒的注视触发后也会带这条橙拖尾。
       //    若要分开，可把 BuffGuid 改用 SwiftBreachBuff（1 轮，仅迅捷突破，但更短）。
