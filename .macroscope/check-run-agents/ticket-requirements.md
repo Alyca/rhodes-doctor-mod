@@ -120,7 +120,23 @@ Macroscope is tasked with generating and completing the self-drawn implementatio
 The temporary borrowed blood haze aura (FxLibrary.PlasmaAura) tinted blue has been completely removed from src/TintedAuraFx.cs.
 Macroscope is tasked with generating and completing the self-drawn implementation in src/ReturnToAbyssFx.cs as specified in docs/fx-rework-prompt-return-to-abyss.md.
 
-**CRITICAL MANDATE — Abyssal Hunter Ocean Torrent & Tidal Surge (狂暴大洋暗流与怒涛):**
+**CRITICAL MANDATE — Author In-Game Playtest Feedback (2026-10-17 Round 2):**
+The author has tested the previous implementation in game and is **completely unsatisfied**, stating:
+> "不太行，可以说是完全不满意，完全没有水的和潮汐的质感"
+> (Completely unsatisfactory; completely lacks the texture, volume, and fluid presence of actual water and tidal surges).
+
+**Key Defects & Redesign Directives:**
+1. **Total Absence of Fluid & Water Texture (完全没有水的质感)**:
+   - The previous effect felt like abstract, thin geometric wireframe lines/lasers spinning in air, rather than heavy, surging, fluid deep-sea water.
+   - Water requires fluid volume, layered wave swells, hydrodynamic motion, variable ribbon widths, undulating hydrodynamic wave equations, and rolling breakers rather than single-pixel wireframes.
+2. **Total Absence of Tidal Surge Dynamics (完全没有潮汐的质感)**:
+   - Tides and oceanic surges have rolling wave crests, surging undertows, expanding and crashing surf, and foam crest dynamics.
+   - **Cast Surge (ReturnToAbyssCastAnim)**: Must feel like an actual explosive geyser / erupting deep-sea tidal surge with dense rising water columns and explosive wave foam, not thin wireframe lines.
+   - **Constant Follow (ReturnToAbyssAnim : MarkFxBase)**: Must feature dense, multi-layered swirling oceanic whirlpools with rhythmic tidal surging/ebbing, broad hydrodynamic fluid current ribbons enveloping the body, and rich splashing foam/droplets.
+   - **Life Syphon (ReturnToAbyssHealAnim)**: Must be an actual churning, voluminous aquatic torrent rushing from victim to caster with undulating stream body.
+   - **Specter Refund Wave (ReturnToAbyssRefundAnim)**: Must deliver an intense tidal bore shockwave, surging oceanic breakers, and a crashing foam wash.
+3. **Full Reset Delegation to Macroscope**:
+   - Macroscope owns the complete redesign and implementation of all four visual components. Do not output thin wireframes; use rich multi-layered procedural geometries, wave math, and fluid motion. Output complete drop-in replacement code via suggestion blocks.
 1. **Color Palette & Visibility**:
    - Palette: Abyssal Blue (AbyssalBlue), Oceanic Teal (OceanicTeal), Wave Foam White (WaveFoamWhite), and Deep Ocean Violet (DeepOceanViolet).
    - Absolutely NO pure black or imperceptible dark tones that become completely transparent under additive blending. Line widths, spirals, and geometries must remain distinct and bold from the 45° isometric camera.
