@@ -77,6 +77,23 @@ Only verify the non-negotiable boundaries:
 - It must remain self-drawn: no vanilla particle prefabs, no `Shader.Find`; use the project's proven mesh/quad + cloned-material path.
 - Preserve `UnstablePlasmaFx.Tracker` and `UnstablePlasmaAnim : MarkFxBase`, zero per-frame GC, the 0.3s `Master` fade, and clean destruction.
 
+### Phase 3.2: Dedicated Self-Drawn Shadow Blade Draw (影霄·拔刀)
+
+The borrowed vanilla Sword Rain blade (giant 6m sword drop) has been completely removed from `src/SpellsSetup.cs`.
+Macroscope is tasked with reviewing and completing the self-drawn implementation in `src/ShadowBladeFx.cs` as specified in `docs/fx-rework-prompt-shadow-blade.md`.
+
+**CRITICAL MANDATE — Author In-Game Playtest Feedback (2026-10-17):**
+The author has tested the previous implementation in game and found two key defects:
+1. **Incomplete Rendering / Missing Visuals**: In Additive particle blending, pure black/dark colors are 100% invisible/transparent, making void cores, obsidian shards, and implosion rings disappear. In addition, geometry scale, slash length, and line widths were too narrow and thin for the isometric camera distance, appearing clipped or fragmented. Macroscope must make all elements 100% visible, thicken line widths, and extend slash span.
+2. **Color Palette Must Be Pure Scarlet Red (赤红)**: The effect must not be dark black, pink, or pale magenta. It must shift fully to an intense, vibrant scarlet/crimson energy palette (`ScarletRed`, `BlazingCrimson`, `WhiteHotCore`, `DeepBloodRed`).
+
+Verify and output drop-in replacement code for:
+- **Slash Tear & Crystal Burst (`ShadowBladeSlashAnim`)**: Pure scarlet and white-hot dual-layer spatial tear lines with explosive crimson shard ejection, initial velocity dispersion, and gravity decay.
+- **Fortitude Failed Death Annihilation (`ShadowBladeKillAnim`)**: Implosion followed by complete disintegrating shatter with void/crystal remnants, fully visible without transparent black dropouts.
+- **Fortitude Saved Heavy Hit & Scar (`ShadowBladeHitAnim`)**: Impact judder / freeze-frame stop with a lingering, trembling scarlet scar and afterglow pulsation (0.5s~0.8s).
+- **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
+
+
 ### Phase 4: Reporting Findings
 
 When you confirm a mismatch, bug, or missing requirement, post an inline PR review comment at the specific file and line using `github_pr_review` (via `modify_pr`).
