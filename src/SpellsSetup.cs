@@ -120,7 +120,7 @@ namespace RhodesDoctor
       { "FieldDressing",        new Meta { School = SpellSchool.Transmutation, Sr = false, DurationKey = "rhodesdoctor.duration.instant" } },
       { "BattlefieldSurvey",    new Meta { School = SpellSchool.Divination,   Sr = false, DurationKey = "rhodesdoctor.duration.minute1" } },
       { "BeaconProjection",     new Meta { School = SpellSchool.Illusion,     Sr = false, DurationKey = "rhodesdoctor.duration.minute10level" } },
-      { "SuppressingShot",      new Meta { School = SpellSchool.Enchantment,  Descriptor = SpellDescriptor.MindAffecting, DurationKey = "rhodesdoctor.duration.round1level", Save = SavingThrow.WillNegates } },
+      { "SuppressingShot",      new Meta { School = SpellSchool.Enchantment,  Descriptor = SpellDescriptor.MindAffecting, Sr = false, DurationKey = "rhodesdoctor.duration.round1" } },
       { "EmergencyExtraction",  new Meta { School = SpellSchool.Conjuration,  Sr = false, DurationKey = "rhodesdoctor.duration.instant" } },
 
       // ─── 1 环 ───
@@ -223,9 +223,9 @@ namespace RhodesDoctor
       new Spec { Key="BeaconProjection", Ring=0, Cast=UnitCommand.CommandType.Standard, Range=AbilityRange.Custom, RangeFeet=30, Kind=Kind.Special,
         Name=L10n.S("spell.BeaconProjection.name", "信标投射", "Beacon Projection"),
         Desc=L10n.S("spell.BeaconProjection.desc", "学派：幻术（光）；距离：30 尺；持续：10 分钟/级。悬浮信标照亮 20 尺半径。", "Illusion (light); 30 ft.; 10 min./level. A floating beacon lights a 20-ft. radius.") },
-      new Spec { Key="SuppressingShot", Ring=0, Cast=UnitCommand.CommandType.Standard, Range=AbilityRange.Custom, RangeFeet=30, Kind=Kind.Debuff, PerLevel=true, Save=SavingThrowType.Will,
+      new Spec { Key="SuppressingShot", Ring=0, Cast=UnitCommand.CommandType.Standard, Range=AbilityRange.Custom, RangeFeet=30, Kind=Kind.Debuff, SaveNone=true, Rounds=1,
         Name=L10n.S("spell.SuppressingShot.name", "牵制射击", "Suppressing Shot"),
-        Desc=L10n.S("spell.SuppressingShot.desc", "学派：惑控（影响心灵）；距离：30 尺；意志无效。目标承受 –1 罚值于其下一次攻击检定；若目标在此轮攻击除你以外的生物，该罚值变为 –2。——克洛丝", "Enchantment (mind-affecting); 30 ft.; Will negates. –1 on the target's next attack roll, or –2 if it attacks anyone but you this round. (Kroos)") },
+        Desc=L10n.S("spell.SuppressingShot.desc", "学派：惑控（影响心灵）；距离：30 尺；持续：1 轮；豁免：无。目标承受 –1 罚值于其下一次攻击检定；若目标在此轮攻击除你以外的生物，该罚值变为 –2。——克洛丝", "Enchantment (mind-affecting); 30 ft.; 1 round; no save. –1 on the target's next attack roll, or –2 if it attacks anyone but you this round. (Kroos)") },
       new Spec { Key="EmergencyExtraction", Ring=0, Cast=UnitCommand.CommandType.Standard, Range=AbilityRange.Touch, Kind=Kind.Special, Friendly=true,
         Name=L10n.S("spell.EmergencyExtraction.name", "紧急撤离", "Emergency Extraction"),
         Desc=L10n.S("spell.EmergencyExtraction.desc", "学派：咒法（传送）；距离：接触；持续时间：立即。目标移动至 10 尺内可见的空格（实现为永远落在施法者身后最近空地）。该移动不引发借机攻击，不能穿越实体障碍。", "Conjuration (teleportation); touch; instantaneous. The target moves up to 10 ft. to a visible square (implemented as the nearest open square behind the caster). Provokes no attacks of opportunity.") },
@@ -2326,8 +2326,8 @@ namespace RhodesDoctor
         AbilityRankType type = AbilityRankType.Default)
       => ContextRankConfigs
           .ClassLevel(new[] { Guids.Vanilla.PaladinClass }, false, type)
-          .WithCustomProgression(Enumerable.Range(1, 20)
-            .Select(l => (l, valueOf(l)))
+          .WithCustomProgression(Enumerable.Range(0, 21)
+            .Select(l => (l, Math.Max(1, valueOf(Math.Max(1, l)))))
             .ToArray());
 
     /// <summary>写游戏私有字段（原版有、公开 API 没暴露的才用）。P2-1：字段缺失记 Error，不再静默。</summary>
