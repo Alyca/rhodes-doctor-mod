@@ -326,6 +326,8 @@ namespace RhodesDoctor
         AlphaScale = alphaScale <= 0f ? 1f : alphaScale;
         try { Apply(go, rgb, lift, tintTextures: true, keepLights: keepLights); }
         finally { AlphaScale = 1f; }
+        // 修正挂载特效中的拖尾/粒子世界空间模拟，防止人物转向时拖尾僵硬旋转
+        FixAttachedTrails(go, link);
         // 素材里的粒子系统可能 playOnAwake=false（由游戏 FX 管理器负责播放）——
         // 单独实例化时必须自己 Play()，否则"有粒子系统但不发射"。
         foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
@@ -355,6 +357,8 @@ namespace RhodesDoctor
         go.transform.localPosition = localPos;
         go.transform.localRotation = Quaternion.identity;
         go.transform.localScale = Vector3.one;
+        // 修正挂载特效中的拖尾/粒子世界空间模拟，防止人物转向时拖尾僵硬旋转
+        FixAttachedTrails(go, link);
         foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
           try { if (!ps.isPlaying) ps.Play(true); } catch { }
         return go;
@@ -363,6 +367,125 @@ namespace RhodesDoctor
       {
         Main.Mod.Logger.Error("[RhodesDoctor] 原样挂载特效失败：\n" + e);
         return null;
+      }
+    }
+
+    private static readonly string[] TrailKeywords =
+    {
+      "trail", "ribbon", "streak", "spark", "smoke", "haze", "mist",
+      "dust", "fog", "cloud", "steam", "foot", "step", "ground",
+      "run", "speed", "charge", "cycle"
+    };
+
+    private static bool IsTrailName(string name)
+    {
+      if (string.IsNullOrEmpty(name)) return false;
+      for (int i = 0; i < TrailKeywords.Length; i++)
+      {
+        if (name.IndexOf(TrailKeywords[i], StringComparison.OrdinalIgnoreCase) >= 0)
+          return true;
+      }
+      return false;
+    }
+
+    private static bool IsTrailPrefab(string assetId)
+    {
+      if (string.IsNullOrEmpty(assetId)) return false;
+      var clean = assetId.Replace("-", "").ToLowerInvariant();
+      // 91ef30ab58fa0d3449d4d2ccc20cb0f8 = HasteTrail (haste00_trail)
+      // 5d6fcb6c26ba59440afc491496f101cf = PlasmaAura (BloodHazeBuff)
+      // 4a09849206b02f04e8d0e704e0e56f4e = BloodragerStandartRageBuff
+      // d6a8c6aead8ec1e4b9362cff1c2373a2 = SlowAura (slow00_cycle)
+      return clean == "91ef30ab58fa0d3449d4d2ccc20cb0f8"
+          || clean == "5d6fcb6c26ba59440afc491496f101cf"
+          || clean == "4a09849206b02f04e8d0e704e0e56f4e"
+          || clean == "d6a8c6aead8ec1e4b9362cff1c2373a2"
+          || (FxLibrary.HasteTrail != null && clean == FxLibrary.HasteTrail.AssetId?.Replace("-", "").ToLowerInvariant())
+          || (FxLibrary.PlasmaAura != null && clean == FxLibrary.PlasmaAura.AssetId?.Replace("-", "").ToLowerInvariant())
+          || (FxLibrary.SlowAura != null && clean == FxLibrary.SlowAura.AssetId?.Replace("-", "").ToLowerInvariant());
+    }
+
+    /// <summary>
+    /// 修复挂载特效中所有拖尾/粒子随人物转向旋转的物理问题：
+    /// 1. 拖尾模块（ParticleSystem.trails）：必须开启 worldSpace = true，
+    ///    且 attachRibbonsToTransform = false，确保丝带轨迹记录在世界坐标；
+    /// 2. 模拟空间（ParticleSystem.main.simulationSpace）：
+    ///    - 若为已知拖尾/雾气素材（加速拖尾 HasteTrail、血雾 PlasmaAura、缓慢 SlowAura 等）；
+    ///    - 或粒子系统开启了 trails 模块；
+    ///    - 或粒子系统/GameObject 名字含 trail / ribbon / streak / spark / haze / mist / smoke / dust / foot / run / cycle；
+    ///    强制切换为 ParticleSystemSimulationSpace.World。
+    ///    这样单位无论是奔跑拐弯还是原地转向，已经发射在空中的粒子与拖尾都稳固留在世界坐标中，
+    ///    不会像硬木棍一样僵硬旋转。
+    /// 3. SnapToLocator 原生约束：原版如果标记了 DontRotate，挂载下补齐 WorldRotationLock，
+    ///    确保物体朝向不被单位转向强行带偏。
+    /// </summary>
+    internal static void FixAttachedTrails(GameObject go, PrefabLink link = null)
+    {
+      if (go == null) return;
+      try
+      {
+        string assetId = link?.AssetId ?? "";
+        bool isKnownTrailPrefab = IsTrailPrefab(assetId);
+
+        foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true))
+        {
+          try
+          {
+            if (ps == null) continue;
+            var main = ps.main;
+            var trails = ps.trails;
+
+            bool isTrailSystem = isKnownTrailPrefab
+              || trails.enabled
+              || IsTrailName(ps.name)
+              || (ps.transform.parent != null && IsTrailName(ps.transform.parent.name));
+
+            if (trails.enabled)
+            {
+              trails.worldSpace = true;
+              trails.attachRibbonsToTransform = false;
+            }
+
+            if (isTrailSystem)
+            {
+              main.simulationSpace = ParticleSystemSimulationSpace.World;
+            }
+          }
+          catch { }
+        }
+
+        foreach (var mb in go.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+          try
+          {
+            if (mb == null) continue;
+            var t = mb.GetType();
+            if (t.Name == "SnapToLocator")
+            {
+              var field = t.GetField("DontRotate");
+              if (field != null && (bool)field.GetValue(mb))
+              {
+                if (mb.gameObject.GetComponent<WorldRotationLock>() == null)
+                  mb.gameObject.AddComponent<WorldRotationLock>();
+              }
+            }
+          }
+          catch { }
+        }
+
+        foreach (var lr in go.GetComponentsInChildren<LineRenderer>(true))
+        {
+          try
+          {
+            if (lr != null && IsTrailName(lr.name))
+              lr.useWorldSpace = true;
+          }
+          catch { }
+        }
+      }
+      catch (Exception e)
+      {
+        Main.Mod.Logger.Warning($"[RhodesDoctor] 挂载拖尾空间修正失败: {e.Message}");
       }
     }
 
@@ -644,7 +767,7 @@ namespace RhodesDoctor
           try
           {
             var main = ps.main;
-            string extra = "";
+            string extra = $" sim={main.simulationSpace}";
             try
             {
               var cbs = ps.colorBySpeed;
@@ -655,6 +778,10 @@ namespace RhodesDoctor
             {
               var trails = ps.trails;
               extra += $" trails.enabled={trails.enabled}";
+              if (trails.enabled)
+              {
+                extra += $" trailWorld={trails.worldSpace} attachRibbon={trails.attachRibbonsToTransform}";
+              }
               try { extra += $" inherit={trails.inheritParticleColor}"; } catch { }
               try { extra += $" trailOL({trails.colorOverLifetime.mode})={trails.colorOverLifetime.color}"; } catch { }
               try { extra += $" trailT({trails.colorOverTrail.mode})={trails.colorOverTrail.color}"; } catch { }
@@ -1261,6 +1388,18 @@ namespace RhodesDoctor
       }
       dst.SetKeys(colors, alphas);
       return dst;
+    }
+  }
+
+  /// <summary>
+  /// 锁定世界旋转为恒等（不随父节点旋转）。
+  /// 用于原版 Prefab 中标记了 SnapToLocator.DontRotate 的部件，防止挂到单位 View 下后被单位转身强行带转。
+  /// </summary>
+  internal sealed class WorldRotationLock : MonoBehaviour
+  {
+    private void LateUpdate()
+    {
+      transform.rotation = Quaternion.identity;
     }
   }
 }

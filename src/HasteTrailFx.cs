@@ -147,8 +147,13 @@ namespace RhodesDoctor
             var body = psr.material;
             if (body == null) continue;
             psr.trailMaterial = body;
+            var trails = ps.trails;
+            trails.worldSpace = true;
+            trails.attachRibbonsToTransform = false;
+            var main = ps.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
             n++;
-            Dbg.Log($"[RhodesDoctor] 骑兵突进·拖尾槽已指向身体材质：'{psr.name}'。");
+            Dbg.Log($"[RhodesDoctor] 骑兵突进·拖尾槽已指向身体材质：'{psr.name}'（世界空间模拟）。");
           }
           catch { }
         }
