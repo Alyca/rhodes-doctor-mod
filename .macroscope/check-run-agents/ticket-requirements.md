@@ -68,10 +68,15 @@ For every requirement and change:
 
 ### Phase 3.1: Special Directive for Visual Effect Redesign
 
-When `docs/fx-rework-prompt-3spells.md` requests a redesign or improvement of visual effects (e.g., CrownEcho, SinPunishment, SuppressingShot):
-- Treat this as an explicit design mandate from the author.
-- Thoroughly review each file (`src/CrownEchoFx.cs`, `src/SinPunishmentFx.cs`, `src/SuppressingShotFx.cs`) from both aesthetic and mathematical perspectives (geometry, color gradients, particle distribution, easing curves, and timing).
-- Provide concrete, full drop-in replacement code suggestions (via `github_pr_review` using `suggestion` or code block) for the classes or methods that should be upgraded to achieve the requested visual excellence.
+The author has reviewed in-game and EXPLICITLY REJECTED the current visual implementations in `src/CrownEchoFx.cs` (王冠的回响) and `src/SinPunishmentFx.cs` (罪罚) as unsatisfactory ("效果不尽如人意").
+
+**MANDATORY CODE OUTPUT REQUIREMENT:**
+- Macroscope MUST NOT conclude with `success` in this run.
+- Macroscope MUST perform a deep visual and mathematical redesign of:
+  1. `src/CrownEchoFx.cs`: Complete redesign of Theresa's CrownEcho visual animation (`CrownEchoAnim` and drawing methods) to achieve soft, ethereal floating pink dust, stardust flow, and Black Crown elegance without rigid concentric rings.
+  2. `src/SinPunishmentFx.cs`: Complete redesign of Penance's SinPunishment visual animations (`SinPunishmentAnim` and `SinPunishmentSmiteAnim`) to achieve weighty, dignified judicial gavel, lawful courtroom authority, and crushing smite.
+- Macroscope MUST provide concrete, full drop-in replacement code suggestions (via inline comments using ````suggestion```` or complete code blocks) for BOTH files!
+- Complete the check run with State `neutral` and Title "Redesign suggestions provided for CrownEcho and SinPunishment".
 
 ### Phase 4: Reporting Findings
 
