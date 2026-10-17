@@ -972,6 +972,7 @@ namespace RhodesDoctor
             });
           // 持续 1 轮/级（作者 10-11）。
           effects.ApplyBuff(buff, ContextDuration.Variable(ContextValues.Rank(), DurationRate.Rounds));
+          effects.Add<ContextActionReturnToAbyssCastFx>();
           break;
         }
 

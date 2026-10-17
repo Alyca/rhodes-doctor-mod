@@ -1,4 +1,4 @@
----
+﻿---
 title: "PR Requirements & Code Review"
 model: claude-opus-5-5
 reasoning: high
@@ -113,6 +113,30 @@ Macroscope is tasked with generating and completing the self-drawn implementatio
      - Smooth 0.3s fadeout upon expiration or dispel.
    - **Will Save Passed Tremor (`NightterrorPassAnim`)**: Brief mental impact judder with subtle ice-blue fading ripples (~0.8s) dissipating smoothly.
    - **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
+
+
+### Phase 3.4: Dedicated Self-Drawn Return to Abyss / 归溟·潮 (归溟幽灵鲨 / 劳伦缇娜)
+
+The temporary borrowed blood haze aura (FxLibrary.PlasmaAura) tinted blue has been completely removed from src/TintedAuraFx.cs.
+Macroscope is tasked with generating and completing the self-drawn implementation in src/ReturnToAbyssFx.cs as specified in docs/fx-rework-prompt-return-to-abyss.md.
+
+**CRITICAL MANDATE — Abyssal Hunter Ocean Torrent & Tidal Surge (狂暴大洋暗流与怒涛):**
+1. **Color Palette & Visibility**:
+   - Palette: Abyssal Blue (AbyssalBlue), Oceanic Teal (OceanicTeal), Wave Foam White (WaveFoamWhite), and Deep Ocean Violet (DeepOceanViolet).
+   - Absolutely NO pure black or imperceptible dark tones that become completely transparent under additive blending. Line widths, spirals, and geometries must remain distinct and bold from the 45° isometric camera.
+2. **Animation Architecture (src/ReturnToAbyssFx.cs)**:
+   - **Swift Cast Surge (ReturnToAbyssCastAnim)**:
+     - At instant of swift cast on self, a spiral deep-sea tidal surge rises and erupts upwards from caster's feet (~0.7s).
+   - **Ocean Torrent Constant Following (ReturnToAbyssAnim : MarkFxBase)**:
+     - Follows caster for 1 round/level via ReturnToAbyssFx.Tracker (listening to RhodesDoctorBuffReturnToAbyss).
+     - Feet: self-rotating breathing deep-sea ocean vortex.
+     - Body: spiral ascending abyssal current ribbons and floating wave foam droplets.
+     - Smooth 0.3s fadeout upon expiration or dispel.
+   - **Melee Hit Life Syphon (ReturnToAbyssHealAnim)**:
+     - On melee hit triggering 2d6 heal (up to 3 times/round), an abyssal blue surge flows backward from target into the caster (~0.6s).
+   - **Crit / Kill Specter Form Refund Wave (ReturnToAbyssRefundAnim)**:
+     - On first confirmed crit or kill each round returning 1 round of Specter form, ocean torrent roars and violently expands an intense white-hot wave foam shockwave ring (~0.8s).
+   - **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no Shader.Find, reuse MarkFxKit.Mat(color)), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
 
 
 ### Phase 4: Reporting Findings

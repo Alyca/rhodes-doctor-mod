@@ -2041,5 +2041,20 @@ namespace RhodesDoctor.Components
         NightterrorFx.PlayFail(target);
     }
   }
+
+  /// <summary>
+  /// 归溟（7 环·归溟幽灵鲨/劳伦缇娜）：迅捷施法瞬间，脚下深海潮汐螺旋升腾炸开。
+  /// </summary>
+  public class ContextActionReturnToAbyssCastFx : ContextAction
+  {
+    public override string GetCaption() => "归溟·自绘迅捷施法深海潮汐特效";
+
+    public override void RunAction()
+    {
+      var caster = Context?.MaybeCaster ?? Context?.MaybeOwner ?? Target?.Unit;
+      if (caster != null)
+        ReturnToAbyssFx.PlayCast(caster);
+    }
+  }
 }
 
