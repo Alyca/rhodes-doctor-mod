@@ -70,14 +70,24 @@ For every requirement and change:
 
 When you confirm a mismatch, bug, or missing requirement, post an inline PR review comment at the specific file and line using `github_pr_review` (via `modify_pr`).
 
-**Comment Guidelines:**
-- Be direct, polite, and actionable.
-- Quote or cite the specific requirement or potential runtime issue.
-- Clearly state what the code currently does and what should change.
+**CRITICAL REQUIREMENT — ALWAYS PROVIDE CONCRETE CODE:**
+- **Never stop at text explanations.** For every issue found, you **MUST provide exact, copy-pasteable replacement code** using GitHub suggestion blocks (````suggestion ... ````) or complete code diffs.
+- Make the code solution immediately actionable and drop-in ready so the author can apply or review the exact code directly.
 
-**Examples of Good Comments:**
-- "The requirement in `docs/fx-rework-prompt-3spells.md` requests self-drawn visuals for X instead of borrowing vanilla bursts, but `ApplyAbilityFx` still falls back to `FxLibrary.Psychic`."
-- "`_target.Position` is accessed directly here, but `_target.View` or `_target` may be destroyed or despawned while the animation is still ticking. Add a null check before updating positions."
+**Comment Guidelines:**
+- State the specific requirement or potential runtime issue clearly and concisely.
+- Quote or identify the affected code lines.
+- **Provide the exact code replacement or fix.**
+
+**Example of a Good Comment:**
+```
+The requirement requests self-drawn visuals for X, and for personal-range abilities that shouldn't duplicate per enemy, use the clicked-target hook:
+
+```suggestion
+          ability.AdditionalAbilityEffectRunActionOnClickedTarget(ActionsBuilder.New()
+            .Add<ContextActionCrownEchoFx>());
+```
+```
 
 **De-duplication:** Check `<prior_runs>` so you don't repeat comments already made unless the code changed in response but still has issues.
 

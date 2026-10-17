@@ -902,7 +902,9 @@ namespace RhodesDoctor
         // 顺序必须先偷后清——反过来增益已被清除，夺取动作什么也拿不到。
         case "CrownEcho":
           // 专属自绘特效：头顶黑冠显现 + 60 尺精神织网扩散 + 敌方增益剥离索取（CrownEchoFx.cs）
-          effects.Add<ContextActionCrownEchoFx>();
+          // 个人距离法术点击目标为施法者自身，挂在 ClickedTarget 上确保每次施法仅运行一次（无敌人也展开、多敌人不重复叠层）
+          ability.AdditionalAbilityEffectRunActionOnClickedTarget(ActionsBuilder.New()
+            .Add<ContextActionCrownEchoFx>());
           effects.SavingThrow(SavingThrowType.Will, onResult: ActionsBuilder.New()
             .ConditionalSaved(
               failed: ActionsBuilder.New()

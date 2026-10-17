@@ -42,6 +42,7 @@ namespace RhodesDoctor
           if (list.Count >= MaxEnemiesTethered) break;
           if (u == null || u == caster || !u.IsInGame || u.View == null) continue;
           if (u.Descriptor.State.IsDead) continue;
+          if (u.Descriptor.State.HasCondition(UnitCondition.Invisible)) continue;
           if (!u.IsEnemy(caster)) continue;
           if (caster.HoldingState != null && u.HoldingState != caster.HoldingState) continue;
           var d = u.Position - caster.Position; d.y = 0f;
