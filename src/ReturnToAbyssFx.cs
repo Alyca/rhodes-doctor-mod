@@ -106,20 +106,43 @@ namespace RhodesDoctor
 
   /// <summary>
   /// 归溟施法潮汐升腾动画（ReturnToAbyssCastAnim）：
-  /// 迅捷施法瞬间，脚下深海潮汐喷薄爆发。
-  /// 【作者实测反馈】：绝不可只有单薄细线，必须有潮汐涌泉与水体升腾的厚度与破浪感，全权交由 Macroscope 重构。
+  /// 迅捷施法瞬间，脚下深海潮汐地脉喷薄爆发，三道厚重水柱摇曳升腾，双层螺旋洋流与破浪白沫环向外推开。
   /// </summary>
   public class ReturnToAbyssCastAnim : MonoBehaviour
   {
     private const float Dur = 0.70f;
-    private float _t;
+    private const int Cols = 3, ColN = 24, Spir = 2, SpN = 36;
+    private float _t, _h = 2f, _r = 0.8f;
     private UnitEntityData _caster;
+    private readonly LineRenderer[] _cols = new LineRenderer[Cols];
+    private readonly LineRenderer[] _spir = new LineRenderer[Spir];
+    private LineRenderer _surf, _foam;
 
     internal bool Init(UnitEntityData caster)
     {
       if (caster?.View == null) return false;
+      var blue = Mat(ReturnToAbyssFx.AbyssalBlue);
+      if (blue == null) return false;
       _caster = caster;
       transform.position = caster.Position;
+      _h = ModelHeight(caster);
+      _r = Mathf.Clamp(caster.View.Corpulence * 1.6f, 0.7f, 3.0f);
+      var teal = Mat(ReturnToAbyssFx.OceanicTeal);
+      var violet = Mat(ReturnToAbyssFx.DeepOceanViolet);
+      var geyser = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(0.6f, 0.75f), new Keyframe(1f, 0.15f));
+      var swell = new AnimationCurve(new Keyframe(0f, 0.15f), new Keyframe(0.4f, 1f), new Keyframe(1f, 0.2f));
+      for (int i = 0; i < Cols; i++)
+      {
+        _cols[i] = Line(transform, "Column" + i, i == 0 ? violet : (i == 1 ? blue : teal), ColN, false, 0.5f - i * 0.08f);
+        _cols[i].widthCurve = geyser;
+      }
+      for (int i = 0; i < Spir; i++)
+      {
+        _spir[i] = Line(transform, "Spiral" + i, i == 0 ? teal : blue, SpN, false, 0.3f);
+        _spir[i].widthCurve = swell;
+      }
+      _surf = Flat(transform, "Surf", blue, RingSeg, true, 0.45f);
+      _foam = Flat(transform, "Foam", Mat(ReturnToAbyssFx.WaveFoamWhite), RingSeg, true, 0.25f);
       return true;
     }
 
@@ -131,6 +154,44 @@ namespace RhodesDoctor
         Destroy(gameObject);
         return;
       }
+      float k = _t / Dur;
+      float e = 1f - (1f - k) * (1f - k) * (1f - k);
+      float a = k < 0.55f ? 1f : 1f - (k - 0.55f) / 0.45f;
+      Vector3 c = _caster.Position;
+      transform.position = c;
+      float top = _h * 1.5f * Mathf.Sin(Mathf.Min(k * 1.6f, 1f) * Mathf.PI * 0.5f);
+      for (int i = 0; i < Cols; i++)
+      {
+        var lr = _cols[i];
+        float ox = Mathf.Cos(i * 2.094f) * _r * 0.25f, oz = Mathf.Sin(i * 2.094f) * _r * 0.25f;
+        for (int j = 0; j < ColN; j++)
+        {
+          float u = j / (float)(ColN - 1);
+          float sway = 0.12f * Mathf.Sin(u * 7f - _t * 14f + i * 2f);
+          lr.SetPosition(j, c + new Vector3(ox * (1f + u) + sway, 0.05f + u * top * (1f - 0.15f * i), oz * (1f + u) - sway));
+        }
+        lr.widthMultiplier = (0.5f - i * 0.08f) * (0.85f + 0.25f * Mathf.Sin(_t * 18f + i));
+        SetA(lr, i == 0 ? ReturnToAbyssFx.DeepOceanViolet : (i == 1 ? ReturnToAbyssFx.AbyssalBlue : ReturnToAbyssFx.OceanicTeal), a * 0.75f);
+      }
+      for (int i = 0; i < Spir; i++)
+      {
+        var lr = _spir[i];
+        float ph = _t * 8f + i * Mathf.PI;
+        for (int j = 0; j < SpN; j++)
+        {
+          float u = j / (float)(SpN - 1);
+          float rad = _r * (0.4f + 0.8f * u) * (0.6f + 0.5f * e);
+          float ang = ph + u * Mathf.PI * 3f;
+          lr.SetPosition(j, c + new Vector3(Mathf.Cos(ang) * rad, 0.05f + u * top * 0.9f, Mathf.Sin(ang) * rad));
+        }
+        SetA(lr, i == 0 ? ReturnToAbyssFx.OceanicTeal : ReturnToAbyssFx.AbyssalBlue, a * 0.7f);
+      }
+      float rr = _r * (0.4f + 1.6f * e);
+      Circle(_surf, c, rr, 0.05f);
+      Circle(_foam, c, rr * 1.04f, 0.08f + 0.06f * Mathf.Sin(k * Mathf.PI));
+      _surf.widthMultiplier = 0.45f * (1f - 0.5f * k);
+      SetA(_surf, ReturnToAbyssFx.AbyssalBlue, a * 0.8f);
+      SetA(_foam, ReturnToAbyssFx.WaveFoamWhite, a);
     }
   }
 
@@ -236,22 +297,35 @@ namespace RhodesDoctor
 
   /// <summary>
   /// 归溟命中吸血逆流动画（ReturnToAbyssHealAnim）：
-  /// 近战命中造成伤害并吸血时，深海狂暴暗流与水瀑自受创目标处逆流回流施法者。
-  /// 【作者实测反馈】：必须是奔涌回溯的深海流体水瀑，而不是单薄单线，全权交由 Macroscope 重构。
+  /// 近战命中吸血时，三层厚重水瀑（主洋流 + 逆浪底层 + 浪峰白沫）自目标汹涌逆溯奔流至施法者，涌入时在施法者脚底炸开破浪水花。
   /// </summary>
   public class ReturnToAbyssHealAnim : MonoBehaviour
   {
     private const float Dur = 0.60f;
-    private float _t;
+    private const int Layers = 3, N = 32;
+    private float _t, _h = 2f;
     private UnitEntityData _source;
     private UnitEntityData _caster;
+    private Vector3 _from;
+    private readonly LineRenderer[] _body = new LineRenderer[Layers];
+    private LineRenderer _splash;
 
     internal bool Init(UnitEntityData source, UnitEntityData caster)
     {
       if (caster?.View == null) return false;
+      var blue = Mat(ReturnToAbyssFx.AbyssalBlue);
+      if (blue == null) return false;
       _source = source;
       _caster = caster;
-      transform.position = source?.View != null ? source.Position : caster.Position;
+      _h = ModelHeight(caster);
+      _from = (source?.View != null ? source.Position : caster.Position) + Vector3.up * (_h * 0.5f);
+      transform.position = _from;
+      var torrent = new AnimationCurve(new Keyframe(0f, 0.2f), new Keyframe(0.3f, 1f), new Keyframe(0.75f, 0.9f), new Keyframe(1f, 0.35f));
+      _body[0] = Line(transform, "Torrent", blue, N, false, 0.5f);
+      _body[1] = Line(transform, "Undertow", Mat(ReturnToAbyssFx.OceanicTeal), N, false, 0.35f);
+      _body[2] = Line(transform, "Crest", Mat(ReturnToAbyssFx.WaveFoamWhite), N, false, 0.25f);
+      for (int i = 0; i < Layers; i++) _body[i].widthCurve = torrent;
+      _splash = Flat(transform, "Splash", Mat(ReturnToAbyssFx.WaveFoamWhite), RingSeg, true, 0.3f);
       return true;
     }
 
@@ -263,25 +337,67 @@ namespace RhodesDoctor
         Destroy(gameObject);
         return;
       }
+      if (_source?.View != null) _from = _source.Position + Vector3.up * (_h * 0.5f);
+      Vector3 to = _caster.Position + Vector3.up * (_h * 0.5f);
+      Vector3 d = to - _from;
+      Vector3 side = Vector3.Cross(d, Vector3.up);
+      side = side.sqrMagnitude > 1e-4f ? side.normalized : Vector3.right;
+      float k = _t / Dur;
+      float head = Mathf.Clamp01(k * 1.6f); head = 1f - (1f - head) * (1f - head);
+      float tail = Mathf.Clamp01((k - 0.35f) / 0.65f);
+      float a = k < 0.7f ? 1f : 1f - (k - 0.7f) / 0.3f;
+      for (int i = 0; i < Layers; i++)
+      {
+        var lr = _body[i];
+        for (int j = 0; j < N; j++)
+        {
+          float u = Mathf.Lerp(tail, head, j / (float)(N - 1));
+          float arc = Mathf.Sin(u * Mathf.PI);
+          float churn = 0.18f * Mathf.Sin(u * 10f - _t * 22f + i * 1.3f) * arc;
+          float lift = 0.5f * arc + 0.08f * i + 0.06f * Mathf.Sin(u * 15f + _t * 18f);
+          lr.SetPosition(j, _from + d * u + side * churn + Vector3.up * lift);
+        }
+        lr.widthMultiplier = (i == 0 ? 0.5f : (i == 1 ? 0.35f : 0.25f)) * (0.85f + 0.2f * Mathf.Sin(_t * 25f + i));
+        SetA(lr, i == 0 ? ReturnToAbyssFx.AbyssalBlue : (i == 1 ? ReturnToAbyssFx.OceanicTeal : ReturnToAbyssFx.WaveFoamWhite), a * (i == 2 ? 0.8f : 0.7f));
+      }
+      float sp = Mathf.Clamp01((k - 0.5f) / 0.5f);
+      Circle(_splash, _caster.Position, 0.4f + 1.1f * (1f - (1f - sp) * (1f - sp)), 0.06f);
+      _splash.widthMultiplier = 0.3f * (1f - sp);
+      SetA(_splash, ReturnToAbyssFx.WaveFoamWhite, sp > 0f ? 1f - sp : 0f);
     }
   }
 
   /// <summary>
   /// 归溟恶灵形态续期怒涛冲击环动画（ReturnToAbyssRefundAnim）：
-  /// 每轮首暴或首杀返还 1 轮恶灵持续时间时，海啸破浪般排山倒海的怒涛冲击波与炽白浪花翻滚！
-  /// 【作者实测反馈】：必须体现狂暴潮汐冲击波的磅礴厚度与翻滚浪沫，全权交由 Macroscope 重构。
+  /// 每轮首暴或首杀返还 1 轮恶灵持续时间时，三重巨大海啸涌浪（0.5m 宽）层层排山倒海扩张，浪头翻卷着炽白浪唇并留下一大片浩瀚海潮水幕。
   /// </summary>
   public class ReturnToAbyssRefundAnim : MonoBehaviour
   {
     private const float Dur = 0.80f;
-    private float _t;
+    private const int Waves = 3, N = 64;
+    private float _t, _r = 0.8f;
     private UnitEntityData _caster;
+    private readonly LineRenderer[] _waves = new LineRenderer[Waves];
+    private readonly LineRenderer[] _lips = new LineRenderer[Waves];
+    private LineRenderer _wash;
 
     internal bool Init(UnitEntityData caster)
     {
       if (caster?.View == null) return false;
+      var foam = Mat(ReturnToAbyssFx.WaveFoamWhite);
+      if (foam == null) return false;
       _caster = caster;
       transform.position = caster.Position;
+      _r = Mathf.Clamp(caster.View.Corpulence * 1.6f, 0.7f, 3.0f);
+      var blue = Mat(ReturnToAbyssFx.AbyssalBlue);
+      var teal = Mat(ReturnToAbyssFx.OceanicTeal);
+      var violet = Mat(ReturnToAbyssFx.DeepOceanViolet);
+      for (int i = 0; i < Waves; i++)
+      {
+        _waves[i] = Line(transform, "Bore" + i, i == 0 ? blue : (i == 1 ? teal : violet), N, true, 0.5f - i * 0.08f);
+        _lips[i] = Line(transform, "Lip" + i, foam, N, true, 0.25f);
+      }
+      _wash = Flat(transform, "Wash", teal, RingSeg, true, 0.5f);
       return true;
     }
 
@@ -293,6 +409,36 @@ namespace RhodesDoctor
         Destroy(gameObject);
         return;
       }
+      float k = _t / Dur;
+      Vector3 c = _caster.Position;
+      transform.position = c;
+      for (int i = 0; i < Waves; i++)
+      {
+        float kk = Mathf.Clamp01((k - i * 0.12f) / 0.76f);
+        float e = 1f - (1f - kk) * (1f - kk) * (1f - kk);
+        float r = _r * (0.4f + 3.2f * e);
+        float crest = 0.55f * Mathf.Sin(Mathf.Min(kk * 1.4f, 1f) * Mathf.PI) * (1f - 0.25f * i);
+        float a = kk <= 0f ? 0f : 1f - kk * kk;
+        var w = _waves[i]; var lip = _lips[i];
+        for (int j = 0; j < N; j++)
+        {
+          float ang = j * Mathf.PI * 2f / N;
+          float rip = 0.1f * Mathf.Sin(ang * 7f + _t * 12f + i) + 0.05f * Mathf.Sin(ang * 13f - _t * 9f);
+          float rr = r + rip;
+          float y = 0.05f + crest * (0.7f + 0.3f * Mathf.Sin(ang * 5f - _t * 10f));
+          float cs = Mathf.Cos(ang), sn = Mathf.Sin(ang);
+          w.SetPosition(j, c + new Vector3(cs * rr, y * 0.5f, sn * rr));
+          lip.SetPosition(j, c + new Vector3(cs * (rr + 0.08f), y, sn * (rr + 0.08f)));
+        }
+        w.widthMultiplier = (0.5f - i * 0.08f) * (1f - 0.4f * kk);
+        lip.widthMultiplier = 0.25f * (1f - 0.5f * kk);
+        SetA(w, i == 0 ? ReturnToAbyssFx.AbyssalBlue : (i == 1 ? ReturnToAbyssFx.OceanicTeal : ReturnToAbyssFx.DeepOceanViolet), a * 0.75f);
+        SetA(lip, ReturnToAbyssFx.WaveFoamWhite, a);
+      }
+      float we = Mathf.Clamp01((k - 0.25f) / 0.75f);
+      Circle(_wash, c, _r * (0.6f + 2.4f * we), 0.04f);
+      _wash.widthMultiplier = 0.5f * (1f - we);
+      SetA(_wash, ReturnToAbyssFx.OceanicTeal, we > 0f ? 0.6f * (1f - we) : 0f);
     }
   }
 }
