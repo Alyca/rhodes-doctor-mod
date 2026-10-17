@@ -272,6 +272,8 @@ namespace RhodesDoctor
       FireReconFx.Tracker.Added(buff);
       FinalSnipeFx.Tracker.Added(buff);
       BattlefieldSurveyFx.Tracker.Added(buff);
+      SuppressingShotFx.Tracker.Added(buff);
+      SinPunishmentFx.Tracker.Added(buff);
     }
 
     public void HandleBuffDidRemoved(Buff buff)
@@ -279,6 +281,8 @@ namespace RhodesDoctor
       FireReconFx.Tracker.Removed(buff);
       FinalSnipeFx.Tracker.Removed(buff);
       BattlefieldSurveyFx.Tracker.Removed(buff);
+      SuppressingShotFx.Tracker.Removed(buff);
+      SinPunishmentFx.Tracker.Removed(buff);
     }
   }
 }

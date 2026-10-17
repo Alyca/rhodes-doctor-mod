@@ -1155,6 +1155,8 @@ namespace RhodesDoctor.Components
         // TriggerRule 抛异常会"标记已扣但反伤无效"）。
         context.TriggerRule(new RuleDealDamage(Owner, Owner, new DamageBundle(back)));
         Data.TriggeredThisRound = true;
+        // 律法审判专属惩击特效（从天而降圣光裁决 + 地面震荡金环）
+        SinPunishmentFx.PlayRetributionSmite(Owner);
       }
       catch (Exception e)
       {

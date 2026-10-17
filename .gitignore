@@ -20,5 +20,6 @@ _tools/acl-recovery/
 # ============ 临时文件 ============
 *.tmp
 *.log
+_tools/tmp/
 Thumbs.db
 desktop.ini

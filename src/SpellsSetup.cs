@@ -674,6 +674,9 @@ namespace RhodesDoctor
           var duration = s.PerLevel
             ? ContextDuration.Variable(ContextValues.Rank(), s.Unit)
             : ContextDuration.Fixed(s.Rounds, s.Unit);
+          // 牵制射击（0 环·克洛丝）：播放专属自绘弩矢飞射与命中爆闪特效
+          if (s.Key == "SuppressingShot")
+            effects.Add<ContextActionSuppressingShotFx>();
           if (s.SaveNone)
             effects.ApplyBuff(buff, duration);
           else
@@ -898,6 +901,8 @@ namespace RhodesDoctor
         // 筛选见 ContextActionStealBuffsCustom.IsStealable（可驱散法术增益、敌方施法者）。
         // 顺序必须先偷后清——反过来增益已被清除，夺取动作什么也拿不到。
         case "CrownEcho":
+          // 专属自绘特效：头顶黑冠显现 + 60 尺精神织网扩散 + 敌方增益剥离索取（CrownEchoFx.cs）
+          effects.Add<ContextActionCrownEchoFx>();
           effects.SavingThrow(SavingThrowType.Will, onResult: ActionsBuilder.New()
             .ConditionalSaved(
               failed: ActionsBuilder.New()
@@ -2047,8 +2052,8 @@ namespace RhodesDoctor
         "DrunkenDream" => FxLibrary.Psychic,
         // 力场：牵引（把敌人拽向落点）——借原版"力场拳"的冲击 FX，见 FxLibrary.Force
         "Dragnet" => FxLibrary.Force,
-        // 暗影：王冠的回响（夺走敌人增益）——借原版"幻影杀手"的 FX，见 FxLibrary.Shadow
-        "CrownEcho" => FxLibrary.Shadow,
+        // 王冠的回响（10 环·特雷西娅）：不再借"幻影杀手"黑紫鬼影，
+        // 改为专属自绘（CrownEchoFx.cs）：头顶黑冠 + 60 尺精神织网 + 敌方丝线索取，挂在 effects 上，不走这里。
         // ── 单体批次（0 环起）──
         // 治疗：医疗敷料（接触包扎）——作者 10-16：不再用治疗轻伤绿光，改借次级复原术的复原光（FxLibrary.FieldDressingFx）
         "FieldDressing" => FxLibrary.FieldDressingFx,
@@ -2060,8 +2065,8 @@ namespace RhodesDoctor
         // 改为专属自绘的战术投影，跟增益同生同灭，见 TacticalProjectionFx.cs。
         // 战场测绘：已改专属 PRTS 战场扫描（BattlefieldSurveyFx.cs），
         // 挂在**能力自己的效果动作**上（见 `effects.Add<ContextActionBattlefieldSurveyFx>()`），不走这里。
-        // 精神：牵制射击（惑控·影响心灵）——复用醉梦那套精神爆发
-        "SuppressingShot" => FxLibrary.Psychic,
+        // 牵制射击（0 环·克洛丝）：不再借原版精神系紫圈爆发（与醉梦重样），
+        // 改为专属自绘（SuppressingShotFx.cs）：射出高亮弩矢 + 命中针刺 + 持续压制准星，不走这里。
         // ── 单体批次（2 环）──
         // 增益：不稳定血浆（死灵；攻击 / 伤害 +2，代价每轮失血）——借原版"英雄气概"的增益施法闪光
         "UnstablePlasma" => FxLibrary.Heroism,
