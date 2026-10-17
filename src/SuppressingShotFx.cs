@@ -1,13 +1,16 @@
-// 牵制射击（0 环·克洛丝）的专属自绘特效：飞射弩箭 + 命中针刺 + 持续压制准心（纯视觉）。
-// 取代原来借的原版精神系紫圈爆发（与醉梦完全重样、脱离压制射击意象）。
+// 牵制射击（0 环·克洛丝）的专属自绘特效：克洛丝标志性【二连射】弩矢 + 连续针刺爆闪 + 压制锁定准星（纯视觉）。
+// 严格还原《明日方舟》克洛丝（“在这里哦~ Kokodayo~”）的核心特色——招牌连发弩箭与精准压制：
 //
 // 结构分两部分：
 //   1. 施法射击一瞬（SuppressingShotShotAnim）：
-//      施法者身前 → 目标胸口的琥珀金弩矢曳光（高亮白芯）+ 命中 4 向针刺爆闪。
+//      还原克洛丝招牌【二连射】（Double-tap Crossbow）：
+//      第一发弩矢（t=0.00s）疾速破空，第二发追猎弩矢（t=0.06s）紧随其后双发齐射！
+//      双道高亮琥珀曳光（亮白锐利箭芯）如流星般贯向目标胸口，并在命中点接连绽开双重针刺爆闪与环形冲击。
 //   2. 减益常驻期间（SuppressingShotAnim，继承 MarkFxBase）：
 //      由 MarkFxTracker 订阅 RhodesDoctorBuffSuppressingShot（直到目标下一次攻击后移除）；
-//      目标头顶正对镜头的"压制锁定"（向下箭头 / 楔形准星 + 两侧定位刻线 + 头部微旋光环），
-//      醒目表达"命中率被压制（-1 / -2 攻击检定罚值）"的意象；攻击后减益移除即 0.3 s 平滑淡出。
+//      目标头顶正对相机的【压制锁定准星】：
+//      环形锁敌光圈 + 四向收束准星刻线 + 向下压制警示箭头 + 头顶微转光环，
+//      醒目表达“命中率受压制（-1 / -2 攻击检定罚值）”的受创受挫意象；攻击消耗后 0.3s 平滑淡出。
 using System;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Buffs;
@@ -20,8 +23,8 @@ namespace RhodesDoctor
   {
     internal static readonly Color Amber     = new Color(1.00f, 0.72f, 0.18f, 1f); // 克洛丝暖琥珀
     internal static readonly Color Hot       = new Color(1.00f, 0.88f, 0.45f, 1f); // 弩矢高亮
-    internal static readonly Color White     = new Color(1.00f, 0.96f, 0.90f, 1f); // 箭芯/针刺
-    internal static readonly Color PaleAmber = new Color(1.00f, 0.80f, 0.40f, 0.65f);
+    internal static readonly Color White     = new Color(1.00f, 0.98f, 0.92f, 1f); // 箭芯/针刺爆闪
+    internal static readonly Color DeepAmber = new Color(1.00f, 0.50f, 0.10f, 1f); // 尾羽深橙
 
     /// <summary>
     /// 减益常驻跟踪器：按增益名或 GUID 认领。
@@ -31,7 +34,7 @@ namespace RhodesDoctor
       "RhodesDoctorBuffSuppressingShot", "牵制射击·压制标记", go => go.AddComponent<SuppressingShotAnim>(),
       Guids.Buff(4));
 
-    /// <summary>施法一瞬：自施法者向目标射出一道高亮弩矢，命中点展开针刺光斑。</summary>
+    /// <summary>施法一瞬：自施法者向目标射出克洛丝标志性的双发连射弩矢，接连命中爆发针刺。</summary>
     internal static void PlayShot(UnitEntityData caster, UnitEntityData target)
     {
       try
@@ -48,37 +51,62 @@ namespace RhodesDoctor
       }
       catch (Exception e)
       {
-        Main.Mod.Logger.Error("[RhodesDoctor] 牵制射击弩箭特效失败（效果照常）：\n" + e);
+        Main.Mod.Logger.Error("[RhodesDoctor] 牵制射击二连射特效失败（效果照常）：\n" + e);
       }
     }
   }
 
-  /// <summary>弩箭飞射与命中针刺爆闪动画（约 0.35 秒）。</summary>
+  /// <summary>
+  /// 克洛丝招牌【二连射】弩矢飞射与接续命中双爆闪动画（约 0.45 秒）。
+  /// </summary>
   public class SuppressingShotShotAnim : MonoBehaviour
   {
-    private const float FlyDur = 0.14f;
-    private const float TotalDur = 0.35f;
+    private const float TotalDur = 0.45f;
+    private const float Bolt1Fly = 0.13f;
+    private const float Bolt2Start = 0.06f;
+    private const float Bolt2Fly = 0.13f;
 
-    private Vector3 _from, _to;
+    private Vector3 _from1, _to1;
+    private Vector3 _from2, _to2;
     private float _t;
-    private LineRenderer _tracer, _core, _hitRing;
-    private readonly LineRenderer[] _hitPins = new LineRenderer[4];
+
+    // ── 第一箭 ──
+    private LineRenderer _tracer1, _core1, _hitRing1;
+    private readonly LineRenderer[] _hitPins1 = new LineRenderer[4];
+
+    // ── 第二箭（二连射紧随其后）──
+    private LineRenderer _tracer2, _core2, _hitRing2;
+    private readonly LineRenderer[] _hitPins2 = new LineRenderer[4];
 
     internal bool Init(Vector3 from, Vector3 to)
     {
       var mA = Mat(SuppressingShotFx.Amber);
       var mW = Mat(SuppressingShotFx.White);
       var mH = Mat(SuppressingShotFx.Hot);
-      if (mA == null || mW == null || mH == null) return false;
+      var mD = Mat(SuppressingShotFx.DeepAmber);
+      if (mA == null || mW == null || mH == null || mD == null) return false;
 
-      _from = from;
-      _to = to;
+      // 为两发弩箭构造微微交错的弹道（更具立体双发感）
+      CamBasis(out var right, out var up);
+      _from1 = from - right * 0.04f + up * 0.02f;
+      _to1   = to   - right * 0.03f;
 
-      _tracer  = Line(transform, "RD_SS_Tracer", mA, 2, false, 0.08f);
-      _core    = Line(transform, "RD_SS_Core",   mW, 2, false, 0.035f);
-      _hitRing = Line(transform, "RD_SS_HitRing", mH, 32, true, 0.04f);
+      _from2 = from + right * 0.06f - up * 0.02f;
+      _to2   = to   + right * 0.04f + up * 0.03f;
+
+      // 第一箭
+      _tracer1  = Line(transform, "RD_SS_Tracer1", mA, 2, false, 0.075f);
+      _core1    = Line(transform, "RD_SS_Core1",   mW, 2, false, 0.032f);
+      _hitRing1 = Line(transform, "RD_SS_HitRing1", mH, 24, true, 0.040f);
       for (int i = 0; i < 4; i++)
-        _hitPins[i] = Line(transform, "RD_SS_Pin", mW, 2, false, 0.045f);
+        _hitPins1[i] = Line(transform, "RD_SS_Pin1_" + i, mW, 2, false, 0.040f);
+
+      // 第二箭
+      _tracer2  = Line(transform, "RD_SS_Tracer2", mD, 2, false, 0.080f);
+      _core2    = Line(transform, "RD_SS_Core2",   mW, 2, false, 0.035f);
+      _hitRing2 = Line(transform, "RD_SS_HitRing2", mA, 24, true, 0.045f);
+      for (int i = 0; i < 4; i++)
+        _hitPins2[i] = Line(transform, "RD_SS_Pin2_" + i, mH, 2, false, 0.045f);
 
       return true;
     }
@@ -88,70 +116,123 @@ namespace RhodesDoctor
       _t += Time.deltaTime;
       if (_t >= TotalDur) { Destroy(gameObject); return; }
 
-      // ── 1. 弩矢飞行阶段（0 ~ 0.14s）──
-      float kHead = Mathf.Clamp01(_t / FlyDur);
-      float kTail = Mathf.Clamp01((_t - 0.045f) / (FlyDur - 0.045f));
-      if (_t <= FlyDur)
+      CamBasis(out var right, out var up);
+
+      // ════════════ 1. 第一箭：0.00s ~ 0.13s 飞射，0.11s ~ 0.32s 命中 ════════════
+      if (_t <= Bolt1Fly)
       {
-        var head = Vector3.Lerp(_from, _to, kHead);
-        var tail = Vector3.Lerp(_from, _to, kTail);
-        foreach (var lr in new[] { _tracer, _core })
-        {
-          lr.enabled = true;
-          lr.SetPosition(0, tail);
-          lr.SetPosition(1, head);
-        }
-        SetA(_tracer, SuppressingShotFx.Amber, 1f);
-        SetA(_core,   SuppressingShotFx.White, 1f);
+        float kHead = Mathf.Clamp01(_t / Bolt1Fly);
+        float kTail = Mathf.Clamp01((_t - 0.04f) / (Bolt1Fly - 0.04f));
+        var head = Vector3.Lerp(_from1, _to1, kHead);
+        var tail = Vector3.Lerp(_from1, _to1, kTail);
+
+        _tracer1.enabled = true;
+        _core1.enabled   = true;
+        _tracer1.SetPosition(0, tail);
+        _tracer1.SetPosition(1, head);
+        _core1.SetPosition(0, tail);
+        _core1.SetPosition(1, head);
+        SetA(_tracer1, SuppressingShotFx.Amber, 1f);
+        SetA(_core1,   SuppressingShotFx.White, 1f);
       }
       else
       {
-        _tracer.enabled = false;
-        _core.enabled   = false;
+        _tracer1.enabled = false;
+        _core1.enabled   = false;
       }
 
-      // ── 2. 命中爆发阶段（0.12 ~ 0.35s）：4 根十字针刺刺出 + 细环扩散 ──
-      float hitT = _t - 0.12f;
-      if (hitT >= 0f)
+      float hit1T = _t - (Bolt1Fly - 0.02f);
+      if (hit1T >= 0f && hit1T < 0.22f)
       {
-        CamBasis(out var right, out var up);
-        float p = Mathf.Clamp01(hitT / (TotalDur - 0.12f));
-        float alpha = 1f - p;
-        float r = Mathf.Lerp(0.15f, 0.70f, 1f - (1f - p) * (1f - p));
+        float p = Mathf.Clamp01(hit1T / 0.22f);
+        float a = 1f - p;
+        float r = Mathf.Lerp(0.12f, 0.60f, 1f - (1f - p) * (1f - p));
 
-        _hitRing.enabled = true;
-        BillCircle(_hitRing, _to, r, right, up);
-        SetA(_hitRing, SuppressingShotFx.Hot, alpha * 0.9f);
+        _hitRing1.enabled = true;
+        BillCircle(_hitRing1, _to1, r, right, up);
+        SetA(_hitRing1, SuppressingShotFx.Hot, a * 0.9f);
 
         for (int i = 0; i < 4; i++)
         {
-          _hitPins[i].enabled = true;
-          float angle = i * Mathf.PI * 0.5f + Mathf.PI * 0.25f; // 斜向 45 度十字
+          _hitPins1[i].enabled = true;
+          float angle = i * Mathf.PI * 0.5f; // 正十字针刺
           var dir = right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
-          _hitPins[i].SetPosition(0, _to + dir * (r * 0.3f));
-          _hitPins[i].SetPosition(1, _to + dir * (r * 1.3f));
-          SetA(_hitPins[i], SuppressingShotFx.White, alpha);
+          _hitPins1[i].SetPosition(0, _to1 + dir * (r * 0.25f));
+          _hitPins1[i].SetPosition(1, _to1 + dir * (r * 1.15f));
+          SetA(_hitPins1[i], SuppressingShotFx.White, a);
         }
       }
       else
       {
-        _hitRing.enabled = false;
-        for (int i = 0; i < 4; i++) _hitPins[i].enabled = false;
+        _hitRing1.enabled = false;
+        for (int i = 0; i < 4; i++) _hitPins1[i].enabled = false;
+      }
+
+      // ════════════ 2. 第二箭（二连射）：0.06s ~ 0.19s 飞射，0.17s ~ 0.42s 命中 ════════════
+      float bolt2Time = _t - Bolt2Start;
+      if (bolt2Time >= 0f && bolt2Time <= Bolt2Fly)
+      {
+        float kHead2 = Mathf.Clamp01(bolt2Time / Bolt2Fly);
+        float kTail2 = Mathf.Clamp01((bolt2Time - 0.04f) / (Bolt2Fly - 0.04f));
+        var head2 = Vector3.Lerp(_from2, _to2, kHead2);
+        var tail2 = Vector3.Lerp(_from2, _to2, kTail2);
+
+        _tracer2.enabled = true;
+        _core2.enabled   = true;
+        _tracer2.SetPosition(0, tail2);
+        _tracer2.SetPosition(1, head2);
+        _core2.SetPosition(0, tail2);
+        _core2.SetPosition(1, head2);
+        SetA(_tracer2, SuppressingShotFx.DeepAmber, 1f);
+        SetA(_core2,   SuppressingShotFx.White, 1f);
+      }
+      else
+      {
+        _tracer2.enabled = false;
+        _core2.enabled   = false;
+      }
+
+      float hit2T = _t - (Bolt2Start + Bolt2Fly - 0.02f);
+      if (hit2T >= 0f && hit2T < 0.24f)
+      {
+        float p2 = Mathf.Clamp01(hit2T / 0.24f);
+        float a2 = 1f - p2;
+        float r2 = Mathf.Lerp(0.15f, 0.72f, 1f - (1f - p2) * (1f - p2));
+
+        _hitRing2.enabled = true;
+        BillCircle(_hitRing2, _to2, r2, right, up);
+        SetA(_hitRing2, SuppressingShotFx.Amber, a2 * 0.95f);
+
+        for (int i = 0; i < 4; i++)
+        {
+          _hitPins2[i].enabled = true;
+          float angle = i * Mathf.PI * 0.5f + Mathf.PI * 0.25f; // 斜向 45 度十字（交错爆闪）
+          var dir = right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
+          _hitPins2[i].SetPosition(0, _to2 + dir * (r2 * 0.30f));
+          _hitPins2[i].SetPosition(1, _to2 + dir * (r2 * 1.30f));
+          SetA(_hitPins2[i], SuppressingShotFx.Hot, a2);
+        }
+      }
+      else
+      {
+        _hitRing2.enabled = false;
+        for (int i = 0; i < 4; i++) _hitPins2[i].enabled = false;
       }
     }
   }
 
   /// <summary>
   /// 牵制射击减益常驻特效（跟增益同生同灭）：
-  /// 目标头顶悬浮朝下的压制标记（向下楔形准星 + 两侧夹角约束刻线 + 头顶微转光环）。
+  /// 目标头顶悬浮朝下的压制锁定准星（环形锁敌圈 + 四向收束准星刻线 + 向下惩罚箭头 + 头顶琥珀光环）。
+  /// 形象体现克洛丝神射手精准锁定压制、令目标攻击失准的实战意象。
   /// </summary>
   public class SuppressingShotAnim : MarkFxBase
   {
-    private LineRenderer _chevron;   // 向下的楔形/箭头（压制意象）
-    private LineRenderer _tickLeft;  // 左侧夹角标线
-    private LineRenderer _tickRight; // 右侧夹角标线
-    private LineRenderer _halo;      // 头顶平躺自旋光环
-    private LineRenderer _pinDot;    // 准心中心点
+    private LineRenderer _halo;         // 头顶平躺自旋光环
+    private LineRenderer _reticleCircle;// 正对相机的瞄准圆环
+    private readonly LineRenderer[] _crossTicks = new LineRenderer[4]; // 四向收束刻线
+    private LineRenderer _downArrow;    // 向下的压制指示箭头（V型）
+    private LineRenderer _centerDot;    // 准心核心点
 
     protected override bool Build(Buff buff)
     {
@@ -160,11 +241,12 @@ namespace RhodesDoctor
       var mH = Mat(SuppressingShotFx.Hot);
       if (mA == null || mW == null || mH == null) return false;
 
-      _chevron   = Line(transform, "RD_SS_Chevron",   mA, 3, false, 0.045f);
-      _tickLeft  = Line(transform, "RD_SS_TickL",     mH, 2, false, 0.035f);
-      _tickRight = Line(transform, "RD_SS_TickR",     mH, 2, false, 0.035f);
-      _halo      = Flat(transform, "RD_SS_Halo",      mA, RingSeg, true, 0.030f);
-      _pinDot    = Line(transform, "RD_SS_Dot",       mW, 12, true, 0.040f);
+      _halo          = Flat(transform, "RD_SS_Halo",    mA, RingSeg, true, 0.030f);
+      _reticleCircle = Line(transform, "RD_SS_Reticle", mH, RingSeg, true, 0.035f);
+      for (int i = 0; i < 4; i++)
+        _crossTicks[i] = Line(transform, "RD_SS_Cross_" + i, mW, 2, false, 0.038f);
+      _downArrow     = Line(transform, "RD_SS_Arrow",   mA, 3, false, 0.045f);
+      _centerDot     = Line(transform, "RD_SS_Dot",     mW, 12, true, 0.035f);
 
       return true;
     }
@@ -173,40 +255,41 @@ namespace RhodesDoctor
     {
       CamBasis(out var right, out var up);
 
-      var headPos = Unit.Position + Vector3.up * (Height + 0.35f);
+      var headPos = Unit.Position + Vector3.up * (Height + 0.38f);
       float appear = Mathf.Clamp01(T / 0.15f) * Master;
-      float pulse = 0.82f + 0.18f * Mathf.Sin(T * 3.8f);
+      float pulse = 0.82f + 0.18f * Mathf.Sin(T * 4.0f);
 
-      // ── 1. 头顶平躺光环（微旋）──
+      // ── 1. 头顶平躺光环 ──
       Circle(_halo, Unit.Position + Vector3.up * Height, 0.45f, 0f);
-      SetA(_halo, SuppressingShotFx.Amber, 0.55f * appear * pulse);
+      SetA(_halo, SuppressingShotFx.Amber, 0.50f * appear * pulse);
 
-      // ── 2. 正对相机的向下楔形压制准星 ──
-      // 顶点朝下指向目标头部，象征"攻击命中被下压"
-      float size = 0.32f;
-      var tip   = headPos + up * -0.12f;
-      var left  = headPos + right * -size + up * size;
-      var rightPt = headPos + right * size + up * size;
+      // ── 2. 正对相机的瞄准圆环 ──
+      float rRing = 0.26f;
+      BillCircle(_reticleCircle, headPos, rRing, right, up);
+      SetA(_reticleCircle, SuppressingShotFx.Hot, 0.85f * appear * pulse);
 
-      _chevron.SetPosition(0, left);
-      _chevron.SetPosition(1, tip);
-      _chevron.SetPosition(2, rightPt);
-      SetA(_chevron, SuppressingShotFx.Amber, 0.95f * appear * pulse);
+      // ── 3. 四向收束准星刻线（上下左右）──
+      for (int i = 0; i < 4; i++)
+      {
+        float angle = i * Mathf.PI * 0.5f;
+        var dir = right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
+        _crossTicks[i].SetPosition(0, headPos + dir * (rRing * 0.65f));
+        _crossTicks[i].SetPosition(1, headPos + dir * (rRing * 1.35f));
+        SetA(_crossTicks[i], SuppressingShotFx.White, 0.90f * appear);
+      }
 
-      // ── 3. 左右两侧夹角约束刻线 ──
-      var leftOuter = left + right * -0.18f;
-      _tickLeft.SetPosition(0, leftOuter);
-      _tickLeft.SetPosition(1, left);
-      SetA(_tickLeft, SuppressingShotFx.Hot, 0.85f * appear);
+      // ── 4. 向下的压制指示箭头（指向头部，表达攻击命中惩罚）──
+      float arrowTop = -0.06f;
+      float arrowBottom = -0.22f;
+      float arrowWidth = 0.12f;
+      _downArrow.SetPosition(0, headPos - up * arrowTop - right * arrowWidth);
+      _downArrow.SetPosition(1, headPos - up * arrowBottom);
+      _downArrow.SetPosition(2, headPos - up * arrowTop + right * arrowWidth);
+      SetA(_downArrow, SuppressingShotFx.Amber, 0.95f * appear * pulse);
 
-      var rightOuter = rightPt + right * 0.18f;
-      _tickRight.SetPosition(0, rightOuter);
-      _tickRight.SetPosition(1, rightPt);
-      SetA(_tickRight, SuppressingShotFx.Hot, 0.85f * appear);
-
-      // ── 4. 楔形中心高亮白点 ──
-      BillCircle(_pinDot, headPos + up * (size * 0.45f), 0.035f, right, up);
-      SetA(_pinDot, SuppressingShotFx.White, appear * pulse);
+      // ── 5. 准心核心高亮白点 ──
+      BillCircle(_centerDot, headPos, 0.035f, right, up);
+      SetA(_centerDot, SuppressingShotFx.White, appear * pulse);
     }
   }
 }
