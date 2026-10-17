@@ -282,9 +282,9 @@ namespace RhodesDoctor
       float arrowTop = -0.06f;
       float arrowBottom = -0.22f;
       float arrowWidth = 0.12f;
-      _downArrow.SetPosition(0, headPos - up * arrowTop - right * arrowWidth);
-      _downArrow.SetPosition(1, headPos - up * arrowBottom);
-      _downArrow.SetPosition(2, headPos - up * arrowTop + right * arrowWidth);
+      _downArrow.SetPosition(0, headPos + up * arrowTop - right * arrowWidth);
+      _downArrow.SetPosition(1, headPos + up * arrowBottom);
+      _downArrow.SetPosition(2, headPos + up * arrowTop + right * arrowWidth);
       SetA(_downArrow, SuppressingShotFx.Amber, 0.95f * appear * pulse);
 
       // ── 5. 准心核心高亮白点 ──

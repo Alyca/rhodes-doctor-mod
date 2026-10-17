@@ -66,6 +66,13 @@ For every requirement and change:
 - Are exceptions in event handlers wrapped so they don't break subsequent game logic?
 - Are created GameObjects destroyed cleanly on timeout, target death, or buff expiration?
 
+### Phase 3.1: Special Directive for Visual Effect Redesign
+
+When `docs/fx-rework-prompt-3spells.md` requests a redesign or improvement of visual effects (e.g., CrownEcho, SinPunishment, SuppressingShot):
+- Treat this as an explicit design mandate from the author.
+- Thoroughly review each file (`src/CrownEchoFx.cs`, `src/SinPunishmentFx.cs`, `src/SuppressingShotFx.cs`) from both aesthetic and mathematical perspectives (geometry, color gradients, particle distribution, easing curves, and timing).
+- Provide concrete, full drop-in replacement code suggestions (via `github_pr_review` using `suggestion` or code block) for the classes or methods that should be upgraded to achieve the requested visual excellence.
+
 ### Phase 4: Reporting Findings
 
 When you confirm a mismatch, bug, or missing requirement, post an inline PR review comment at the specific file and line using `github_pr_review` (via `modify_pr`).
