@@ -144,15 +144,93 @@ namespace RhodesDoctor
   /// </summary>
   public class ReturnToAbyssAnim : MarkFxBase
   {
+    private const int Sheets = 3, SheetN = 36, Ribbons = 4, RibN = 48, Drops = 14;
+    private readonly LineRenderer[] _sheets = new LineRenderer[Sheets];
+    private readonly LineRenderer[] _ribbons = new LineRenderer[Ribbons];
+    private readonly LineRenderer[] _drops = new LineRenderer[Drops];
+    private readonly float[] _seed = new float[Drops];
+    private static readonly Color[] RibCol = { ReturnToAbyssFx.AbyssalBlue, ReturnToAbyssFx.OceanicTeal, ReturnToAbyssFx.DeepOceanViolet, ReturnToAbyssFx.AbyssalBlue };
+
     protected override bool Build(Buff buff)
     {
-      // 预留骨架，待 Macroscope 在 PR Check-Run 中提供全新流体自绘实现
+      var blue = Mat(ReturnToAbyssFx.AbyssalBlue);
+      if (blue == null) return false;
+      var teal = Mat(ReturnToAbyssFx.OceanicTeal);
+      var violet = Mat(ReturnToAbyssFx.DeepOceanViolet);
+      var foam = Mat(ReturnToAbyssFx.WaveFoamWhite);
+      var swell = new AnimationCurve(new Keyframe(0f, 0.15f), new Keyframe(0.35f, 1f), new Keyframe(0.7f, 0.8f), new Keyframe(1f, 0.1f));
+      for (int i = 0; i < Sheets; i++)
+      {
+        _sheets[i] = Flat(transform, "Whirl" + i, i == 0 ? violet : (i == 1 ? blue : teal), SheetN, false, 0.45f - i * 0.1f);
+        _sheets[i].widthCurve = swell;
+      }
+      for (int i = 0; i < Ribbons; i++)
+      {
+        _ribbons[i] = Line(transform, "Current" + i, i == 2 ? violet : (i == 1 ? teal : blue), RibN, false, 0.32f);
+        _ribbons[i].widthCurve = swell;
+      }
+      for (int i = 0; i < Drops; i++)
+      {
+        _drops[i] = Line(transform, "Foam" + i, foam, 2, false, 0.14f);
+        _seed[i] = i * 0.6180339f;
+      }
       return true;
     }
 
     protected override void Tick(float dt)
     {
-      // 预留骨架，待 Macroscope 在 PR Check-Run 中提供全新流体摆位与缓动
+      Vector3 c = Unit.Position;
+      transform.position = c;
+      float intro = Mathf.Clamp01(T / 0.35f);
+      intro = 1f - (1f - intro) * (1f - intro) * (1f - intro);
+      float a = Master * intro;
+      float tide = Mathf.Sin(T * 1.8f);               // tidal surge / ebb
+      float r = Radius * (1f + 0.15f * tide);
+
+      for (int s = 0; s < Sheets; s++)
+      {
+        var lr = _sheets[s];
+        float spin = T * (1.6f + s * 0.7f) + s * 2.1f;
+        for (int j = 0; j < SheetN; j++)
+        {
+          float u = j / (float)(SheetN - 1);
+          float rad = r * (1.25f - s * 0.25f) * (0.2f + 0.8f * u);
+          float ang = spin + u * Mathf.PI * 2.2f;
+          float y = 0.04f + s * 0.03f + 0.05f * Mathf.Sin(u * 10f - T * 5f);
+          lr.SetPosition(j, c + new Vector3(Mathf.Cos(ang) * rad, y, Mathf.Sin(ang) * rad));
+        }
+        lr.widthMultiplier = (0.45f - s * 0.1f) * (1f + 0.3f * tide);
+        SetA(lr, s == 0 ? ReturnToAbyssFx.DeepOceanViolet : (s == 1 ? ReturnToAbyssFx.AbyssalBlue : ReturnToAbyssFx.OceanicTeal), a * (0.55f + 0.15f * s));
+      }
+
+      float h = Height * (1.0f + 0.12f * tide);
+      for (int i = 0; i < Ribbons; i++)
+      {
+        var lr = _ribbons[i];
+        float ph = -T * 2.0f + i * Mathf.PI * 0.5f;
+        for (int j = 0; j < RibN; j++)
+        {
+          float u = j / (float)(RibN - 1);
+          float wave = 0.12f * Mathf.Sin(u * 8f - T * 6f + i) + 0.05f * Mathf.Sin(u * 21f + T * 9f);
+          float rad = r * 0.8f * (1f - 0.3f * u) + wave;
+          float ang = ph + u * Mathf.PI * 2.6f;
+          lr.SetPosition(j, c + new Vector3(Mathf.Cos(ang) * rad, 0.1f + u * h + wave * 0.5f, Mathf.Sin(ang) * rad));
+        }
+        lr.widthMultiplier = 0.32f * (0.8f + 0.35f * Mathf.Sin(T * 3f + i * 1.7f));
+        SetA(lr, RibCol[i], a * 0.7f);
+      }
+
+      for (int i = 0; i < Drops; i++)
+      {
+        float p = Mathf.Repeat(T * 0.55f + _seed[i], 1f);
+        float ang = _seed[i] * 17f - T * 1.5f;
+        float rad = r * (0.7f + 0.35f * p);
+        // ballistic splash arc: rise then fall
+        var pos = c + new Vector3(Mathf.Cos(ang) * rad, 0.1f + h * 0.6f * 4f * p * (1f - p), Mathf.Sin(ang) * rad);
+        _drops[i].SetPosition(0, pos);
+        _drops[i].SetPosition(1, pos + new Vector3(0f, 0.12f * (1f - 2f * p), 0f));
+        SetA(_drops[i], ReturnToAbyssFx.WaveFoamWhite, a * Mathf.Sin(p * Mathf.PI));
+      }
     }
   }
 

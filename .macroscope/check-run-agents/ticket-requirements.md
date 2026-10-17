@@ -135,24 +135,14 @@ The author has tested the previous implementation in game and is **completely un
    - **Constant Follow (ReturnToAbyssAnim : MarkFxBase)**: Must feature dense, multi-layered swirling oceanic whirlpools with rhythmic tidal surging/ebbing, broad hydrodynamic fluid current ribbons enveloping the body, and rich splashing foam/droplets.
    - **Life Syphon (ReturnToAbyssHealAnim)**: Must be an actual churning, voluminous aquatic torrent rushing from victim to caster with undulating stream body.
    - **Specter Refund Wave (ReturnToAbyssRefundAnim)**: Must deliver an intense tidal bore shockwave, surging oceanic breakers, and a crashing foam wash.
-3. **Full Reset Delegation to Macroscope**:
-   - Macroscope owns the complete redesign and implementation of all four visual components. Do not output thin wireframes; use rich multi-layered procedural geometries, wave math, and fluid motion. Output complete drop-in replacement code via suggestion blocks.
-1. **Color Palette & Visibility**:
-   - Palette: Abyssal Blue (AbyssalBlue), Oceanic Teal (OceanicTeal), Wave Foam White (WaveFoamWhite), and Deep Ocean Violet (DeepOceanViolet).
-   - Absolutely NO pure black or imperceptible dark tones that become completely transparent under additive blending. Line widths, spirals, and geometries must remain distinct and bold from the 45° isometric camera.
-2. **Animation Architecture (src/ReturnToAbyssFx.cs)**:
-   - **Swift Cast Surge (ReturnToAbyssCastAnim)**:
-     - At instant of swift cast on self, a spiral deep-sea tidal surge rises and erupts upwards from caster's feet (~0.7s).
-   - **Ocean Torrent Constant Following (ReturnToAbyssAnim : MarkFxBase)**:
-     - Follows caster for 1 round/level via ReturnToAbyssFx.Tracker (listening to RhodesDoctorBuffReturnToAbyss).
-     - Feet: self-rotating breathing deep-sea ocean vortex.
-     - Body: spiral ascending abyssal current ribbons and floating wave foam droplets.
-     - Smooth 0.3s fadeout upon expiration or dispel.
-   - **Melee Hit Life Syphon (ReturnToAbyssHealAnim)**:
-     - On melee hit triggering 2d6 heal (up to 3 times/round), an abyssal blue surge flows backward from target into the caster (~0.6s).
-   - **Crit / Kill Specter Form Refund Wave (ReturnToAbyssRefundAnim)**:
-     - On first confirmed crit or kill each round returning 1 round of Specter form, ocean torrent roars and violently expands an intense white-hot wave foam shockwave ring (~0.8s).
-   - **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no Shader.Find, reuse MarkFxKit.Mat(color)), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
+3. **Status & Next Step (CRITICAL MANDATE FOR THIS RUN)**:
+   - ReturnToAbyssAnim has been successfully updated with the fluid wide-sheet/ribbon redesign.
+   - **Macroscope MUST now provide inline suggestion code blocks for the remaining three empty components**:
+     - ReturnToAbyssCastAnim: Erupting deep-sea tidal surge with broad water sheets, spiral current ribbons, and foam rings (~0.7s).
+     - ReturnToAbyssHealAnim: Heavy churning aquatic torrent rushing from victim to caster with undulating stream volume and foam splash (~0.6s).
+     - ReturnToAbyssRefundAnim: Powerful tidal bore shockwave with thick concentric wave crests and crashing foam wash (~0.8s).
+   - All three components must use the same wide fluid band & hydrodynamic swell technique (widthCurve, broad line widths  .25f~0.5f, layered ocean colors).
+   - Self-drawn only (no vanilla prefabs, no Shader.Find, reuse MarkFxKit.Mat(color)), zero GC in Update/Tick, and clean lifetime destruction.
 
 
 ### Phase 4: Reporting Findings
