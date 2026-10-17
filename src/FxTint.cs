@@ -373,8 +373,7 @@ namespace RhodesDoctor
     private static readonly string[] TrailKeywords =
     {
       "trail", "ribbon", "streak", "spark", "smoke", "haze", "mist",
-      "dust", "fog", "cloud", "steam", "foot", "step", "ground",
-      "run", "speed", "charge", "cycle"
+      "dust", "fog", "steam", "foot"
     };
 
     private static bool IsTrailName(string name)
@@ -412,12 +411,12 @@ namespace RhodesDoctor
     /// 2. 模拟空间（ParticleSystem.main.simulationSpace）：
     ///    - 若为已知拖尾/雾气素材（加速拖尾 HasteTrail、血雾 PlasmaAura、缓慢 SlowAura 等）；
     ///    - 或粒子系统开启了 trails 模块；
-    ///    - 或粒子系统/GameObject 名字含 trail / ribbon / streak / spark / haze / mist / smoke / dust / foot / run / cycle；
+    ///    - 或粒子系统/GameObject 名字含 trail / ribbon / streak / spark / haze / mist / smoke / dust / fog / steam / foot；
     ///    强制切换为 ParticleSystemSimulationSpace.World。
     ///    这样单位无论是奔跑拐弯还是原地转向，已经发射在空中的粒子与拖尾都稳固留在世界坐标中，
     ///    不会像硬木棍一样僵硬旋转。
     /// 3. SnapToLocator 原生约束：原版如果标记了 DontRotate，挂载下补齐 WorldRotationLock，
-    ///    确保物体朝向不被单位转向强行带偏。
+    ///    记录并锁定原始俯仰朝向，确保不被单位转向强行带偏。
     /// </summary>
     internal static void FixAttachedTrails(GameObject go, PrefabLink link = null)
     {
@@ -466,19 +465,9 @@ namespace RhodesDoctor
               if (field != null && (bool)field.GetValue(mb))
               {
                 if (mb.gameObject.GetComponent<WorldRotationLock>() == null)
-                  mb.gameObject.AddComponent<WorldRotationLock>();
+                  mb.gameObject.AddComponent<WorldRotationLock>().Capture(go.transform);
               }
             }
-          }
-          catch { }
-        }
-
-        foreach (var lr in go.GetComponentsInChildren<LineRenderer>(true))
-        {
-          try
-          {
-            if (lr != null && IsTrailName(lr.name))
-              lr.useWorldSpace = true;
           }
           catch { }
         }
@@ -1392,14 +1381,23 @@ namespace RhodesDoctor
   }
 
   /// <summary>
-  /// 锁定世界旋转为恒等（不随父节点旋转）。
-  /// 用于原版 Prefab 中标记了 SnapToLocator.DontRotate 的部件，防止挂到单位 View 下后被单位转身强行带转。
+  /// 锁定世界旋转为解耦朝向（不随父节点旋转）。
+  /// 记录相对 FX 根（即去掉单位朝向后）的原始朝向，用于原版 Prefab 中标记了 SnapToLocator.DontRotate 的部件，
+  /// 既保留其预制体设计的俯仰/横滚角度，又防止挂到单位 View 下后被单位转身强行带转。
   /// </summary>
   internal sealed class WorldRotationLock : MonoBehaviour
   {
+    private Quaternion _authored = Quaternion.identity;
+
+    /// <summary>记录相对 FX 根（即去掉单位朝向后）的原始朝向。</summary>
+    internal void Capture(Transform root)
+    {
+      _authored = root != null ? Quaternion.Inverse(root.rotation) * transform.rotation : transform.rotation;
+    }
+
     private void LateUpdate()
     {
-      transform.rotation = Quaternion.identity;
+      transform.rotation = _authored;
     }
   }
 }
