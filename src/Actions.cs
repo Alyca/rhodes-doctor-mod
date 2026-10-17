@@ -1995,5 +1995,51 @@ namespace RhodesDoctor.Components
         ShadowBladeFx.PlayHit(target);
     }
   }
+
+  /// <summary>
+  /// 梦魇（4 环·夜魔）：施法一瞬的心智冲击波与微裂隙特效。
+  /// </summary>
+  public class ContextActionNightterrorCastFx : ContextAction
+  {
+    public override string GetCaption() => "梦魇·自绘施法心智冲击特效";
+
+    public override void RunAction()
+    {
+      var caster = Context?.MaybeCaster;
+      var target = Target?.Unit;
+      if (target != null)
+        NightterrorFx.PlayCast(caster, target);
+    }
+  }
+
+  /// <summary>
+  /// 梦魇（4 环·夜魔）：意志豁免通过（战栗 1 轮）的心智震颤与幽蓝余波特效。
+  /// </summary>
+  public class ContextActionNightterrorPassFx : ContextAction
+  {
+    public override string GetCaption() => "梦魇·自绘豁免成功震颤特效";
+
+    public override void RunAction()
+    {
+      var target = Target?.Unit;
+      if (target != null)
+        NightterrorFx.PlayPass(target);
+    }
+  }
+
+  /// <summary>
+  /// 梦魇（4 环·夜魔）：意志豁免失败（恐慌 2 轮）的瞬间惊骇爆发特效。
+  /// </summary>
+  public class ContextActionNightterrorFailFx : ContextAction
+  {
+    public override string GetCaption() => "梦魇·自绘豁免失败惊骇爆发特效";
+
+    public override void RunAction()
+    {
+      var target = Target?.Unit;
+      if (target != null)
+        NightterrorFx.PlayFail(target);
+    }
+  }
 }
 

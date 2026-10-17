@@ -279,6 +279,7 @@ namespace RhodesDoctor
       SuppressingShotFx.Tracker.Added(buff);
       SinPunishmentFx.Tracker.Added(buff);
       UnstablePlasmaFx.Tracker.Added(buff);
+      NightterrorFx.PanicTracker.Added(buff);
     }
 
     public void HandleBuffDidRemoved(Buff buff)
@@ -289,6 +290,7 @@ namespace RhodesDoctor
       SuppressingShotFx.Tracker.Removed(buff);
       SinPunishmentFx.Tracker.Removed(buff);
       UnstablePlasmaFx.Tracker.Removed(buff);
+      NightterrorFx.PanicTracker.Removed(buff);
     }
   }
 }

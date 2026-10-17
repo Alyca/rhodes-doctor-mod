@@ -94,6 +94,27 @@ Verify and output drop-in replacement code for:
 - **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
 
 
+### Phase 3.3: Dedicated Self-Drawn Nightterror / 梦魇 (夜魔 / 格罗莉亚)
+
+The temporary borrowed blood haze aura (`FxLibrary.PlasmaAura`) tinted dark purple-black has been completely removed from `src/TintedAuraFx.cs`.
+Macroscope is tasked with generating and completing the self-drawn implementation in `src/NightterrorFx.cs` as specified in `docs/fx-rework-prompt-nightterror.md`.
+
+**CRITICAL MANDATE — Dual Personality & Nightmare Shadow (夜魇魔影):**
+1. **Color Palette & Visibility**:
+   - Contrast ethereal deep purple (`NightmarePurple`) with ice blue (`GloriaBlue`) and incandescent mind fissure white (`MindWhite`), supported by `ShadowViolet` for outer halo.
+   - Absolutely NO pure black or imperceptible dark tones that become completely transparent under additive blending. Line widths and geometries must remain distinct and bold from the 45° isometric camera.
+2. **Animation Architecture (`src/NightterrorFx.cs`)**:
+   - **Cast Shockwave (`NightterrorCastAnim`)**: Mental fissure shockwave piercing the target's head with dual-personality flicker (purple / ice blue).
+   - **Will Save Failed 2-Round Panic (`NightterrorPanicAnim : MarkFxBase`)**:
+     - Follows panicked target running away for 2 rounds via `NightterrorFx.PanicTracker`.
+     - Distorted overhead Nightmare Eye / Terror Mask (`CamBasis` facing camera, dual-color split purple/blue).
+     - Feet deep purple Nightmare Vortex with rotational vortex motion.
+     - Multiple swirling wraith shadow tendrils tearing around target.
+     - Smooth 0.3s fadeout upon expiration or dispel.
+   - **Will Save Passed Tremor (`NightterrorPassAnim`)**: Brief mental impact judder with subtle ice-blue fading ripples (~0.8s) dissipating smoothly.
+   - **Core Constraints**: Self-drawn only (no vanilla particle prefabs, no `Shader.Find`, reuse `MarkFxKit.Mat(color)`), zero per-frame GC allocation in Update/Tick, safe lifetime cleanup, and complete null safety.
+
+
 ### Phase 4: Reporting Findings
 
 When you confirm a mismatch, bug, or missing requirement, post an inline PR review comment at the specific file and line using `github_pr_review` (via `modify_pr`).

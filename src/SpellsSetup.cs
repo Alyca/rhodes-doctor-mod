@@ -1586,13 +1586,17 @@ namespace RhodesDoctor
                 .ApplyBuff(shakenLong, ContextDuration.Variable(ContextValues.Rank(), DurationRate.Rounds)));
             });
           ability.AddContextRankConfig(BuffRank(l => l));
+          // 专属自绘特效：施法心智冲击贯穿
+          effects.Add<ContextActionNightterrorCastFx>();
           // 持续时间显式写 Rounds（原版恐惧术的 JSON 也是 `Rate: Rounds`；不写就吃默认值，容易看错）。
           effects.SavingThrow(SavingThrowType.Will, onResult: ActionsBuilder.New()
             .ConditionalSaved(
               failed: ActionsBuilder.New()
-                .ApplyBuff(panic, ContextDuration.Fixed(2, DurationRate.Rounds)),
+                .ApplyBuff(panic, ContextDuration.Fixed(2, DurationRate.Rounds))
+                .Add<ContextActionNightterrorFailFx>(),
               succeed: ActionsBuilder.New()
-                .ApplyBuff(shakenLong, ContextDuration.Fixed(1, DurationRate.Rounds))));
+                .ApplyBuff(shakenLong, ContextDuration.Fixed(1, DurationRate.Rounds))
+                .Add<ContextActionNightterrorPassFx>()));
           break;
         }
 

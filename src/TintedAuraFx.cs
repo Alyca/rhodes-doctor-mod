@@ -107,29 +107,8 @@ namespace RhodesDoctor
         Label = "铸铁·淡蓝护甲",
       },
       // 梦魇（减益，作者 10-10：梦魇也该持续；且原素材看着像"领域"）：
-      // 原素材"美味恐惧"（WitchHexDeliciousFrightBuff，粒子 BorderGlow / Border_Loop / Border_ThinActive /
-      // DarkBottomSmoke）是**地面圆环 + 底部烟雾**的魔法阵——贴在敌人身上像"给敌人放了个领域"，不像 debuff。
-      // 换成**身体型**素材：原版**血雾**（BloodHazeBuff，与"不稳定血浆"同源）→ 重染**恐惧的黑**，
-      // 贴在敌人身上是一层"黑影缠身"，读起来就是 debuff。
-      // 梦魇挂两个增益（恐慌 2 轮 → 到期转动摇），两个都要挂，恐惧才"全程"。
-      new Entry
-      {
-        BuffGuid = Norm(Guids.NightterrorPanicBuff),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.10f, 0.06f, 0.16f, 1f),
-        Lift = 0.0f,
-        KeepLights = true,
-        Label = "梦魇·黑影缠身（恐慌）",
-      },
-      new Entry
-      {
-        BuffGuid = Norm(Guids.NightterrorShakenBuff),
-        Link = () => FxLibrary.PlasmaAura,
-        Tint = new Color(0.10f, 0.06f, 0.16f, 1f),
-        Lift = 0.0f,
-        KeepLights = true,
-        Label = "梦魇·黑影缠身（动摇）",
-      },
+      // 梦魇（4 环）：原先借用原版血雾（BloodHazeBuff）重染深紫黑已废弃。
+      // 现已由专属自绘特效（NightterrorFx.cs）全面接管（头顶魔面/魔眼 + 脚下梦魇漩涡 + 怨灵触手）。
       // ── 单体批次（6–9 环）：自增益 / 敌方减益的常驻光环（2026-10-10）──
       // 涌潮悲歌（自增益，Guids.Buff(36)）：**原来的天使罩子 + 原来的蓝**（作者 10-10：原特效挺好），
       // 只把整份特效**平均地减弱**——用 `Opacity` 降不透明度（不改色相，所以不偏色）。
