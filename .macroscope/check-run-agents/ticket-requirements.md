@@ -66,14 +66,27 @@ For every requirement and change:
 - Are exceptions in event handlers wrapped so they don't break subsequent game logic?
 - Are created GameObjects destroyed cleanly on timeout, target death, or buff expiration?
 
-### Phase 3.1: Special Directive for Visual Effect Redesign
+### Phase 3.1: Special Directive for Visual Effect Redesign (Unstable Plasma)
 
-The author requested Macroscope to redesign all 3 visual effects:
-1. `src/SuppressingShotFx.cs` (Kroos double-tap bolt tracers with tail fade + 300° rotating halo and snap-in reticle) - ✅ Redesigned by Macroscope & applied.
-2. `src/CrownEchoFx.cs` (Theresa's harmonic ripples with interlocking crests, 36 stardust comet trails, concave-peak Black Crown, unwinding enemy vortex) - ✅ Redesigned by Macroscope & applied.
-3. `src/SinPunishmentFx.cs` (Penance's 3D chamfered gavel rig with solemn pivot cadence, counter-rotating thorn seal, and 3x scale smite with camera flash) - ✅ Redesigned by Macroscope & applied.
+The author requested Macroscope to redesign and mathematically model the 3D procedural visual effect for:
+- `src/UnstablePlasmaFx.cs` (Warfarin's 2-Ring Unstable Plasma / 不稳定血浆)
 
-Verify that all three redesigned files adhere to the mathematical and visual specifications in `docs/fx-rework-prompt-3spells.md`, compile cleanly, properly manage GameObjects, and follow safe lifecycle and cleanup patterns.
+Key Visual Requirements:
+1. **Tri-Orbital Polyhedral Blood Crystals (三元环绕立体菱形血晶)**:
+   - 3 sharp diamond double-pyramids orbiting the target at chest height (`Height * 0.55f`, radius `Radius * 1.05f`) with 120° phase separation;
+   - Harmonic vertical bobbing, independent 3D tilt, self-spin, inner gleaming core axis (`_crystalAxes`), and trailing particles.
+2. **Cardiac ECG Pulse Wave (二段式心率脉搏电波)**:
+   - "lub-dub" double-beat rhythm (`T_cycle = 1.0s`):
+     - `t ∈ [0.00, 0.18]s`: Systolic primary pulse expanding rapidly with sharp ECG QRS spike jitter (`sin(k * theta)` modulated by QRS waveform);
+     - `t ∈ [0.22, 0.38]s`: Dicrotic secondary pulse echo;
+     - `t ∈ [0.38, 1.00]s`: Diastolic relaxation and fade.
+3. **Ascending Blood Helix (升腾血魔双螺旋)**:
+   - Two counter-phase intertwined DNA / fluid transfusion helix paths from feet to head (`Height * 1.1f`);
+   - Bottleneck waist radius curve, upward surging animation.
+4. **Ground Reagent Glyph (地面试剂同心环)**:
+   - Subtle floor concentric ring + 4 needle tick lines, pulsing gently with heartbeat.
+
+Verify that the redesigned file adheres to the mathematical and visual specifications in `docs/fx-rework-prompt-unstable-plasma.md`, compiles cleanly, properly manages GameObjects, and follows safe lifecycle and cleanup patterns.
 
 ### Phase 4: Reporting Findings
 
