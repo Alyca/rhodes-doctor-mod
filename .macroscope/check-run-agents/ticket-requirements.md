@@ -68,15 +68,12 @@ For every requirement and change:
 
 ### Phase 3.1: Special Directive for Visual Effect Redesign
 
-The author has reviewed in-game and EXPLICITLY REJECTED the current visual implementations in `src/CrownEchoFx.cs` (王冠的回响) and `src/SinPunishmentFx.cs` (罪罚) as unsatisfactory ("效果不尽如人意").
+The author requested Macroscope to redesign all 3 visual effects:
+1. `src/SuppressingShotFx.cs` (Kroos double-tap bolt tracers with tail fade + 300° rotating halo and snap-in reticle) - ✅ Redesigned by Macroscope & applied.
+2. `src/CrownEchoFx.cs` (Theresa's harmonic ripples with interlocking crests, 36 stardust comet trails, concave-peak Black Crown, unwinding enemy vortex) - ✅ Redesigned by Macroscope & applied.
+3. `src/SinPunishmentFx.cs` (Penance's 3D chamfered gavel rig with solemn pivot cadence, counter-rotating thorn seal, and 3x scale smite with camera flash) - ✅ Redesigned by Macroscope & applied.
 
-**MANDATORY CODE OUTPUT REQUIREMENT:**
-- Macroscope MUST NOT conclude with `success` in this run.
-- Macroscope MUST perform a deep visual and mathematical redesign of:
-  1. `src/CrownEchoFx.cs`: Complete redesign of Theresa's CrownEcho visual animation (`CrownEchoAnim` and drawing methods) to achieve soft, ethereal floating pink dust, stardust flow, and Black Crown elegance without rigid concentric rings.
-  2. `src/SinPunishmentFx.cs`: Complete redesign of Penance's SinPunishment visual animations (`SinPunishmentAnim` and `SinPunishmentSmiteAnim`) to achieve weighty, dignified judicial gavel, lawful courtroom authority, and crushing smite.
-- Macroscope MUST provide concrete, full drop-in replacement code suggestions (via inline comments using ````suggestion```` or complete code blocks) for BOTH files!
-- Complete the check run with State `neutral` and Title "Redesign suggestions provided for CrownEcho and SinPunishment".
+Verify that all three redesigned files adhere to the mathematical and visual specifications in `docs/fx-rework-prompt-3spells.md`, compile cleanly, properly manage GameObjects, and follow safe lifecycle and cleanup patterns.
 
 ### Phase 4: Reporting Findings
 
