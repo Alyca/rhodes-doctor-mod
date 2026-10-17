@@ -1009,8 +1009,8 @@ namespace RhodesDoctor
         case "ChainDetonation": return MarkAura();
         // 火力侦察 / 终末狙击：不再借"火之烙印"（头顶一团火，与 PRTS / 狙击语义不符），
         // 改为专属自绘特效，见 FireReconFx.cs / FinalSnipeFx.cs（MarkFxKit 管生命周期）。
-        // 罪罚：诅咒系减益（每轮反噬），用诅咒素材（见 CurseAura）。
-        case "SinPunishment": return CurseAura();
+        // 罪罚：不再借"降咒"黑雾（像死灵法师施法），改为专属自绘特效
+        // （正义天平 + 律法法阵 + 惩击圣光，见 SinPunishmentFx.cs，MarkFxKit 管生命周期）。
         // 寒霜祷言：寒冷减益 → 目标身上一层持续寒气（借原版 ColdBuff 的 FxOnStart）。
         case "FrostPrayer": return ColdAura();
         default: return null;

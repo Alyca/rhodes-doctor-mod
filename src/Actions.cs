@@ -1918,4 +1918,35 @@ namespace RhodesDoctor.Components
         + (hits.Count > 0 ? $"（{string.Join(", ", hits.Select(b => b.Blueprint.name).ToArray())}）" : "（身上没有形态增益）"));
     }
   }
+
+  /// <summary>
+  /// 牵制射击（0 环·克洛丝）：播放专属自绘弩矢飞射与命中针刺爆闪特效。
+  /// </summary>
+  public class ContextActionSuppressingShotFx : ContextAction
+  {
+    public override string GetCaption() => "牵制射击·自绘弩箭飞射特效";
+
+    public override void RunAction()
+    {
+      var caster = Context?.MaybeCaster;
+      var target = Target?.Unit;
+      if (caster != null && target != null)
+        SuppressingShotFx.PlayShot(caster, target);
+    }
+  }
+
+  /// <summary>
+  /// 王冠的回响（10 环·特雷西娅）：播放专属自绘黑冠悬浮 + 60 尺精神织网扩散 + 敌方增益剥离索取特效。
+  /// </summary>
+  public class ContextActionCrownEchoFx : ContextAction
+  {
+    public override string GetCaption() => "王冠的回响·黑冠精神织网特效";
+
+    public override void RunAction()
+    {
+      var caster = Context?.MaybeCaster ?? Context?.MaybeOwner ?? Target?.Unit;
+      if (caster != null)
+        CrownEchoFx.Play(caster, caster.Position, CrownEchoFx.DefaultRadius);
+    }
+  }
 }
