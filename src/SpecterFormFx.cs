@@ -1,4 +1,4 @@
-﻿// 巴别塔的恶灵（核心职业特技·死灵/变化·博士 Doctor）专属自绘视觉特效（纯视觉，不影响数值结算）。
+// 巴别塔的恶灵（核心职业特技·死灵/变化·博士 Doctor）专属自绘视觉特效（纯视觉，不影响数值结算）。
 //
 // 对应角色：【博士】（Doctor，前文明源石主宰者“巴别塔的恶灵”）
 // 机制体系：核心职业特技，形态切换：敏捷形态 Agile / 坚韧形态 Enduring（共三个阶段 V1/V2/V3 六个形态增益），
@@ -163,8 +163,24 @@ namespace RhodesDoctor
 
       if (guid == AftermathGuidNorm)
       {
+        // 20 级罗德岛的博士（冠冕）恶灵余波被抑制免除（与 BuffHelper.SpecterLockActive 同步，直接查 Capstone 存在）
+        if (buff.IsSuppressed || HasCapstone(unit)) return;
         AftermathTracker.Added(buff);
       }
+    }
+
+    private static readonly string CapstoneGuidNorm = Norm(Guids.CapstoneBuff);
+
+    private static bool HasCapstone(UnitEntityData unit)
+    {
+      if (unit == null) return false;
+      try
+      {
+        foreach (var b in unit.Buffs.RawFacts)
+          if (b?.Blueprint != null && Norm(b.Blueprint.AssetGuid.ToString()) == CapstoneGuidNorm) return true;
+      }
+      catch { }
+      return false;
     }
 
     /// <summary>
@@ -771,11 +787,13 @@ namespace RhodesDoctor
       float beat = 0.75f + 0.25f * Mathf.Sin(T * 2.4f);
       _body.Begin(); _glow.Begin(); _edge.Begin();
 
-      // ── 头顶前文明黑冠：实心冠体，倾斜进动 + 自旋 + 悬浮起伏 ──
-      float cr = Mathf.Clamp(R * 0.42f, 0.32f, 0.8f) * Mathf.Lerp(0.6f, 1f, appear);
+      // 避开开启 / 解除瞬间实心黑冠交接重叠：0.62–0.80 s 开启冠体淡出时才平滑淡入；
+      // 形态解除时约 0.09 s 快速让位给 SpecterDeactivateAnim 的碎裂黑冠，防止两顶实心黑冠在同一位置重叠穿插
+      float crownA = SpecterGeo.Out3((T - 0.62f) / 0.18f) * Mathf.Clamp01((Master - 0.7f) / 0.3f);
+      float cr = Mathf.Clamp(R * 0.42f, 0.32f, 0.8f);
       var cc = Vector3.up * (H + 0.5f + 0.06f * Mathf.Sin(T * 1.6f));
       var q = Quaternion.Euler(8f * Mathf.Sin(T * 0.7f), T * 52f, 8f * Mathf.Cos(T * 0.7f));
-      SpecterGeo.Crown(_body, _glow, _edge, cc, cr, cr * 1.05f, q, appear, 0.42f * beat * appear, 0f, fwd, T * 90f);
+      SpecterGeo.Crown(_body, _glow, _edge, cc, cr, cr * 1.05f, q, crownA, 0.42f * beat * crownA, 0f, fwd, T * 90f);
 
       // ── 垂落精神晶屑：实体八面晶片加速下坠，拖曳宽幅流光 ──
       float dropLen = H * 0.7f;
@@ -785,7 +803,7 @@ namespace RhodesDoctor
         float ang = _dripAng[i] + T * 0.9f;
         float fall = dropLen * (0.25f * k + 0.75f * k * k);
         var head = cc + new Vector3(Mathf.Cos(ang) * cr * 0.95f, -(fall + cr * 0.12f), Mathf.Sin(ang) * cr * 0.95f);
-        float fa = Mathf.Sin(k * Mathf.PI) * appear;
+        float fa = Mathf.Sin(k * Mathf.PI) * crownA;
         float tail = 0.18f + 0.30f * k;
         for (int p = 0; p < DripPts; p++)
           _pts[p] = head + Vector3.up * (tail * (1f - p / (float)(DripPts - 1)));
