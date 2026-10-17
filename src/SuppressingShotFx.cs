@@ -130,10 +130,13 @@ namespace RhodesDoctor
         _core1.enabled   = true;
         _tracer1.SetPosition(0, tail);
         _tracer1.SetPosition(1, head);
-        _core1.SetPosition(0, tail);
+        _core1.SetPosition(0, Vector3.Lerp(tail, head, 0.45f));
         _core1.SetPosition(1, head);
-        SetA(_tracer1, SuppressingShotFx.Amber, 1f);
-        SetA(_core1,   SuppressingShotFx.White, 1f);
+        var d1 = SuppressingShotFx.DeepAmber; var w1 = SuppressingShotFx.White;
+        _tracer1.startColor = new Color(d1.r, d1.g, d1.b, 0f);   // 尾羽 -> 渐隐透明
+        _tracer1.endColor   = SuppressingShotFx.Amber;          // 箭头金
+        _core1.startColor   = new Color(w1.r, w1.g, w1.b, 0f);
+        _core1.endColor     = w1;                               // 亮白芯
       }
       else
       {
@@ -181,10 +184,13 @@ namespace RhodesDoctor
         _core2.enabled   = true;
         _tracer2.SetPosition(0, tail2);
         _tracer2.SetPosition(1, head2);
-        _core2.SetPosition(0, tail2);
+        _core2.SetPosition(0, Vector3.Lerp(tail2, head2, 0.45f));
         _core2.SetPosition(1, head2);
-        SetA(_tracer2, SuppressingShotFx.DeepAmber, 1f);
-        SetA(_core2,   SuppressingShotFx.White, 1f);
+        var d2 = SuppressingShotFx.DeepAmber; var w2 = SuppressingShotFx.White;
+        _tracer2.startColor = new Color(d2.r, d2.g, d2.b, 0f);
+        _tracer2.endColor   = SuppressingShotFx.Hot;
+        _core2.startColor   = new Color(w2.r, w2.g, w2.b, 0f);
+        _core2.endColor     = w2;
       }
       else
       {
@@ -241,7 +247,7 @@ namespace RhodesDoctor
       var mH = Mat(SuppressingShotFx.Hot);
       if (mA == null || mW == null || mH == null) return false;
 
-      _halo          = Flat(transform, "RD_SS_Halo",    mA, RingSeg, true, 0.030f);
+      _halo          = Flat(transform, "RD_SS_Halo",    mA, RingSeg, false, 0.030f);
       _reticleCircle = Line(transform, "RD_SS_Reticle", mH, RingSeg, true, 0.035f);
       for (int i = 0; i < 4; i++)
         _crossTicks[i] = Line(transform, "RD_SS_Cross_" + i, mW, 2, false, 0.038f);
@@ -255,33 +261,48 @@ namespace RhodesDoctor
     {
       CamBasis(out var right, out var up);
 
+      const float baseR = 0.26f;
       var headPos = Unit.Position + Vector3.up * (Height + 0.38f);
       float appear = Mathf.Clamp01(T / 0.15f) * Master;
       float pulse = 0.82f + 0.18f * Mathf.Sin(T * 4.0f);
+      // 准星入场：0.35 s 从外向内收束（"咔哒"咬住目标）
+      float k = Mathf.Clamp01(T / 0.35f);
+      float lock01 = 1f - (1f - k) * (1f - k) * (1f - k);
 
-      // ── 1. 头顶平躺光环 ──
-      Circle(_halo, Unit.Position + Vector3.up * Height, 0.45f, 0f);
+      // ── 1. 头顶平躺光环（300° 开口弧，缺口自转，微转清晰可见）──
+      var haloC = Unit.Position + Vector3.up * Height;
+      float spin = T * 0.9f;
+      int hn = _halo.positionCount;
+      for (int i = 0; i < hn; i++)
+      {
+        float a = spin + i * (Mathf.PI * 2f * (300f / 360f)) / (hn - 1);
+        _halo.SetPosition(i, haloC + new Vector3(Mathf.Cos(a) * 0.45f, 0f, Mathf.Sin(a) * 0.45f));
+      }
       SetA(_halo, SuppressingShotFx.Amber, 0.50f * appear * pulse);
 
-      // ── 2. 正对相机的瞄准圆环 ──
-      float rRing = 0.26f;
+      // ── 2. 瞄准圆环（从 1.5 倍收拢到位）──
+      float rRing = baseR * Mathf.Lerp(1.5f, 1f, lock01);
       BillCircle(_reticleCircle, headPos, rRing, right, up);
       SetA(_reticleCircle, SuppressingShotFx.Hot, 0.85f * appear * pulse);
 
-      // ── 3. 四向收束准星刻线（上下左右）──
+      // ── 3. 瞄准收束刻线（咬合 + 微幅呼吸）──
+      float breathe = 0.03f * Mathf.Sin(T * 3.0f) * lock01;
+      float inner = Mathf.Lerp(1.60f, 0.65f, lock01) + breathe;
+      float outer = Mathf.Lerp(2.30f, 1.35f, lock01) + breathe;
       for (int i = 0; i < 4; i++)
       {
         float angle = i * Mathf.PI * 0.5f;
         var dir = right * Mathf.Cos(angle) + up * Mathf.Sin(angle);
-        _crossTicks[i].SetPosition(0, headPos + dir * (rRing * 0.65f));
-        _crossTicks[i].SetPosition(1, headPos + dir * (rRing * 1.35f));
+        _crossTicks[i].SetPosition(0, headPos + dir * (baseR * inner));
+        _crossTicks[i].SetPosition(1, headPos + dir * (baseR * outer));
         SetA(_crossTicks[i], SuppressingShotFx.White, 0.90f * appear);
       }
 
-      // ── 4. 向下的压制指示箭头（指向头部，表达攻击命中惩罚）──
-      float arrowTop = -0.06f;
-      float arrowBottom = -0.22f;
-      float arrowWidth = 0.12f;
+      // ── 4. 压制警示箭头（收在刻线内部，尖端保持在 -0.16 之上，带“下压”轻弹）──
+      float press = -0.02f * (0.5f + 0.5f * Mathf.Sin(T * 5.0f));
+      float arrowTop = -0.045f + press;
+      float arrowBottom = -0.135f + press;
+      float arrowWidth = 0.085f;
       _downArrow.SetPosition(0, headPos + up * arrowTop - right * arrowWidth);
       _downArrow.SetPosition(1, headPos + up * arrowBottom);
       _downArrow.SetPosition(2, headPos + up * arrowTop + right * arrowWidth);
