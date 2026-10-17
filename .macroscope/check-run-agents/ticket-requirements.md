@@ -66,27 +66,16 @@ For every requirement and change:
 - Are exceptions in event handlers wrapped so they don't break subsequent game logic?
 - Are created GameObjects destroyed cleanly on timeout, target death, or buff expiration?
 
-### Phase 3.1: Special Directive for Visual Effect Redesign (Unstable Plasma)
+### Phase 3.1: Full Reset Delegation (Unstable Plasma)
 
-The author requested Macroscope to redesign and mathematically model the 3D procedural visual effect for:
-- `src/UnstablePlasmaFx.cs` (Warfarin's 2-Ring Unstable Plasma / 不稳定血浆)
+The author has rejected the previous line-based `src/UnstablePlasmaFx.cs` and all prior visual specs for it. The old `docs/fx-rework-prompt-unstable-plasma.md` is void; do not use it to enforce geometry, timing, or `LineRenderer` requirements.
 
-Key Visual Requirements:
-1. **Tri-Orbital Polyhedral Blood Crystals (三元环绕立体菱形血晶)**:
-   - 3 sharp diamond double-pyramids orbiting the target at chest height (`Height * 0.55f`, radius `Radius * 1.05f`) with 120° phase separation;
-   - Harmonic vertical bobbing, independent 3D tilt, self-spin, inner gleaming core axis (`_crystalAxes`), and trailing particles.
-2. **Cardiac ECG Pulse Wave (二段式心率脉搏电波)**:
-   - "lub-dub" double-beat rhythm (`T_cycle = 1.0s`):
-     - `t ∈ [0.00, 0.18]s`: Systolic primary pulse expanding rapidly with sharp ECG QRS spike jitter (`sin(k * theta)` modulated by QRS waveform);
-     - `t ∈ [0.22, 0.38]s`: Dicrotic secondary pulse echo;
-     - `t ∈ [0.38, 1.00]s`: Diastolic relaxation and fade.
-3. **Ascending Blood Helix (升腾血魔双螺旋)**:
-   - Two counter-phase intertwined DNA / fluid transfusion helix paths from feet to head (`Height * 1.1f`);
-   - Bottleneck waist radius curve, upward surging animation.
-4. **Ground Reagent Glyph (地面试剂同心环)**:
-   - Subtle floor concentric ring + 4 needle tick lines, pulsing gently with heartbeat.
+This file is a full-reset task delegated entirely to Macroscope. Macroscope owns the new visual design and implementation. Do not post incremental fixes against the old file and do not treat any prior run's visual requirements as binding.
 
-Verify that the redesigned file adheres to the mathematical and visual specifications in `docs/fx-rework-prompt-unstable-plasma.md`, compiles cleanly, properly manages GameObjects, and follows safe lifecycle and cleanup patterns.
+Only verify the non-negotiable boundaries:
+- The new effect must not be a line / wireframe / ribbon-led look (`LineRenderer` / `TrailRenderer` not used as the primary visual).
+- It must remain self-drawn: no vanilla particle prefabs, no `Shader.Find`; use the project's proven mesh/quad + cloned-material path.
+- Preserve `UnstablePlasmaFx.Tracker` and `UnstablePlasmaAnim : MarkFxBase`, zero per-frame GC, the 0.3s `Master` fade, and clean destruction.
 
 ### Phase 4: Reporting Findings
 
